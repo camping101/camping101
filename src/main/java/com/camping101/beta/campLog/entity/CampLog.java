@@ -1,5 +1,8 @@
-package com.camping101.beta.member.entity;
+package com.camping101.beta.campLog.entity;
 
+import com.camping101.beta.bookMark.entity.BookMark;
+import com.camping101.beta.member.entity.Member;
+import com.camping101.beta.site.entity.Site;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,17 +25,20 @@ public class CampLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "camp_log_id")
     private Long campLogId;
 
     @ManyToOne
-    @JoinColumn(name = "MEMBER_ID")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "BOOK_MARK_ID")
+    @JoinColumn(name = "book_mark_id")
     private BookMark bookMark;
 
-    // TODO 사이트 참조 추가 필요
+    @ManyToOne
+    @JoinColumn(name = "site_id")
+    private Site site;
 
     @OneToMany(mappedBy = "campLog")
     private List<RecTag> recTags = new ArrayList<RecTag>();
@@ -52,6 +58,7 @@ public class CampLog {
     private long view;
 
     @CreatedDate
+    @Column(updatable = false, insertable = true)
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime updatedAt;
@@ -76,5 +83,13 @@ public class CampLog {
             bookMark.getCampLogs().add(this);
         }
     }
+
+    // TODO 사이트 연관관계 추가 필요
+//    public void changeSite(Site site) {
+//        this.site = site;
+//        if (!site.getCampLogs().contains(this)) {
+//            site.getCampLogs().add(this);
+//        }
+//    }
 
 }

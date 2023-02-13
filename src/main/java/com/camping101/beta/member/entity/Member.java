@@ -1,5 +1,8 @@
 package com.camping101.beta.member.entity;
 
+import com.camping101.beta.bookMark.entity.BookMark;
+import com.camping101.beta.campLog.entity.CampLog;
+import com.camping101.beta.comment.entity.Comment;
 import com.camping101.beta.member.entity.status.MemberStatus;
 import com.camping101.beta.member.entity.type.MemberType;
 import com.camping101.beta.member.entity.type.SignInType;
@@ -24,6 +27,7 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long memberId;
 
     private String email;
@@ -45,7 +49,9 @@ public class Member {
     private BookMark bookMark;
 
     @CreatedDate
+    @Column(updatable = false, insertable = true)
     private LocalDateTime createdAt;
+    @Column(updatable = false, insertable = true)
     private LocalDateTime deletedAt;
 
     public void addCampLog(CampLog campLog) {

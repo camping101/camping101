@@ -1,5 +1,7 @@
-package com.camping101.beta.member.entity;
+package com.camping101.beta.bookMark.entity;
 
+import com.camping101.beta.campLog.entity.CampLog;
+import com.camping101.beta.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,10 +21,11 @@ public class BookMark {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "book_mark_id")
     private Long bookMarkId;
 
     @OneToOne
-    @JoinColumn(name = "MEMBER_ID")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @OneToMany(mappedBy = "bookMark")

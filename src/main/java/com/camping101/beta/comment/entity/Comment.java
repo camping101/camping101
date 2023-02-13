@@ -1,5 +1,6 @@
-package com.camping101.beta.member.entity;
+package com.camping101.beta.comment.entity;
 
+import com.camping101.beta.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,10 +18,11 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_id")
     private Long commentId;
 
     @ManyToOne
-    @JoinColumn(name = "MEMBER_ID")
+    @JoinColumn(name = "member_id")
     Member member;
 
     private Long parentId;

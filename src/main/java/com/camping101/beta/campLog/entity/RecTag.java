@@ -1,4 +1,4 @@
-package com.camping101.beta.member.entity;
+package com.camping101.beta.campLog.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,10 +17,11 @@ public class RecTag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "reg_tag_id")
     private Long recTagId;
 
     @ManyToOne
-    @JoinColumn(name = "CAMP_LOG_ID")
+    @JoinColumn(name = "camp_log_id")
     private CampLog campLog;
 
     private String name;
