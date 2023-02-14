@@ -35,7 +35,7 @@ public class Site {
     @JoinColumn(name = "camp_id")
     private Camp camp;
 
-    private String openYn; //
+    //private String openYn; //
     private String name;
     private String rpImage; //대표이미지
     private String introduction;
