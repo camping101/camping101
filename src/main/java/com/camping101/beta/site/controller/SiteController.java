@@ -37,7 +37,8 @@ public class SiteController {
 
     // 사이트 목록 조회
     @GetMapping // 쿼리스트링 쓸지 PathVariable 쓸지 정하자.
-    public ResponseEntity<List<SiteListResponse>> siteList(@RequestParam Long campId, Pageable pageable) {
+    public ResponseEntity<List<SiteListResponse>> siteList(@RequestParam Long campId,
+        Pageable pageable) {
 
         List<SiteListResponse> response = siteService.findSiteList(campId, pageable);
         return ResponseEntity.ok(response);

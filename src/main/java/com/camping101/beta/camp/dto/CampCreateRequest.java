@@ -1,17 +1,9 @@
 package com.camping101.beta.camp.dto;
 
-import static javax.persistence.EnumType.STRING;
-
 import com.camping101.beta.camp.entity.FacilityCnt;
 import com.camping101.beta.camp.entity.Location;
 import com.camping101.beta.camp.entity.ManageStatus;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

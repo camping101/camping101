@@ -1,6 +1,5 @@
 package com.camping101.beta.member.entity;
 
-import com.camping101.beta.bookMark.entity.BookMark;
 import com.camping101.beta.campLog.entity.CampLog;
 import com.camping101.beta.comment.entity.Comment;
 import com.camping101.beta.member.entity.status.MemberStatus;
@@ -16,7 +15,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

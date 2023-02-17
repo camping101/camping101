@@ -36,7 +36,8 @@ public class CampController {
 
     // 자신의 캠핑장 목록 조회(주인)
     @GetMapping("/{memberId}")
-    public ResponseEntity<List<CampListResponse>> ownerCampList(Pageable pageable, @PathVariable Long memberId) {
+    public ResponseEntity<List<CampListResponse>> ownerCampList(Pageable pageable,
+        @PathVariable Long memberId) {
 
         List<CampListResponse> response = campService.findOwnerCampList(pageable, memberId);
         return ResponseEntity.ok(response);

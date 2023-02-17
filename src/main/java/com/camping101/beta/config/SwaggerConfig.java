@@ -17,19 +17,19 @@ public class SwaggerConfig {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiInfo())
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.camping101.beta"))
-                .paths(PathSelectors.any())
-                .build();
+            .apiInfo(apiInfo())
+            .select()
+            .apis(RequestHandlerSelectors.basePackage("com.camping101.beta"))
+            .paths(PathSelectors.any())
+            .build();
     }
 
-    private ApiInfo apiInfo(){
+    private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Camping101 API Swagger Document")
-                .description("캠핑101의 API를 사용해보세요.")
-                .version("1.0.0")
-                .build();
+            .title("Camping101 API Swagger Document")
+            .description("캠핑101의 API를 사용해보세요.")
+            .version("1.0.0")
+            .build();
     }
 
 }

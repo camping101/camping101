@@ -1,18 +1,23 @@
 package com.camping101.beta.bookMark.entity;
 
-import com.camping101.beta.bookMark.dto.BookMarkCreateRequest;
 import com.camping101.beta.bookMark.dto.BookMarkCreateResponse;
 import com.camping101.beta.bookMark.dto.BookMarkListResponse;
 import com.camping101.beta.campLog.entity.CampLog;
 import com.camping101.beta.member.entity.Member;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter

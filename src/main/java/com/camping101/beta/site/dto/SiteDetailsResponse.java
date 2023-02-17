@@ -15,5 +15,4 @@ public class SiteDetailsResponse {
 //   - 댓글/대댓글
 
 
-
 }

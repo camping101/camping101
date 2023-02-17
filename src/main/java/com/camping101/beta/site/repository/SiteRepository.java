@@ -13,7 +13,4 @@ public interface SiteRepository extends JpaRepository<Site, Long> {
     Page<Site> findAllByCamp(Camp camp, Pageable pageable);
 
 
-
-
-
 }

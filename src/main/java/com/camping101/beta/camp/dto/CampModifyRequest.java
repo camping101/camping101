@@ -34,5 +34,4 @@ public class CampModifyRequest {
     private String businessNo; // 사업자 번호
 
 
-
 }

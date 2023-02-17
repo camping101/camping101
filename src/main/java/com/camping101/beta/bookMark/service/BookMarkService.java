@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BookMarkService {
 
     private final BookMarkRepository bookMarkRepository;
@@ -47,6 +49,7 @@ public class BookMarkService {
     }
 
     // 북마크 목록 조회
+    @Transactional(readOnly = true)
     public List<BookMarkListResponse> findBookMarkList(Long memberId) {
 
         Member findMember = memberRepository.findById(memberId).orElseThrow(() -> {
@@ -55,7 +58,8 @@ public class BookMarkService {
 
         List<BookMark> bookMarkList = bookMarkRepository.findBookMarkByMember(findMember);
 
-        return bookMarkList.stream().map(BookMark::toBookMarkListResponse).collect(Collectors.toList());
+        return bookMarkList.stream().map(BookMark::toBookMarkListResponse)
+            .collect(Collectors.toList());
 
     }
 
