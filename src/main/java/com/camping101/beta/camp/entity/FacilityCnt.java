@@ -1,4 +1,4 @@
-package com.camping101.beta.camp;
+package com.camping101.beta.camp.entity;
 
 import javax.persistence.Embeddable;
 import lombok.AccessLevel;
