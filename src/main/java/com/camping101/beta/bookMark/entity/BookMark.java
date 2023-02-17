@@ -1,5 +1,8 @@
 package com.camping101.beta.bookMark.entity;
 
+import com.camping101.beta.bookMark.dto.BookMarkCreateRequest;
+import com.camping101.beta.bookMark.dto.BookMarkCreateResponse;
+import com.camping101.beta.bookMark.dto.BookMarkListResponse;
 import com.camping101.beta.campLog.entity.CampLog;
 import com.camping101.beta.member.entity.Member;
 import lombok.AllArgsConstructor;
@@ -24,25 +27,47 @@ public class BookMark {
     @Column(name = "book_mark_id")
     private Long bookMarkId;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "bookMark")
-    private List<CampLog> campLogs = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private CampLog campLog;
 
     public void addCampLog(CampLog campLog) {
-        this.campLogs.add(campLog);
-        if (campLog.getBookMark() != this) {
-            campLog.changeBookMark(this);
-        }
+        this.campLog = campLog;
+//        if (campLog.getBookMark() != this) {
+//            campLog.changeBookMark(this);
+//        }
     }
 
     public void changeMember(Member member) {
         this.member = member;
-        if (member.getBookMark() != this) {
-            member.changeBookMark(this);
-        }
+//        if (member.getBookMark() != this) {
+//            member.changeBookMark(this);
+//        }
     }
+
+    public static BookMarkCreateResponse toBookMarkCreateResponse(BookMark bookMark) {
+
+        return BookMarkCreateResponse.builder()
+            .bookMarkId(bookMark.bookMarkId)
+            .memberId(bookMark.getMember().getMemberId())
+            .campLogId(bookMark.getCampLog().getCampLogId())
+            .build();
+
+    }
+
+    public static BookMarkListResponse toBookMarkListResponse(BookMark bookMark) {
+
+        return BookMarkListResponse.builder()
+            .bookMarkId(bookMark.bookMarkId)
+            .memberId(bookMark.getMember().getMemberId())
+            .campLogId(bookMark.getCampLog().getCampLogId())
+            .build();
+
+    }
+
 
 }

@@ -6,16 +6,23 @@ import com.camping101.beta.comment.entity.Comment;
 import com.camping101.beta.member.entity.status.MemberStatus;
 import com.camping101.beta.member.entity.type.MemberType;
 import com.camping101.beta.member.entity.type.SignInType;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -39,14 +46,11 @@ public class Member {
 
     private String image;
 
-    @OneToMany(mappedBy="member")
+    @OneToMany(mappedBy = "member")
     private List<CampLog> campLogs = new ArrayList<CampLog>();
 
-    @OneToMany(mappedBy="member")
+    @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<Comment>();
-
-    @OneToOne(mappedBy="member")
-    private BookMark bookMark;
 
     @CreatedDate
     @Column(updatable = false, insertable = true)
@@ -68,10 +72,10 @@ public class Member {
         }
     }
 
-    public void changeBookMark(BookMark bookMark) {
-        this.bookMark = bookMark;
-        if (bookMark.getMember() != this) {
-            bookMark.changeMember(this);
-        }
-    }
+//    public void changeBookMark(BookMark bookMark) {
+//        this.bookMark = bookMark;
+//        if (bookMark.getMember() != this) {
+//            bookMark.changeMember(this);
+//        }
+//    }
 }
