@@ -11,6 +11,9 @@ import com.camping101.beta.member.exception.ErrorCode;
 import com.camping101.beta.member.exception.MemberException;
 import com.camping101.beta.member.repository.MemberRepository;
 import com.camping101.beta.member.repository.TemporalPasswordRepository;
+import com.camping101.beta.util.CustomMailSender;
+import com.camping101.beta.util.RandomCode;
+import com.camping101.beta.util.S3FileUploader;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.transaction.Transactional;
@@ -26,8 +29,8 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final TemporalPasswordRepository temporalPasswordRepository;
     private final PasswordEncoder passwordEncoder;
-//    private final CustomMailSender customMailSender;
-//    private final S3FileUploader s3FileUploader;
+    private final CustomMailSender customMailSender;
+    private final S3FileUploader s3FileUploader;
 
     @Override
     public MemberInfoResponse getMemberInfo(String email, Long memberId) {
@@ -82,7 +85,7 @@ public class MemberServiceImpl implements MemberService{
 
         return temporalPasswordRepository.save(TemporalPassword.builder()
                 .email(email)
-//                .temporalPassword(RandomCode.createRandomEightString())
+                .temporalPassword(RandomCode.createRandomEightString())
                 .emailSentAt(LocalDateTime.now())
                 .activeYn(false)
                 .build());
@@ -104,8 +107,8 @@ public class MemberServiceImpl implements MemberService{
                 "</body>\n" +
                 "</html>";
 
-//        return customMailSender.sendMail(subject, "", htmlText, email);
-        return false;
+        return customMailSender.sendMail(subject, "", htmlText, email);
+
 
     }
 
@@ -125,8 +128,8 @@ public class MemberServiceImpl implements MemberService{
             member.setPassword(passwordEncoder.encode(member.getPhoneNumber()));
         }
         if (Objects.nonNull(request.getImage())) {
-//            var s3ImageUrl = s3FileUploader.uploadFileAndGetURL(request.getImage());
-//            member.setImage(s3ImageUrl);
+            var s3ImageUrl = s3FileUploader.uploadFileAndGetURL(request.getImage());
+            member.setImage(s3ImageUrl);
         }
         if (Objects.nonNull(request.getNickname())) {
             member.setNickname(request.getNickname());

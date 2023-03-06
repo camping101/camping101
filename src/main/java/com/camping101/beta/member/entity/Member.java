@@ -2,15 +2,19 @@ package com.camping101.beta.member.entity;
 
 import com.camping101.beta.campLog.entity.CampLog;
 import com.camping101.beta.comment.entity.Comment;
+import com.camping101.beta.member.dto.MemberSignUpRequest;
 import com.camping101.beta.member.entity.status.MemberStatus;
 import com.camping101.beta.member.entity.type.MemberType;
 import com.camping101.beta.member.entity.type.SignInType;
+import com.camping101.beta.member.entity.type.SignUpType;
+import com.camping101.beta.member.service.oAuth.GoogleAccountInfo;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,7 +38,6 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long memberId;
-    private String nickName;
 
     private String email;
     private String password;
@@ -56,6 +59,10 @@ public class Member {
     private LocalDateTime createdAt;
     @Column(updatable = false, insertable = true)
     private LocalDateTime deletedAt;
+    private String nickname;
+
+    @Enumerated
+    private SignUpType signUpType;
 
     public void addCampLog(CampLog campLog) {
         this.campLogs.add(campLog);
@@ -71,10 +78,60 @@ public class Member {
         }
     }
 
-//    public void changeBookMark(BookMark bookMark) {
-//        this.bookMark = bookMark;
-//        if (bookMark.getMember() != this) {
-//            bookMark.changeMember(this);
-//        }
-//    }
+    // TODO 주인 회원 캠핑장 연관관계 추가
+
+    public static Member from(MemberSignUpRequest memberSignUpRequest,
+        String s3Url, String encPassword) {
+        return Member.builder()
+            .image(s3Url)
+            .email(memberSignUpRequest.getEmail())
+            .password(encPassword)
+            .phoneNumber(memberSignUpRequest.getPhoneNumber())
+            .nickname(memberSignUpRequest.getNickname())
+            .signUpType(memberSignUpRequest.getSignUpType())
+            .memberType(memberSignUpRequest.getMemberType())
+            .memberType(MemberType.CUSTOMER)
+            .memberStatus(MemberStatus.NOT_ACTIVATED)
+            .build();
+    }
+
+    public static Member from(GoogleAccountInfo member) {
+        return Member.builder()
+            .image(member.getPicture())
+            .email(member.getEmail())
+            .nickname(member.getName())
+            .signUpType(SignUpType.GOOGLE)
+            .memberType(MemberType.CUSTOMER)
+            .memberStatus(MemberStatus.IN_USE)
+            .build();
+    }
+
+    public void activateMember() {
+        this.memberStatus = MemberStatus.IN_USE;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setMemberStatus(MemberStatus memberStatus) {
+        this.memberStatus = memberStatus;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
 }
