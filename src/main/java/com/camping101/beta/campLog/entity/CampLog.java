@@ -1,6 +1,9 @@
 package com.camping101.beta.campLog.entity;
 
 import com.camping101.beta.bookMark.entity.BookMark;
+import com.camping101.beta.campLog.dto.CampLogCreateRequest;
+import com.camping101.beta.campLog.dto.CampLogUpdateRequest;
+import com.camping101.beta.comment.entity.Comment;
 import com.camping101.beta.member.entity.Member;
 import com.camping101.beta.site.entity.Site;
 import lombok.AllArgsConstructor;
@@ -33,16 +36,10 @@ public class CampLog {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "book_mark_id")
-    private BookMark bookMark;
-
-    @ManyToOne
     @JoinColumn(name = "site_id")
     private Site site;
 
-    @OneToMany(mappedBy = "campLog")
-    private List<RecTag> recTags = new ArrayList<RecTag>();
-
+    private String recTags;
     private LocalDateTime visitedAt;
     private String visitedWith;
     private String title;
@@ -53,9 +50,14 @@ public class CampLog {
     private String image3;
     private String image4;
     private String image5;
+    private long likes = 0;
+    private long view = 0;
 
-    private long like;
-    private long view;
+    @OneToMany(mappedBy = "campLog")
+    private List<BookMark> bookMarks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "campLog")
+    private List<Comment> comments = new ArrayList<>();
 
     @CreatedDate
     @Column(updatable = false, insertable = true)
@@ -63,33 +65,64 @@ public class CampLog {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public void addRecTag(RecTag recTag) {
-        this.recTags.add(recTag);
-        if (recTag.getCampLog() != this) {
-            recTag.changeCampLog(this);
+    public void addBookMark(BookMark bookMark) {
+        this.bookMarks.add(bookMark);
+        if (bookMark.getCampLog() != this) {
+            bookMark.changeCampLog(this);
         }
     }
+    public static CampLog from(CampLogCreateRequest request) {
+        return CampLog.builder()
+                .visitedAt(request.getVisitedAt())
+                .visitedWith(request.getVisitedWith())
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .build();
+    }
 
-    public void changeMember(Member member) {
+    public void setImagePaths(List<String> imagePaths) {
+        this.image = imagePaths.get(0);
+        this.image1 = imagePaths.get(1);
+        this.image2 = imagePaths.get(2);
+        this.image3 = imagePaths.get(3);
+        this.image4 = imagePaths.get(4);
+        this.image5 = imagePaths.get(5);
+    }
+
+    public void setRecTags(String recTags){
+        this.recTags = recTags;
+    }
+
+    public void setMember(Member member) {
         this.member = member;
-        if (!member.getCampLogs().contains(this)) {
-            member.getCampLogs().add(this);
+    }
+
+    public void setSite(Site site) {
+        this.site = site;
+    }
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+        if (comment.getCampLog() != this) {
+            comment.changeCampLog(this);
         }
     }
 
-    public void changeBookMark(BookMark bookMark) {
-        this.bookMark = bookMark;
-        if (!bookMark.getCampLogs().contains(this)) {
-            bookMark.getCampLogs().add(this);
-        }
+    public void increaseViewCount() {
+        this.view = this.view + 1;
     }
 
-    // TODO 사이트 연관관계 추가 필요
-//    public void changeSite(Site site) {
-//        this.site = site;
-//        if (!site.getCampLogs().contains(this)) {
-//            site.getCampLogs().add(this);
-//        }
-//    }
+    public void updateCampLog(CampLogUpdateRequest request) {
+        this.visitedAt = request.getVisitedAt();
+        this.visitedWith = request.getVisitedWith();
+        this.title = request.getTitle();
+        this.description = request.getDescription();
+    }
 
+    public void increaseLikesCount() {
+        this.likes = this.likes + 1;
+    }
+
+    public void decreaseLikesCount() {
+        this.likes = this.likes + 1;
+    }
 }

@@ -1,12 +1,18 @@
 package com.camping101.beta.comment.entity;
 
+import com.camping101.beta.campLog.entity.CampLog;
+import com.camping101.beta.comment.dto.CommentCreateRequest;
 import com.camping101.beta.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -21,19 +27,44 @@ public class Comment {
     @Column(name = "comment_id")
     private Long commentId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     Member member;
 
-    private Long parentId;
-    private boolean recommendYn;
-    private String content;
-    private long like;
+    @ManyToOne
+    @JoinColumn(name = "camp_log_id")
+    CampLog campLog;
 
-    public void changeComment(Member member) {
+    private Long parentId;
+    private boolean reCommentYn;
+    private String content;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    public static Comment from(CommentCreateRequest request) {
+        return Comment.builder()
+            .parentId(request.getParentId())
+            .reCommentYn(request.isReCommentYn())
+            .content(request.getContent())
+            .build();
+    }
+
+    public void changeMember(Member member) {
         this.member = member;
-        if (!member.getComments().contains(this)) {
-            member.getComments().add(this);
+    }
+
+    public void changeCampLog(CampLog campLog) {
+        this.campLog = campLog;
+        if (!campLog.getComments().contains(this)) {
+            campLog.addComment(this);
         }
     }
+
+    public void changeContent(String content) {
+        this.content = content;
+    }
+
 }
