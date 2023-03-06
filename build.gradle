@@ -1,15 +1,19 @@
 buildscript {
+	dependencies {
+		classpath "io.spring.gradle:dependency-management-plugin:1.0.10.RELEASE"
+	}
 	ext {
 		queryDslVersion = "5.0.0"
+		set('springCloudVersion', "2021.0.5")
 	}
 }
 
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.8'
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
-	//querydsl 추가
-	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'jacoco'
 }
 
 group = 'camping101'
@@ -25,51 +29,94 @@ configurations {
 test {
 	useJUnitPlatform()
 	systemProperty "jasypt.encryptor.password", project.getProperties().get("jasypt.encryptor.password")
+	finalizedBy jacocoTestReport // 테스트 끝나고 리포트 실행
 }
 
 repositories {
 	mavenCentral()
 }
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.h2database:h2'
-	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'io.projectreactor:reactor-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-
-	//querydsl 추가
-	implementation 'com.querydsl:querydsl-jpa:5.0.0'
-	implementation 'com.querydsl:querydsl-apt:5.0.0'
-	annotationProcessor 'com.querydsl:querydsl-apt:5.0.0'
-
-	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-
-	// jwt dependency 추가
-	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-	implementation group: 'org.apache.commons',name: 'commons-collections4',version: '4.3'
-
-	// Jasypt
-	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
-
-	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
-
+// feign client 사용을 위한 스프링클라우드 설정
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+jacoco{
+	toolVersion = "0.8.7"
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		html.enabled true
+		xml.enabled false
+		csv.enabled false
+	}
+	finalizedBy 'jacocoTestCoverageVerification'
+}
+
+tasks.jacocoTestCoverageVerification {
+//	violationRules {
+//		rule {
+//			enabled = true;
+//			element = 'CLASS'
+//
+//			limit {
+//				counter = 'METHOD'
+//				value = 'COVEREDRATIO'
+//				minimum = 0.5
+//			}
+//		}
+//	}
+}
+
+dependencies {
+
+	// Web MVC 관련
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools' // 컨텐츠 변경 시, 자동 재부팅
+	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1' // jwt
+	implementation group: 'org.apache.commons',name: 'commons-collections4',version: '4.3' // jwt support
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	// RDB / NoSQL
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.mariadb.jdbc:mariadb-java-client'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'   // jpa
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis' // redis
+	implementation 'com.querydsl:querydsl-jpa:5.0.0'      // querydsl
+	implementation 'com.querydsl:querydsl-apt:5.0.0'
+	annotationProcessor 'com.querydsl:querydsl-apt:5.0.0'
+	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'  // p6spy  : 쿼리 시각화
+	runtimeOnly 'com.h2database:h2' // 테스트용
+
+	testImplementation('it.ozimov:embedded-redis:0.7.3'){
+		exclude group: 'org.slf4j', module: 'slf4j-simple' // slf4j 중복 방지용
+	}
+
+	// Test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	// Swagger
+	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+
+	// ETC
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4' // Jasypt : 보완키 암호화
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.apache.commons:commons-lang3:3.12.0'
+	implementation 'commons-codec:commons-codec:1.15'
+
 }
 
 jar {
