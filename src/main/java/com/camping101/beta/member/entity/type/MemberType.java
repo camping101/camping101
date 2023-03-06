@@ -1,7 +1,13 @@
 package com.camping101.beta.member.entity.type;
 
-public enum MemberType {
+import org.springframework.security.core.GrantedAuthority;
 
-    CUSTOMER, OWNER, ADMIN
+public enum MemberType implements GrantedAuthority {
 
+    CUSTOMER, OWNER, ADMIN;
+
+    @Override
+    public String getAuthority() {
+        return this.name();
+    }
 }

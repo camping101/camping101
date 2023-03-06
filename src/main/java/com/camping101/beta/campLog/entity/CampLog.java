@@ -6,19 +6,6 @@ import com.camping101.beta.campLog.dto.CampLogUpdateRequest;
 import com.camping101.beta.comment.entity.Comment;
 import com.camping101.beta.member.entity.Member;
 import com.camping101.beta.site.entity.Site;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +13,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -40,17 +30,16 @@ public class CampLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "camp_log_id")
     private Long campLogId;
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "site_id")
     private Site site;
 
     private String recTags;
-    private String campLogName; // 내가 일단 임의로 추가함
-
     private LocalDateTime visitedAt;
     private String visitedWith;
     private String title;
@@ -61,9 +50,8 @@ public class CampLog {
     private String image3;
     private String image4;
     private String image5;
-
-    private long likes;
-    private long view;
+    private long likes = 0;
+    private long view = 0;
 
     @OneToMany(mappedBy = "campLog")
     private List<BookMark> bookMarks = new ArrayList<>();
@@ -77,19 +65,19 @@ public class CampLog {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public void changeMember(Member member) {
-        this.member = member;
-        if (!member.getCampLogs().contains(this)) {
-            member.getCampLogs().add(this);
+    public void addBookMark(BookMark bookMark) {
+        this.bookMarks.add(bookMark);
+        if (bookMark.getCampLog() != this) {
+            bookMark.changeCampLog(this);
         }
     }
     public static CampLog from(CampLogCreateRequest request) {
         return CampLog.builder()
-            .visitedAt(request.getVisitedAt())
-            .visitedWith(request.getVisitedWith())
-            .title(request.getTitle())
-            .description(request.getDescription())
-            .build();
+                .visitedAt(request.getVisitedAt())
+                .visitedWith(request.getVisitedWith())
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .build();
     }
 
     public void setImagePaths(List<String> imagePaths) {
@@ -107,28 +95,15 @@ public class CampLog {
 
     public void setMember(Member member) {
         this.member = member;
-        if (!member.getCampLogs().contains(this)) {
-            member.getCampLogs().add(this);
-        }
-    }
-
-    public void addBookMark(BookMark bookMark) {
-        this.bookMarks.add(bookMark);
-        if (bookMark.getCampLog() != this) {
-            bookMark.setCampLog(this);
-        }
     }
 
     public void setSite(Site site) {
         this.site = site;
-//        if (!site.getCamLogs().contains(this)) {
-//            site.getCampLogs().add(this);
-//        }
     }
     public void addComment(Comment comment) {
         this.comments.add(comment);
         if (comment.getCampLog() != this) {
-            comment.setCampLog(this);
+            comment.changeCampLog(this);
         }
     }
 
@@ -150,5 +125,4 @@ public class CampLog {
     public void decreaseLikesCount() {
         this.likes = this.likes + 1;
     }
-
 }

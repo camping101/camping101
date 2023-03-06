@@ -52,21 +52,18 @@ public class Comment {
             .build();
     }
 
-    public void setMember(Member member) {
+    public void changeMember(Member member) {
         this.member = member;
-        if (!member.getComments().contains(this)) {
-            member.addComment(this);
-        }
     }
 
-    public void setCampLog(CampLog campLog) {
+    public void changeCampLog(CampLog campLog) {
         this.campLog = campLog;
         if (!campLog.getComments().contains(this)) {
             campLog.addComment(this);
         }
     }
 
-    public void setContent(String content) {
+    public void changeContent(String content) {
         this.content = content;
     }
 

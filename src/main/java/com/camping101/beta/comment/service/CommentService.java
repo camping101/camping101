@@ -1,6 +1,6 @@
 package com.camping101.beta.comment.service;
 
-import com.camping101.beta.campLog.CampLogRepository;
+import com.camping101.beta.campLog.repository.CampLogRepository;
 import com.camping101.beta.comment.dto.*;
 import com.camping101.beta.comment.entity.Comment;
 import com.camping101.beta.comment.repository.CommentRepository;
@@ -40,8 +40,8 @@ public class CommentService {
         validateIfCommentAlreadyWrittenByMember(request, commentsOfCampLogByMember);
 
         Comment newComment = commentRepository.save(Comment.from(request));
-        newComment.setMember(member);
-        newComment.setCampLog(campLog);
+        newComment.changeMember(member);
+        newComment.changeCampLog(campLog);
 
         return CommentInfoResponse.fromEntity(newComment);
     }
@@ -118,7 +118,7 @@ public class CommentService {
             throw new RuntimeException("댓글을 쓴 작성자만 수정이 가능합니다.");
         }
 
-        comment.setContent(request.getContent());
+        comment.changeContent(request.getContent());
 
         return CommentInfoResponse.fromEntity(comment);
     }

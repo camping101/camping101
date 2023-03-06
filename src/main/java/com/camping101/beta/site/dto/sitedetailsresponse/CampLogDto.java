@@ -1,11 +1,10 @@
 package com.camping101.beta.site.dto.sitedetailsresponse;
 
 import com.camping101.beta.campLog.entity.CampLog;
-import com.camping101.beta.campLog.entity.RecTag;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.camping101.beta.regtag.entity.RecTag;
 import lombok.Getter;
+
+import java.time.LocalDateTime;
 
 @Getter
 public class CampLogDto {
@@ -16,7 +15,7 @@ public class CampLogDto {
 
     private Long siteId;
 
-    private List<RecTagDto> recTagDtoList;
+    private String recTagDto;
     private String campLogName;
     private LocalDateTime visitedAt;
     private String visitedWith;
@@ -36,10 +35,8 @@ public class CampLogDto {
         this.campLogId = campLog.getCampLogId();
         this.memberId = campLog.getMember().getMemberId();
         this.siteId = campLog.getSite().getSiteId();
-        this.recTagDtoList = campLog.getRecTags().stream()
-            .map(RecTagDto::new)
-            .collect(Collectors.toList());
-        this.campLogName = campLog.getCampLogName();
+        this.recTagDto = campLog.getRecTags();
+        this.campLogName = campLog.getTitle();
         this.visitedAt = campLog.getVisitedAt();
         this.visitedWith = campLog.getVisitedWith();
         this.title = campLog.getTitle();

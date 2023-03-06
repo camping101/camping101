@@ -1,30 +1,19 @@
 package com.camping101.beta.member.entity;
 
-import com.camping101.beta.campLog.entity.CampLog;
-import com.camping101.beta.comment.entity.Comment;
 import com.camping101.beta.member.dto.MemberSignUpRequest;
 import com.camping101.beta.member.entity.status.MemberStatus;
 import com.camping101.beta.member.entity.type.MemberType;
-import com.camping101.beta.member.entity.type.SignInType;
 import com.camping101.beta.member.entity.type.SignUpType;
 import com.camping101.beta.member.service.oAuth.GoogleAccountInfo;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -38,47 +27,24 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long memberId;
-
     private String email;
     private String password;
     private String phoneNumber;
-    private SignInType signInType;
-    private MemberType memberType;
-    private MemberStatus memberStatus;
-
     private String image;
-
-    @OneToMany(mappedBy = "member")
-    private List<CampLog> campLogs = new ArrayList<CampLog>();
-
-    @OneToMany(mappedBy = "member")
-    private List<Comment> comments = new ArrayList<Comment>();
-
-    @CreatedDate
-    @Column(updatable = false, insertable = true)
-    private LocalDateTime createdAt;
-    @Column(updatable = false, insertable = true)
-    private LocalDateTime deletedAt;
     private String nickname;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private SignUpType signUpType;
 
-    public void addCampLog(CampLog campLog) {
-        this.campLogs.add(campLog);
-        if (campLog.getMember() != this) {
-            campLog.changeMember(this);
-        }
-    }
+    @Enumerated(EnumType.STRING)
+    private MemberType memberType;
 
-    public void addComment(Comment comment) {
-        this.comments.add(comment);
-        if (comment.getMember() != this) {
-            comment.changeComment(this);
-        }
-    }
+    @Enumerated(EnumType.STRING)
+    private MemberStatus memberStatus;
 
-    // TODO 주인 회원 캠핑장 연관관계 추가
+    @CreatedDate
+    private LocalDateTime createdAt;
+    private LocalDateTime deletedAt;
 
     public static Member from(MemberSignUpRequest memberSignUpRequest,
         String s3Url, String encPassword) {
@@ -110,27 +76,27 @@ public class Member {
         this.memberStatus = MemberStatus.IN_USE;
     }
 
-    public void setImage(String image) {
+    public void changeImage(String image) {
         this.image = image;
     }
 
-    public void setNickname(String nickname) {
+    public void changeNickname(String nickname) {
         this.nickname = nickname;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public void changePhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
-    public void setPassword(String password) {
+    public void changePassword(String password) {
         this.password = password;
     }
 
-    public void setMemberStatus(MemberStatus memberStatus) {
+    public void changeMemberStatus(MemberStatus memberStatus) {
         this.memberStatus = memberStatus;
     }
 
-    public void setDeletedAt(LocalDateTime deletedAt) {
+    public void changeDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
     }
 

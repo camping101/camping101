@@ -85,7 +85,7 @@ public class CampAuthQueryService {
     private BooleanExpression nickNameEq(String nickName) {
 
         if (nickName != null) {
-            return camp.member.nickName.eq(nickName);
+            return camp.member.nickname.eq(nickName);
         }
 
         return null;

@@ -43,7 +43,7 @@ public class BookMarkService {
 
         bookMarkRepository.save(bookMark);
 
-        bookMark.addCampLog(findCampLog);
+        bookMark.changeCampLog(findCampLog);
         bookMark.changeMember(findMember);
 
         return BookMark.toBookMarkCreateResponse(bookMark);

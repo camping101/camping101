@@ -137,7 +137,7 @@ public class CampQueryService {
 
         // querydsl 로 사이트 갯수만큼 쿼리 날리기
         return queryFactory.select(new QCampLogInCamp(
-                member.memberId, site.siteId, campLog.campLogId, campLog.campLogName,
+                member.memberId, site.siteId, campLog.campLogId, campLog.title,
                 campLog.description, campLog.visitedAt, campLog.image, campLog.createdAt,
                 campLog.updatedAt
             )).from(campLog)

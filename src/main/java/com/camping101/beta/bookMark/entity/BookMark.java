@@ -40,18 +40,15 @@ public class BookMark {
     @JoinColumn(name = "camp_log_id")
     private CampLog campLog;
 
-    public void addCampLog(CampLog campLog) {
+    public void changeCampLog(CampLog campLog) {
         this.campLog = campLog;
-//        if (campLog.getBookMark() != this) {
-//            campLog.changeBookMark(this);
-//        }
+        if (!campLog.getBookMarks().contains(this)) {
+            campLog.addBookMark(this);
+        }
     }
 
     public void changeMember(Member member) {
         this.member = member;
-//        if (member.getBookMark() != this) {
-//            member.changeBookMark(this);
-//        }
     }
 
     public static BookMarkCreateResponse toBookMarkCreateResponse(BookMark bookMark) {
@@ -60,7 +57,7 @@ public class BookMark {
             .bookMarkId(bookMark.getBookMarkId())
             .memberId(bookMark.getMember().getMemberId())
             .campLogId(bookMark.getCampLog().getCampLogId())
-            .campLogName(bookMark.getCampLog().getCampLogName())
+            //.campLogName(bookMark.getCampLog().getCampLogName())
             .build();
 
     }
@@ -70,9 +67,9 @@ public class BookMark {
         return BookMarkListResponse.builder()
             .bookMarkId(bookMark.getBookMarkId())
             .memberId(bookMark.getMember().getMemberId())
-            .nickName(bookMark.getMember().getNickName())
+            //.nickName(bookMark.getMember().getNickName())
             .campLogId(bookMark.getCampLog().getCampLogId())
-            .campLogName(bookMark.getCampLog().getCampLogName())
+            //.campLogName(bookMark.getCampLog().getCampLogName())
             .title(bookMark.getCampLog().getTitle())
             .description(bookMark.getCampLog().getDescription())
             .image(bookMark.getCampLog().getImage())

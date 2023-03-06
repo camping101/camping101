@@ -44,14 +44,10 @@ public class Site {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "camp_id")
     private Camp camp;
-
-    // 새로 추가된 것들(양방향 연관관계를 만들기 위해 추가함)|
     @OneToMany(mappedBy = "site")
     private List<Reservation> reservationList = new ArrayList<>();
-
     @OneToMany(mappedBy = "site")
     private List<CampLog> campLogList = new ArrayList<>();
-    //
 
     private String name;
     private String rpImage; //대표이미지

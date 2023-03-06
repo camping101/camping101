@@ -1,8 +1,8 @@
 package com.camping101.beta.campLog.service;
 
+import com.camping101.beta.campLog.repository.CampLogRepository;
 import com.camping101.beta.regtag.entity.RecTag;
 import com.camping101.beta.regtag.repository.RecTagRepository;
-import com.camping101.beta.campLog.CampLogRepository;
 import com.camping101.beta.campLog.dto.*;
 import com.camping101.beta.campLog.entity.CampLog;
 import com.camping101.beta.member.repository.MemberRepository;
@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;

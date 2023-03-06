@@ -42,7 +42,7 @@ public class AdminMemberService {
         var member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
 
-        member.setMemberStatus(MemberStatus.valueOf(memberStatus));
+        member.changeMemberStatus(MemberStatus.valueOf(memberStatus));
 
         return AdminMemberInfoResponse.fromEntity(member);
 

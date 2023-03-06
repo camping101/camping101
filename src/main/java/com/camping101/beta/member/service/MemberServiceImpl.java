@@ -125,17 +125,17 @@ public class MemberServiceImpl implements MemberService{
 
         if (Objects.nonNull(request.getPassword())) {
             validateIfMemberSignedUpByEmail(member);
-            member.setPassword(passwordEncoder.encode(member.getPhoneNumber()));
+            member.changePassword(passwordEncoder.encode(member.getPhoneNumber()));
         }
         if (Objects.nonNull(request.getImage())) {
             var s3ImageUrl = s3FileUploader.uploadFileAndGetURL(request.getImage());
-            member.setImage(s3ImageUrl);
+            member.changeImage(s3ImageUrl);
         }
         if (Objects.nonNull(request.getNickname())) {
-            member.setNickname(request.getNickname());
+            member.changeNickname(request.getNickname());
         }
         if (Objects.nonNull(request.getPhoneNumber())) {
-            member.setPhoneNumber(request.getPhoneNumber());
+            member.changePhoneNumber(request.getPhoneNumber());
         }
 
         return MemberInfoResponse.fromEntity(member);
@@ -148,8 +148,8 @@ public class MemberServiceImpl implements MemberService{
         var member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
 
-        member.setMemberStatus(MemberStatus.WITHDRAW);
-        member.setDeletedAt(LocalDateTime.now());
+        member.changeMemberStatus(MemberStatus.WITHDRAW);
+        member.changeDeletedAt(LocalDateTime.now());
 
     }
 
