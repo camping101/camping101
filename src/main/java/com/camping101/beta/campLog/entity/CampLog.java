@@ -9,12 +9,14 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,20 +38,17 @@ public class CampLog {
     @Column(name = "camp_log_id")
     private Long campLogId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne
-    @JoinColumn(name = "book_mark_id")
-    private BookMark bookMark;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "site_id")
     private Site site;
 
     @OneToMany(mappedBy = "campLog")
     private List<RecTag> recTags = new ArrayList<RecTag>();
+    private String campLogName; // 내가 일단 임의로 추가함
 
     private LocalDateTime visitedAt;
     private String visitedWith;
@@ -62,7 +61,7 @@ public class CampLog {
     private String image4;
     private String image5;
 
-    private long like;
+    private long likes;
     private long view;
 
     @CreatedDate
@@ -85,12 +84,12 @@ public class CampLog {
         }
     }
 
-    public void changeBookMark(BookMark bookMark) {
-        this.bookMark = bookMark;
-        if (!bookMark.getCampLogs().contains(this)) {
-            bookMark.getCampLogs().add(this);
-        }
-    }
+//    public void changeBookMark(BookMark bookMark) {
+//        this.bookMark = bookMark;
+//        if (!bookMark.getCampLogs().contains(this)) {
+//            bookMark.getCampLogs().add(this);
+//        }
+//    }
 
     // TODO 사이트 연관관계 추가 필요
 //    public void changeSite(Site site) {

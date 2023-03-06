@@ -24,7 +24,6 @@ public class SiteCreateRequest {
     private LocalDateTime checkOut;// 체크 아웃 시간
     private int leastScheduling; // 최소 일정
 
-
     private SiteCapacity siteCapacity;
     private String mapImage;
     private String policy;

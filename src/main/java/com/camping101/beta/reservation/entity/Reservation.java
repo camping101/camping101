@@ -8,8 +8,11 @@ import com.camping101.beta.reservation.dto.ReservationCreateRequest;
 import com.camping101.beta.reservation.dto.ReservationCreateResponse;
 import com.camping101.beta.reservation.dto.ReservationDetailsResponse;
 import com.camping101.beta.reservation.dto.ReservationListResponse;
+import com.camping101.beta.reservation.dto.ReservationOwnerListResponse;
+import com.camping101.beta.site.dto.sitedetailsresponse.ReservationDto;
 import com.camping101.beta.site.entity.Site;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -66,23 +69,29 @@ public class Reservation {
     @Column(updatable = false, insertable = true)
     private LocalDateTime cancelAt;
 
-    private String campLogYn; //
-    private String campLogWritableYn; //
+    private boolean campLogYn; // 캠프로그 여부
+    private boolean campLogWritableYn; // 캠프로그 쓰기 권한
 
     public void addMember(Member member) {
         this.member = member;
-
     }
 
     public void addSite(Site site) {
         this.site = site;
     }
 
+    public long addPayment(int price, LocalDateTime startDate, LocalDateTime endDate) {
+
+        long days = ChronoUnit.DAYS.between(startDate, endDate);
+        return price * days;
+
+    }
+
     public static void modifyReservationStatus(Reservation reservation) {
 
         reservation.status = CANCEL;
-
     }
+
 
     public static Reservation toEntity(ReservationCreateRequest reservationCreateRequest) {
 
@@ -92,8 +101,8 @@ public class Reservation {
             .humanCapacity(reservationCreateRequest.getHumanCapacity())
             .status(COMP)
             .payment(reservationCreateRequest.getPayment())
-            .campLogYn(reservationCreateRequest.getCampLogYn())
-            .campLogWritableYn(reservationCreateRequest.getCampLogWritableYn())
+            .campLogYn(false)
+            .campLogWritableYn(true)
             .build();
 
     }
@@ -104,6 +113,7 @@ public class Reservation {
             .memberId(reservation.getMember().getMemberId())
             .reservationId(reservation.getReservationId())
             .siteId(reservation.getSite().getSiteId())
+            .siteName(reservation.getSite().getName())
             .startDate(reservation.getStartDate())
             .endDate(reservation.getEndDate())
             .humanCapacity(reservation.getHumanCapacity())
@@ -111,8 +121,6 @@ public class Reservation {
             .payment(reservation.getPayment())
             .createdAt(reservation.getCreatedAt())
             .cancelAt(reservation.getCancelAt())
-            .campLogYn(reservation.getCampLogYn())
-            .campLogWritableYn(reservation.getCampLogWritableYn())
             .build();
 
     }
@@ -123,36 +131,62 @@ public class Reservation {
             .memberId(reservation.getMember().getMemberId())
             .reservationId(reservation.getReservationId())
             .siteId(reservation.getSite().getSiteId())
+            .siteName(reservation.getSite().getName())
             .startDate(reservation.getStartDate())
             .endDate(reservation.getEndDate())
             .humanCapacity(reservation.getHumanCapacity())
             .status(reservation.getStatus())
             .payment(reservation.getPayment())
             .createdAt(reservation.getCreatedAt())
-            .campLogYn(reservation.getCampLogYn())
-            .campLogWritableYn(reservation.getCampLogWritableYn())
+            .campLogYn(reservation.isCampLogYn())
+            .campLogWritableYn(reservation.isCampLogWritableYn())
             .build();
 
     }
 
     public static ReservationDetailsResponse toReservationDetailsResponse(Reservation reservation) {
 
-        return ReservationDetailsResponse.builder()
-            .memberId(reservation.getMember().getMemberId())
-            .reservationId(reservation.getReservationId())
-            .siteId(reservation.getSite().getSiteId())
-            .startDate(reservation.getStartDate())
-            .endDate(reservation.getEndDate())
-            .humanCapacity(reservation.getHumanCapacity())
-            .status(reservation.getStatus())
-            .payment(reservation.getPayment())
-            .createdAt(reservation.getCreatedAt())
-            .cancelAt(reservation.getCancelAt())
-            .campLogYn(reservation.getCampLogYn())
-            .campLogWritableYn(reservation.getCampLogWritableYn())
-            .build();
+        if(reservation.getStatus() == CANCEL) {
+
+            return ReservationDetailsResponse.builder()
+                .memberId(reservation.getMember().getMemberId())
+                .reservationId(reservation.getReservationId())
+                .siteId(reservation.getSite().getSiteId())
+                .siteName(reservation.getSite().getName())
+                .startDate(reservation.getStartDate())
+                .endDate(reservation.getEndDate())
+                .humanCapacity(reservation.getHumanCapacity())
+                .status(reservation.getStatus())
+                .payment(reservation.getPayment())
+                .cancelAt(reservation.getCancelAt())
+                .campLogYn(reservation.isCampLogYn())
+                .campLogWritableYn(reservation.isCampLogWritableYn())
+                .build();
+
+        } else {
+
+            return ReservationDetailsResponse.builder()
+                .memberId(reservation.getMember().getMemberId())
+                .reservationId(reservation.getReservationId())
+                .siteId(reservation.getSite().getSiteId())
+                .siteName(reservation.getSite().getName())
+                .startDate(reservation.getStartDate())
+                .endDate(reservation.getEndDate())
+                .humanCapacity(reservation.getHumanCapacity())
+                .status(reservation.getStatus())
+                .payment(reservation.getPayment())
+                .createdAt(reservation.getCreatedAt())
+                .campLogYn(reservation.isCampLogYn())
+                .campLogWritableYn(reservation.isCampLogWritableYn())
+                .build();
+        }
 
     }
 
 
+    public void changeCampLogWritableYn(Reservation reservation) {
+
+        this.campLogWritableYn = true;
+
+    }
 }

@@ -13,25 +13,18 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SiteListResponse {
 
+    // 대표이미지 / 사이트명 / 가격 / 기본일정 / 체크인 / 별점
+
     private Long siteId;
     private Long campId;
 
-    private String name;
+    private String name; // 사이트 명
     private String rpImage; //대표 이미지
-    private String introduction;
-    private SiteType type;
-    private SiteYn siteYn;
-
-
     private LocalDateTime checkIn; // 체크 인 시간
     private LocalDateTime checkOut;// 체크 아웃 시간
     private int leastScheduling; // 최소 일정
 
+    private int price; // 가격
 
-    private SiteCapacity siteCapacity;
-    private String mapImage;
-    private String policy;
-    private int price;
-    private LocalDateTime refundableDate;
 
 }

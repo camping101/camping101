@@ -6,6 +6,9 @@ import com.camping101.beta.bookMark.dto.BookMarkListResponse;
 import com.camping101.beta.bookMark.service.BookMarkService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/bookmark")
 public class BookMarkController {
-
     private final BookMarkService bookMarkService;
 
     // 북마크 생성
@@ -34,11 +36,15 @@ public class BookMarkController {
 
     }
 
-    // 북마크 목록 조회
+    // 회원의 북마크 목록 조회
+    // 북마크는 캠프로그를 북마크하는것이기에 캠프로그의 간단한 정보들도 포함되어 있어야 한다.
     @GetMapping
-    public ResponseEntity<List<BookMarkListResponse>> bookMarkList(@RequestParam Long memberId) {
+    public ResponseEntity<Page<BookMarkListResponse>> bookMarkList(@RequestParam Long memberId,
+        @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
 
-        List<BookMarkListResponse> bookMarkList = bookMarkService.findBookMarkList(memberId);
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        Page<BookMarkListResponse> bookMarkList = bookMarkService.findBookMarkList(memberId, pageRequest);
 
         return ResponseEntity.ok(bookMarkList);
 

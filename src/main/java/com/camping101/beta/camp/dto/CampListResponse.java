@@ -14,24 +14,13 @@ import lombok.Getter;
 public class CampListResponse {
 
     private Long memberId;
+    private String campName;
     private Long campId;
     private String intro;
     private ManageStatus manageStatus;
     private Location location;
-
-    private String tel;
-    private String oneLineReserveYn;
-
     private String openSeason;
-    private LocalDateTime openDateOfWeek;
-    private FacilityCnt facilityCnt;
-
-    private String facility;
-    private String leisure;
     private String animalCapable;
-    private String equipmentTools;
     private String firstImage;
-    private String homepage;
-    private String businessNo; // 사업자 번호
 
 }

@@ -35,7 +35,7 @@ public class Comment {
     private Long parentId;
     private boolean recommendYn;
     private String content;
-    private long like;
+    private long likes;
 
     public void changeComment(Member member) {
         this.member = member;

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SiteYn {
 
-    private String openYn;
+
     private String animalYn;
     private String campnicYn;
     private String stayOverYn;

@@ -3,6 +3,7 @@ package com.camping101.beta.campLog.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,7 @@ public class RecTag {
     @Column(name = "reg_tag_id")
     private Long recTagId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "camp_log_id")
     private CampLog campLog;
 

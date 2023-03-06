@@ -9,8 +9,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public class BookMarkCreateRequest {
 
+    private Long bookMarkId;
     private Long memberId;
     private Long campLogId;
+    private String campLogName;
 
 
 }

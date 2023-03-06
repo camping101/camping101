@@ -20,6 +20,7 @@ public class SiteCreateResponse {
     private String rpImage; //대표 이미지
     private String introduction;
     private SiteType type;
+    private boolean openYn;
     private SiteYn siteYn;
 
 

@@ -37,7 +37,7 @@ public class BookMark {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "camp_log_id")
     private CampLog campLog;
 
     public void addCampLog(CampLog campLog) {
@@ -57,9 +57,10 @@ public class BookMark {
     public static BookMarkCreateResponse toBookMarkCreateResponse(BookMark bookMark) {
 
         return BookMarkCreateResponse.builder()
-            .bookMarkId(bookMark.bookMarkId)
+            .bookMarkId(bookMark.getBookMarkId())
             .memberId(bookMark.getMember().getMemberId())
             .campLogId(bookMark.getCampLog().getCampLogId())
+            .campLogName(bookMark.getCampLog().getCampLogName())
             .build();
 
     }
@@ -67,9 +68,14 @@ public class BookMark {
     public static BookMarkListResponse toBookMarkListResponse(BookMark bookMark) {
 
         return BookMarkListResponse.builder()
-            .bookMarkId(bookMark.bookMarkId)
+            .bookMarkId(bookMark.getBookMarkId())
             .memberId(bookMark.getMember().getMemberId())
+            .nickName(bookMark.getMember().getNickName())
             .campLogId(bookMark.getCampLog().getCampLogId())
+            .campLogName(bookMark.getCampLog().getCampLogName())
+            .title(bookMark.getCampLog().getTitle())
+            .description(bookMark.getCampLog().getDescription())
+            .image(bookMark.getCampLog().getImage())
             .build();
 
     }

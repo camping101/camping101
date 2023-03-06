@@ -1,12 +1,16 @@
 package com.camping101.beta.site.entity;
 
 import com.camping101.beta.camp.entity.Camp;
+import com.camping101.beta.campLog.entity.CampLog;
+import com.camping101.beta.reservation.entity.Reservation;
 import com.camping101.beta.site.dto.SiteCreateRequest;
 import com.camping101.beta.site.dto.SiteCreateResponse;
 import com.camping101.beta.site.dto.SiteListResponse;
 import com.camping101.beta.site.dto.SiteModifyRequest;
 import com.camping101.beta.site.dto.SiteModifyResponse;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -18,6 +22,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,21 +45,28 @@ public class Site {
     @JoinColumn(name = "camp_id")
     private Camp camp;
 
-    //private String openYn; //
+    // 새로 추가된 것들(양방향 연관관계를 만들기 위해 추가함)|
+    @OneToMany(mappedBy = "site")
+    private List<Reservation> reservationList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "site")
+    private List<CampLog> campLogList = new ArrayList<>();
+    //
+
     private String name;
     private String rpImage; //대표이미지
     private String introduction;
 
     @Enumerated(EnumType.STRING)
-    private SiteType type; //
+    private SiteType type;
+
+    private boolean openYn; // 노출 상태, 비노출 상태
 
     @Embedded
     private SiteYn siteYn;
-
-    private int score;
-    private LocalDateTime checkIn; //
-    private LocalDateTime checkOut;//
-    private int leastScheduling; //
+    private LocalDateTime checkIn;
+    private LocalDateTime checkOut;
+    private int leastScheduling;
 
     @Embedded
     private SiteCapacity siteCapacity;
@@ -69,6 +81,10 @@ public class Site {
         this.camp = camp;
     }
 
+    public void addReservation(List<Reservation> reservations) {
+        this.reservationList = reservations;
+    }
+
     public static Site toEntity(SiteCreateRequest siteCreateRequest) {
 
         return Site.builder()
@@ -76,6 +92,7 @@ public class Site {
             .rpImage(siteCreateRequest.getRpImage())
             .introduction(siteCreateRequest.getIntroduction())
             .type(siteCreateRequest.getType())
+            .openYn(false)
             .siteYn(siteCreateRequest.getSiteYn())
             .checkIn(siteCreateRequest.getCheckIn())
             .checkOut(siteCreateRequest.getCheckOut())
@@ -97,6 +114,7 @@ public class Site {
             .rpImage(site.getRpImage())
             .introduction(site.getIntroduction())
             .type(site.getType())
+            .openYn(site.isOpenYn())
             .siteYn(site.getSiteYn())
             .checkIn(site.getCheckIn())
             .checkOut(site.getCheckOut())
@@ -116,6 +134,7 @@ public class Site {
         this.rpImage = siteModifyRequest.getRpImage(); //대표 이미지
         this.introduction = siteModifyRequest.getIntroduction();
         this.type = siteModifyRequest.getType();
+        this.openYn = siteModifyRequest.isOpenYn();
         this.siteYn = siteModifyRequest.getSiteYn();
         this.checkIn = siteModifyRequest.getCheckIn();
         this.checkOut = siteModifyRequest.getCheckOut();
@@ -158,6 +177,7 @@ public class Site {
             .rpImage(site.getRpImage())
             .introduction(site.getIntroduction())
             .type(site.getType())
+            .openYn(site.isOpenYn())
             .siteYn(site.getSiteYn())
             .checkIn(site.getCheckIn())
             .checkOut(site.getCheckOut())
@@ -177,19 +197,16 @@ public class Site {
             .siteId(site.getSiteId())
             .name(site.getName())
             .rpImage(site.getRpImage())
-            .introduction(site.getIntroduction())
-            .type(site.getType())
-            .siteYn(site.getSiteYn())
             .checkIn(site.getCheckIn())
             .checkOut(site.getCheckOut())
             .leastScheduling(site.getLeastScheduling())
-            .siteCapacity(site.getSiteCapacity())
-            .mapImage(site.getMapImage())
-            .policy(site.getPolicy())
             .price(site.getPrice())
-            .refundableDate(site.getRefundableDate())
             .build();
 
+    }
+
+    public void changeOpenYn(Site site) {
+        site.openYn = true;
     }
 
 

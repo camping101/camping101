@@ -14,16 +14,22 @@ import lombok.Getter;
 public class CampCreateRequest {
 
     private Long memberId;
+    private String CampName;
     private String intro;
-    private ManageStatus manageStatus;
-    private Location location;
+    private String environment;
+    private String addr1;
+    private String addr2;
+    private String latitude;
+    private String longitude;
 
     private String tel;
     private String oneLineReserveYn;
 
     private String openSeason;
     private LocalDateTime openDateOfWeek;
-    private FacilityCnt facilityCnt;
+    private int toiletCnt;
+    private int showerCnt;
+    private int waterProofCnt;
 
     private String facility;
     private String leisure;
@@ -34,3 +40,5 @@ public class CampCreateRequest {
     private String businessNo; // 사업자 번호
 
 }
+
+
