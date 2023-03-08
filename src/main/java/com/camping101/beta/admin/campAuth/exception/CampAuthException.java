@@ -1,4 +1,4 @@
-package com.camping101.beta.admin.exception;
+package com.camping101.beta.admin.campAuth.exception;
 
 import lombok.Getter;
 

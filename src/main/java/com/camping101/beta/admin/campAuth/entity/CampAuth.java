@@ -1,7 +1,7 @@
-package com.camping101.beta.admin.entity;
+package com.camping101.beta.admin.campAuth.entity;
 
-import com.camping101.beta.admin.dto.CampAuthAddResponse;
-import com.camping101.beta.admin.status.CampAuthStatus;
+import com.camping101.beta.admin.campAuth.dto.CampAuthAddResponse;
+import com.camping101.beta.admin.campAuth.status.CampAuthStatus;
 import com.camping101.beta.camp.entity.Camp;
 import java.time.LocalDateTime;
 import javax.persistence.Column;

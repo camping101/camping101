@@ -1,19 +1,16 @@
-package com.camping101.beta.admin.controller;
+package com.camping101.beta.admin.campAuth.controller;
 
-import com.camping101.beta.admin.dto.CampAuthAddResponse;
-import com.camping101.beta.admin.dto.CampAuthIdListRequest;
-import com.camping101.beta.admin.dto.CampAuthListResponse;
-import com.camping101.beta.admin.dto.CampAuthSearchRequest;
-import com.camping101.beta.admin.service.CampAuthService;
+import com.camping101.beta.admin.campAuth.dto.CampAuthAddResponse;
+import com.camping101.beta.admin.campAuth.dto.CampAuthListResponse;
+import com.camping101.beta.admin.campAuth.dto.CampAuthSearchRequest;
+import com.camping101.beta.admin.campAuth.service.CampAuthService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;

@@ -1,4 +1,4 @@
-package com.camping101.beta.admin.status;
+package com.camping101.beta.admin.campAuth.status;
 
 public enum CampAuthStatus {
 

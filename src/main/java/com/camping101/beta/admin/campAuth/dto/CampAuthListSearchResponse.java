@@ -1,6 +1,6 @@
-package com.camping101.beta.admin.dto;
+package com.camping101.beta.admin.campAuth.dto;
 
-import com.camping101.beta.admin.status.CampAuthStatus;
+import com.camping101.beta.admin.campAuth.status.CampAuthStatus;
 import com.camping101.beta.camp.entity.Location;
 import com.querydsl.core.annotations.QueryProjection;
 import java.time.LocalDateTime;

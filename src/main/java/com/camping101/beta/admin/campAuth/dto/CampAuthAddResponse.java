@@ -1,6 +1,5 @@
-package com.camping101.beta.admin.dto;
+package com.camping101.beta.admin.campAuth.dto;
 
-import com.camping101.beta.admin.status.CampAuthStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

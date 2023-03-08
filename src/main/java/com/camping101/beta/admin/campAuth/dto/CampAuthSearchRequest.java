@@ -1,4 +1,4 @@
-package com.camping101.beta.admin.dto;
+package com.camping101.beta.admin.campAuth.dto;
 
 import com.camping101.beta.camp.entity.Location;
 import java.time.LocalDateTime;

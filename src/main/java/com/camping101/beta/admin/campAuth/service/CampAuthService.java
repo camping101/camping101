@@ -1,14 +1,12 @@
-package com.camping101.beta.admin.service;
+package com.camping101.beta.admin.campAuth.service;
 
-import static com.camping101.beta.admin.exception.ErrorCode.CAMP_AUTH_NOT_FOUND;
+import static com.camping101.beta.admin.campAuth.exception.ErrorCode.CAMP_AUTH_NOT_FOUND;
 
-import com.camping101.beta.admin.dto.CampAuthAddResponse;
-import com.camping101.beta.admin.dto.CampAuthIdListRequest;
-import com.camping101.beta.admin.dto.CampAuthListResponse;
-import com.camping101.beta.admin.entity.CampAuth;
-import com.camping101.beta.admin.exception.CampAuthException;
-import com.camping101.beta.admin.exception.ErrorCode;
-import com.camping101.beta.admin.repository.CampAuthRepository;
+import com.camping101.beta.admin.campAuth.dto.CampAuthAddResponse;
+import com.camping101.beta.admin.campAuth.dto.CampAuthListResponse;
+import com.camping101.beta.admin.campAuth.entity.CampAuth;
+import com.camping101.beta.admin.campAuth.exception.CampAuthException;
+import com.camping101.beta.admin.campAuth.repository.CampAuthRepository;
 import com.camping101.beta.camp.entity.Camp;
 import com.camping101.beta.camp.repository.CampRepository;
 import java.util.ArrayList;

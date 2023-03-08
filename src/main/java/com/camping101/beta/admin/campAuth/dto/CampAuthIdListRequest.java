@@ -1,4 +1,4 @@
-package com.camping101.beta.admin.dto;
+package com.camping101.beta.admin.campAuth.dto;
 
 import java.util.ArrayList;
 import java.util.List;
