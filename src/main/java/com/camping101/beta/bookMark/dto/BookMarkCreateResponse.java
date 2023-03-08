@@ -12,6 +12,6 @@ public class BookMarkCreateResponse {
     private Long bookMarkId;
     private Long memberId;
     private Long campLogId;
-    private String campLogName;
+    private String title;
 
 }

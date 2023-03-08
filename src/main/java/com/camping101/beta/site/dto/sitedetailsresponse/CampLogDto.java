@@ -16,10 +16,9 @@ public class CampLogDto {
     private Long siteId;
 
     private String recTagDto;
-    private String campLogName;
+    private String title;
     private LocalDateTime visitedAt;
     private String visitedWith;
-    private String title;
     private String description;
     private String image;
 
@@ -36,7 +35,7 @@ public class CampLogDto {
         this.memberId = campLog.getMember().getMemberId();
         this.siteId = campLog.getSite().getSiteId();
         this.recTagDto = campLog.getRecTags();
-        this.campLogName = campLog.getTitle();
+        this.title = campLog.getTitle();
         this.visitedAt = campLog.getVisitedAt();
         this.visitedWith = campLog.getVisitedWith();
         this.title = campLog.getTitle();

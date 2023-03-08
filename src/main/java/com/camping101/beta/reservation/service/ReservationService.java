@@ -1,8 +1,12 @@
 package com.camping101.beta.reservation.service;
 
+import static com.camping101.beta.camp.exception.ErrorCode.CAMP_NOT_FOUND;
 import static com.camping101.beta.reservation.entity.ReservationStatus.COMP;
+import static com.camping101.beta.reservation.exception.ErrorCode.RESERVATION_NOT_FOUND;
+import static com.camping101.beta.site.exception.ErrorCode.SITE_NOT_FOUND;
 
 import com.camping101.beta.camp.entity.Camp;
+import com.camping101.beta.camp.exception.CampException;
 import com.camping101.beta.camp.repository.CampRepository;
 import com.camping101.beta.member.entity.Member;
 import com.camping101.beta.member.repository.MemberRepository;
@@ -12,8 +16,11 @@ import com.camping101.beta.reservation.dto.ReservationDetailsResponse;
 import com.camping101.beta.reservation.dto.ReservationListResponse;
 import com.camping101.beta.reservation.dto.ReservationOwnerListResponse;
 import com.camping101.beta.reservation.entity.Reservation;
+import com.camping101.beta.reservation.exception.ReservationException;
 import com.camping101.beta.reservation.repository.ReservationRepository;
 import com.camping101.beta.site.entity.Site;
+import com.camping101.beta.site.exception.ErrorCode;
+import com.camping101.beta.site.exception.SiteException;
 import com.camping101.beta.site.repository.SiteRepository;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -54,7 +61,7 @@ public class ReservationService {
 
         Site findSite = siteRepository.findById(reservationCreateRequest.getSiteId())
             .orElseThrow(() -> {
-                throw new RuntimeException("존재하는 사이트가 없습니다");
+                throw new SiteException(SITE_NOT_FOUND);
             });
 
         // 사이트 계산
@@ -113,8 +120,7 @@ public class ReservationService {
 //    - [캠프 로그] 버튼 선택 시, 캠프 로그 등록 페이지로 이동
 //    - 예약 목록 조회시 캠프 로그를 쓸수있는지 없는지가 나타남
     // -> 예약 목록 조회시 취소된 예약은 캠프로그를 작성할 수 없게 해야한다.
-    @Transactional(readOnly = true)
-    public List<ReservationListResponse> findReservationList(Long memberId, int month) {
+    public List<ReservationListResponse> findReservationFilterList(Long memberId, int month) {
 
         Member findMember = memberRepository.findById(memberId).orElseThrow(() -> {
             throw new RuntimeException("존재하는 회원이 없습니다");
@@ -154,10 +160,10 @@ public class ReservationService {
 
     // 캠핑장 예약 목록 조회 (주인(캠핑장 사장) 기능) -> 초기 화면
     // 캠핑장에 해당하는 모든 예약 목록 조회
-    public List<ReservationOwnerListResponse> findAllReservationOwnerList(Long campId) {
+    public List<ReservationOwnerListResponse> findReservationOwnerList(Long campId) {
 
         Camp findCamp = campRepository.findById(campId).orElseThrow(() -> {
-            throw new RuntimeException("존재하는 캠핑장이 없습니다");
+            throw new CampException(CAMP_NOT_FOUND);
         });
 
         List<Long> siteIds = findCamp.getSites().stream().map(Site::getSiteId)
@@ -168,7 +174,7 @@ public class ReservationService {
         for (Long siteId : siteIds) {
 
             Reservation findReservation = reservationRepository.findById(siteId).orElseThrow(() -> {
-                throw new RuntimeException("존재하는 예약이 없습니다");
+                throw new ReservationException(RESERVATION_NOT_FOUND);
             });
 
             reservations.add(findReservation);
@@ -182,10 +188,11 @@ public class ReservationService {
 
     // 캠핑장 예약 목록 조회 (주인(캠핑장 사장) 기능) -> 검색 필터를 사용한 화면
     // 캠핑장에 해당 사이트의 모든 예약 목록 조회
-    public List<ReservationOwnerListResponse> findReservationOwnerList(Long siteId) {
+    @Transactional(readOnly = true)
+    public List<ReservationOwnerListResponse> findReservationFilterOwnerList(Long siteId) {
 
         Site findSite = siteRepository.findById(siteId).orElseThrow(() -> {
-            throw new RuntimeException("존재하는 사이트가 없습니다");
+            throw new SiteException(SITE_NOT_FOUND);
         });
 
         List<Reservation> reservations = reservationRepository.findBySite(findSite);
@@ -202,7 +209,7 @@ public class ReservationService {
 
         Reservation findReservation = reservationRepository.findById(reservationId)
             .orElseThrow(() -> {
-                throw new RuntimeException("존재하는 예약이 없습니다");
+                throw new ReservationException(RESERVATION_NOT_FOUND);
             });
 
         return Reservation.toReservationDetailsResponse(findReservation);
@@ -215,7 +222,7 @@ public class ReservationService {
 
         Reservation findReservation = reservationRepository.findById(reservationId)
             .orElseThrow(() -> {
-                throw new RuntimeException("예약이 존재하지 않습니다");
+                throw new ReservationException(RESERVATION_NOT_FOUND);
             });
 
         if ((findReservation.getStartDate().plusDays(7)).isBefore(LocalDateTime.now())) {

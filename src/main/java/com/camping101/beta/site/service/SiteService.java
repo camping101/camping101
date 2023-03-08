@@ -1,8 +1,11 @@
 package com.camping101.beta.site.service;
 
+import static com.camping101.beta.camp.exception.ErrorCode.CAMP_NOT_FOUND;
 import static com.camping101.beta.member.entity.type.MemberType.CUSTOMER;
+import static com.camping101.beta.site.exception.ErrorCode.SITE_NOT_FOUND;
 
 import com.camping101.beta.camp.entity.Camp;
+import com.camping101.beta.camp.exception.CampException;
 import com.camping101.beta.camp.repository.CampRepository;
 import com.camping101.beta.member.entity.Member;
 import com.camping101.beta.member.entity.type.MemberType;
@@ -17,6 +20,8 @@ import com.camping101.beta.site.dto.SiteModifyResponse;
 import com.camping101.beta.site.dto.sitedetailsresponse.ReservationDto;
 import com.camping101.beta.site.dto.sitedetailsresponse.SiteDetailsResponse;
 import com.camping101.beta.site.entity.Site;
+import com.camping101.beta.site.exception.ErrorCode;
+import com.camping101.beta.site.exception.SiteException;
 import com.camping101.beta.site.repository.SiteRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,7 +43,6 @@ public class SiteService {
     private final SiteRepository siteRepository;
     private final CampRepository campRepository;
     private final SiteQueryService siteQueryService;
-    private final ReservationService reservationService;
     private final MemberRepository memberRepository;
     private final ReservationRepository reservationRepository;
 
@@ -52,7 +56,7 @@ public class SiteService {
 
         Camp camp = campRepository.findById(siteCreateRequest.getCampId())
             .orElseThrow(() -> {
-                throw new RuntimeException("사이트가 존재하지 않습니다");
+                throw new SiteException(SITE_NOT_FOUND);
             });
 
         site.addCamp(camp); // 변경감지로 넣기
@@ -67,7 +71,7 @@ public class SiteService {
     public Page<SiteListResponse> findSiteList(Long campId, Pageable pageable) {
 
         Camp camp = campRepository.findById(campId).orElseThrow(() -> {
-            throw new RuntimeException("캠핑장이 존재하지 않습니다");
+            throw new CampException(CAMP_NOT_FOUND);
         });
 
         // 공개 여부가 true 인 값만 목록 조회
@@ -90,7 +94,7 @@ public class SiteService {
         for (Long validSiteId : canChangeOpenYn) {
 
             Site findSite = siteRepository.findById(validSiteId).orElseThrow(() -> {
-                throw new RuntimeException("존재하는 사이트아이디가 없습니다");
+                throw new SiteException(SITE_NOT_FOUND);
             });
 
             findSite.changeOpenYn(findSite);
@@ -101,7 +105,7 @@ public class SiteService {
     private void isReservationValid(Long siteId, List<Long> canChangeOpenYn) {
 
         Site findSite = siteRepository.findById(siteId).orElseThrow(() -> {
-            throw new RuntimeException("사이트가 존재하지 않습니다");
+            throw new SiteException(SITE_NOT_FOUND);
         });
 
         List<ReservationDto> reservationList = findAllReservationList(siteId);
@@ -155,7 +159,7 @@ public class SiteService {
 
         Site findSite = siteRepository.findById(siteModifyRequest.getSiteId())
             .orElseThrow(() -> {
-                throw new RuntimeException("존재하지 않는 사이트입니다");
+                throw new SiteException(SITE_NOT_FOUND);
             });
 
         boolean isValid = isReservationValid(findSite.getSiteId());
@@ -174,7 +178,7 @@ public class SiteService {
     public boolean isReservationValid(Long siteId) {
 
         Site findSite = siteRepository.findById(siteId).orElseThrow(() -> {
-            throw new RuntimeException("사이트가 존재하지 않습니다");
+            throw new SiteException(SITE_NOT_FOUND);
         });
 
         List<ReservationDto> reservationList = findAllReservationList(siteId);
@@ -194,7 +198,7 @@ public class SiteService {
     private List<ReservationDto> findAllReservationList(Long siteId) {
 
         Site findSite = siteRepository.findById(siteId).orElseThrow(() -> {
-            throw new RuntimeException("존재하는 사이트가 없습니다.");
+            throw new SiteException(SITE_NOT_FOUND);
         });
 
         return reservationRepository.findBySite(findSite)

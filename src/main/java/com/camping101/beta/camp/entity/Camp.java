@@ -3,6 +3,7 @@ package com.camping101.beta.camp.entity;
 import static com.camping101.beta.camp.entity.ManageStatus.AUTHORIZED;
 import static javax.persistence.EnumType.STRING;
 
+import com.camping101.beta.admin.entity.CampAuth;
 import com.camping101.beta.camp.dto.CampCreateRequest;
 import com.camping101.beta.camp.dto.CampCreateResponse;
 import com.camping101.beta.camp.dto.CampDetailsAdminResponse;
@@ -15,6 +16,7 @@ import com.camping101.beta.site.entity.Site;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -82,8 +84,11 @@ public class Camp {
     @Column(updatable = false, insertable = true)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "camp")
+    @OneToMany(mappedBy = "camp", cascade = CascadeType.REMOVE)
     private List<Site> sites = new ArrayList<>();
+
+    @OneToMany(mappedBy = "camp", cascade = CascadeType.REMOVE)
+    private List<CampAuth> campAuthList = new ArrayList<>();
 
 
     public static Camp toEntity(CampCreateRequest campCreateRequest) {
@@ -92,15 +97,12 @@ public class Camp {
             .name(campCreateRequest.getCampName())
             .intro(campCreateRequest.getIntro())
             .manageStatus(ManageStatus.UNAUTHORIZED)
-            .location(new Location(campCreateRequest.getEnvironment(), campCreateRequest.getAddr1(),
-                campCreateRequest.getAddr2(), campCreateRequest.getLatitude(),
-                campCreateRequest.getLongitude()))
+            .location(campCreateRequest.getLocation())
             .tel(campCreateRequest.getTel())
             .oneLineReserveYn(campCreateRequest.getOneLineReserveYn())
             .openSeason(campCreateRequest.getOpenSeason())
             .openDateOfWeek(campCreateRequest.getOpenDateOfWeek())
-            .facilityCnt(new FacilityCnt(campCreateRequest.getToiletCnt(),
-                campCreateRequest.getShowerCnt(), campCreateRequest.getWaterProofCnt()))
+            .facilityCnt(campCreateRequest.getFacilityCnt())
             .facility(campCreateRequest.getFacility())
             .leisure(campCreateRequest.getLeisure())
             .animalCapable(campCreateRequest.getAnimalCapable())
@@ -119,18 +121,12 @@ public class Camp {
             .campName(camp.getName())
             .intro(camp.getIntro())
             .manageStatus(String.valueOf(camp.getManageStatus())) // => 캠핑장 생성이 완료되었습니다. 관리자가 요청을 확인합니다.
-            .environment(camp.getLocation().getEnvironment())
-            .addr1(camp.getLocation().getAddr1())
-            .addr2(camp.getLocation().getAddr2())
-            .latitude(camp.getLocation().getLatitude())
-            .longitude(camp.getLocation().getLongitude())
+            .location(camp.getLocation())
             .tel(camp.getTel())
             .oneLineReserveYn(camp.getOneLineReserveYn())
             .openSeason(camp.getOpenSeason())
             .openDateOfWeek(camp.getOpenDateOfWeek())
-            .showerCnt(camp.getFacilityCnt().getShowerCnt())
-            .toiletCnt(camp.getFacilityCnt().getToiletCnt())
-            .waterProofCnt(camp.getFacilityCnt().getWaterProofCnt())
+            .facilityCnt(camp.getFacilityCnt())
             .facility(camp.getFacility())
             .leisure(camp.getLeisure())
             .animalCapable(camp.getAnimalCapable())
@@ -253,13 +249,11 @@ public class Camp {
     }
 
     public void addMember(Member member) {
-
         this.member = member;
-
     }
 
-    public void editManageStatus(Camp camp) {
-        camp.manageStatus = AUTHORIZED;
+    public void editManageStatus() {
+        this.manageStatus = AUTHORIZED;
 
     }
 

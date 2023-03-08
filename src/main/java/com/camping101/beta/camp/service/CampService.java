@@ -1,6 +1,8 @@
 package com.camping101.beta.camp.service;
 
 import static com.camping101.beta.camp.entity.ManageStatus.AUTHORIZED;
+import static com.camping101.beta.camp.entity.ManageStatus.UNAUTHORIZED;
+import static com.camping101.beta.camp.exception.ErrorCode.CAMP_NOT_FOUND;
 
 import com.camping101.beta.admin.entity.CampAuth;
 import com.camping101.beta.admin.repository.CampAuthRepository;
@@ -15,6 +17,8 @@ import com.camping101.beta.camp.dto.campdetaildto.CampDetailsResponse;
 import com.camping101.beta.camp.entity.Camp;
 import com.camping101.beta.camp.entity.FacilityCnt;
 import com.camping101.beta.camp.entity.Location;
+import com.camping101.beta.camp.exception.CampException;
+import com.camping101.beta.camp.exception.ErrorCode;
 import com.camping101.beta.camp.repository.CampRepository;
 import com.camping101.beta.member.entity.Member;
 import com.camping101.beta.member.repository.MemberRepository;
@@ -42,7 +46,6 @@ public class CampService {
     private final CampAuthRepository campAuthRepository;
     private final SiteService siteService;
 
-
     // 캠핑장 서비스 이용 요청
     public CampCreateResponse registerCamp(CampCreateRequest campCreateRequest) {
 
@@ -54,7 +57,7 @@ public class CampService {
             throw new RuntimeException("존재하는 회원이 없습니다");
         });
 
-        camp.addMember(findMember); // 변경 감지
+        camp.addMember(findMember);
         requestAuth(camp);
 
         log.info("{} 캠핑장이 생성되었습니다. 관리자 승인이 완료되어야 캠핑장 서비스를 이용할 수 있습니다."
@@ -88,7 +91,7 @@ public class CampService {
     @Transactional(readOnly = true)
     public Page<CampListResponse> findCampList(Pageable pageable) {
 
-        Page<Camp> camps = campRepository.findAll(pageable);
+        Page<Camp> camps = campRepository.findAllByManageStatus(pageable,AUTHORIZED);
         return camps.map(Camp::toCampListResponse);
     }
 
@@ -103,10 +106,11 @@ public class CampService {
     }
 
     // 캠핑장 상세 정보 조회 -> 주인(캠핑장 사장)
+    @Transactional(readOnly = true)
     public CampDetailsOwnerResponse findCampDetailsOwner(Long campId) {
 
         Camp findCamp = campRepository.findById(campId).orElseThrow(() -> {
-            throw new RuntimeException("존재하는 캠핑장이 없습니다");
+            throw new CampException(CAMP_NOT_FOUND);
         });
 
         return Camp.toCampDetailsOwnerResponse(findCamp);
@@ -118,7 +122,7 @@ public class CampService {
     public CampDetailsAdminResponse findCampDetailsAdmin(Long campId) {
 
         Camp findCamp = campRepository.findById(campId).orElseThrow(() -> {
-            throw new RuntimeException("존재하는 캠핑장이 없습니다");
+            throw new CampException(CAMP_NOT_FOUND);
         });
 
         return Camp.toCampDetailsAdminResponse(findCamp);
@@ -129,7 +133,7 @@ public class CampService {
     public CampModifyResponse modifyCamp(CampModifyRequest campEditRequest) {
 
         Camp camp = campRepository.findById(campEditRequest.getCampId()).orElseThrow(() -> {
-            throw new RuntimeException("존재하지 않는 캠핑장입니다.");
+            throw new CampException(CAMP_NOT_FOUND);
         });
 
         Camp modifiedCamp = camp.updateCamp(campEditRequest);
@@ -142,7 +146,7 @@ public class CampService {
     public void removeCamp(Long campId) {
 
         Camp findCamp = campRepository.findById(campId).orElseThrow(() -> {
-            throw new RuntimeException("존재하는 캠핑장이 없습니다");
+            throw new CampException(CAMP_NOT_FOUND);
         });
 
         List<Long> siteIds = findCamp.getSites().stream().map(Site::getSiteId)
@@ -158,7 +162,7 @@ public class CampService {
         }
 
         if (ableRemove) {
-            campRepository.deleteById(campId);
+            campRepository.delete(findCamp);
         } else {
             log.info("캠핑장에 예약이 존재하여 삭제할 수 없습니다.");
         }

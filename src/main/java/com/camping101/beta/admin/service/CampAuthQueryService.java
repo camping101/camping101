@@ -20,8 +20,10 @@ import javax.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class CampAuthQueryService {
 
     private EntityManager em;
@@ -33,34 +35,27 @@ public class CampAuthQueryService {
 
     }
 
-//
-//    public CampAuthListSearchResponse findCampAuthList(CampAuthSearchRequest campAuthSearchRequest,
-//        Pageable pageable) {
-//
-////        private Long campId;
-////        private String campName;
-////        private String location;
-////        private String tel;
-////        private String email;
-////        private LocalDateTime createDate;
-////        private String campAuthStatus;
-//
-////        return queryFactory.select(new QCampAuthListSearchResponse(
-////                camp.campId,
-////                camp.name,
-////                camp.tel,
-////                camp.member.email,
-////                campAuth.createdAt,
-////                String.valueOf(campAuth.campAuthStatus)))
-////            .from(campAuth)
-////            .innerJoin(campAuth.camp, camp)
-////            .where(campNameEq(campAuthSearchRequest.getCampName()),
-////                campAuthStatusEq(campAuthSearchRequest.getCampAuthStatus()),
-////                nickNameEq(campAuthSearchRequest.getNickName()))
-////            .orderBy(getOrderSpecifier(pageable.getSort()).stream().toArray(OrderSpecifier[]::new))
-////            .fetchResults();
-//
-//    }
+
+    public List<CampAuthListSearchResponse> findCampAuthList(CampAuthSearchRequest campAuthSearchRequest,
+        Pageable pageable) {
+
+        return queryFactory.select(new QCampAuthListSearchResponse(
+                camp.campId,
+                camp.name,
+                camp.location,
+                camp.tel,
+                camp.member.email,
+                campAuth.createdAt,
+                campAuth.campAuthStatus))
+            .from(campAuth)
+            .innerJoin(campAuth.camp, camp)
+            .where(campNameEq(campAuthSearchRequest.getCampName()),
+                campAuthStatusEq(campAuthSearchRequest.getCampAuthStatus()),
+                nickNameEq(campAuthSearchRequest.getNickName()))
+            .orderBy(getOrderSpecifier(pageable.getSort()).stream().toArray(OrderSpecifier[]::new))
+            .fetch();
+
+    }
 
     private BooleanExpression campNameEq(String campName) {
 
@@ -71,16 +66,6 @@ public class CampAuthQueryService {
         return null;
 
     }
-
-//    private BooleanExpression locationEq(String location) {
-//
-//        if (location != null) {
-//            return campAuth.camp.location.eq(location);
-//        }
-//
-//        return null;
-//
-//    }
 
     private BooleanExpression nickNameEq(String nickName) {
 

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,20 +27,19 @@ public class BookMarkController {
 
     // 북마크 생성
     @PostMapping
-    public ResponseEntity<BookMarkCreateResponse> bookMarkAdd(
+    public ResponseEntity<BookMarkCreateResponse> bookMarkAdd(@RequestBody
         BookMarkCreateRequest bookMarkCreateRequest) {
 
         BookMarkCreateResponse response = bookMarkService.registerBookMark(
             bookMarkCreateRequest);
 
         return ResponseEntity.ok(response);
-
     }
 
     // 회원의 북마크 목록 조회
     // 북마크는 캠프로그를 북마크하는것이기에 캠프로그의 간단한 정보들도 포함되어 있어야 한다.
-    @GetMapping
-    public ResponseEntity<Page<BookMarkListResponse>> bookMarkList(@RequestParam Long memberId,
+    @GetMapping("/{memberId}")
+    public ResponseEntity<Page<BookMarkListResponse>> bookMarkList(@PathVariable Long memberId,
         @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
 
         PageRequest pageRequest = PageRequest.of(page, size);

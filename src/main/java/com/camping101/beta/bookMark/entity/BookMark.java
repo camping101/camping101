@@ -57,7 +57,7 @@ public class BookMark {
             .bookMarkId(bookMark.getBookMarkId())
             .memberId(bookMark.getMember().getMemberId())
             .campLogId(bookMark.getCampLog().getCampLogId())
-            //.campLogName(bookMark.getCampLog().getCampLogName())
+            .title(bookMark.getCampLog().getTitle())
             .build();
 
     }
@@ -67,9 +67,8 @@ public class BookMark {
         return BookMarkListResponse.builder()
             .bookMarkId(bookMark.getBookMarkId())
             .memberId(bookMark.getMember().getMemberId())
-            //.nickName(bookMark.getMember().getNickName())
+            .nickName(bookMark.getMember().getNickname())
             .campLogId(bookMark.getCampLog().getCampLogId())
-            //.campLogName(bookMark.getCampLog().getCampLogName())
             .title(bookMark.getCampLog().getTitle())
             .description(bookMark.getCampLog().getDescription())
             .image(bookMark.getCampLog().getImage())
