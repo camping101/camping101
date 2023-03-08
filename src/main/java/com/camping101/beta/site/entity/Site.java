@@ -106,6 +106,7 @@ public class Site {
 
         return SiteCreateResponse.builder()
             .siteId(site.getSiteId())
+            .campId(site.getCamp().getCampId())
             .name(site.getName())
             .rpImage(site.getRpImage())
             .introduction(site.getIntroduction())
@@ -169,6 +170,7 @@ public class Site {
 
         return SiteModifyResponse.builder()
             .siteId(site.getSiteId())
+            .campId(site.getCamp().getCampId())
             .name(site.getName())
             .rpImage(site.getRpImage())
             .introduction(site.getIntroduction())
@@ -191,6 +193,7 @@ public class Site {
 
         return SiteListResponse.builder()
             .siteId(site.getSiteId())
+            .campId(site.getCamp().getCampId())
             .name(site.getName())
             .rpImage(site.getRpImage())
             .checkIn(site.getCheckIn())

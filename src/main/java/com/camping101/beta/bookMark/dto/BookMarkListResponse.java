@@ -14,7 +14,6 @@ public class BookMarkListResponse {
     private String nickName;
 
     private Long campLogId;
-    private String campLogName;
     private String title;
     private String description;
     private String image;

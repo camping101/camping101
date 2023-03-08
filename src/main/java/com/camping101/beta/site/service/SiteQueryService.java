@@ -70,7 +70,7 @@ public class SiteQueryService {
     public SiteDetailsResponse findSiteDetails(Long siteId) {
 
         Site findSite = queryFactory.select(site).from(site)
-            .innerJoin(site.campLogList, campLog).fetchJoin()
+            .leftJoin(site.campLogList, campLog).fetchJoin()
             .where(site.siteId.eq(siteId))
             .distinct()
             .fetchOne();

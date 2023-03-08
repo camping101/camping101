@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,6 +35,7 @@ public class CampAuth {
     @Column(name = "camp_auth_id")
     private Long campAuthId;
 
+    @Enumerated(EnumType.STRING)
     private CampAuthStatus campAuthStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -48,7 +51,6 @@ public class CampAuth {
             .campAuthStatus(CampAuthStatus.UNAUTHORIZED)
             .camp(camp)
             .build();
-
     }
 
     public static CampAuthAddResponse toCampAuthAddResponse(CampAuth campAuth , Camp camp) {
@@ -60,6 +62,10 @@ public class CampAuth {
             .campAuthStatus(String.valueOf(campAuth.getCampAuthStatus()))
             .build();
 
-
     }
+
+    public void editCampAuthStatus() {
+        this.campAuthStatus = CampAuthStatus.AUTHORIZED;
+    }
+
 }

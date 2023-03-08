@@ -1,9 +1,13 @@
 package com.camping101.beta.bookMark.service;
 
+import static com.camping101.beta.bookMark.exception.ErrorCode.BOOKMARK_NOT_FOUND;
+
 import com.camping101.beta.bookMark.dto.BookMarkCreateRequest;
 import com.camping101.beta.bookMark.dto.BookMarkCreateResponse;
 import com.camping101.beta.bookMark.dto.BookMarkListResponse;
 import com.camping101.beta.bookMark.entity.BookMark;
+import com.camping101.beta.bookMark.exception.BookMarkException;
+import com.camping101.beta.bookMark.exception.ErrorCode;
 import com.camping101.beta.bookMark.repository.BookMarkRepository;
 import com.camping101.beta.campLog.entity.CampLog;
 import com.camping101.beta.campLog.repository.CampLogRepository;
@@ -68,7 +72,7 @@ public class BookMarkService {
     public void removeBookMark(Long bookmarkId) {
 
         BookMark findBookMark = bookMarkRepository.findById(bookmarkId).orElseThrow(() -> {
-            throw new RuntimeException("존재하는 북마크가 없습니다.");
+            throw new BookMarkException(BOOKMARK_NOT_FOUND);
         });
 
         bookMarkRepository.delete(findBookMark);

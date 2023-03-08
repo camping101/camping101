@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 public interface CampRepository extends JpaRepository<Camp, Long> {
 
     // 캠핑장 목록 조회(회원, 비회원)
-    Page<Camp> findAll(Pageable pageable);
+    Page<Camp> findAllByManageStatus(Pageable pageable, ManageStatus manageStatus);
 
     // 자신의 캠핑장 목록 조회(주인)
     Page<Camp> findAllByMemberAndManageStatus(Pageable pageable, Member member, ManageStatus manageStatus);

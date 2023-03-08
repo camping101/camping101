@@ -7,29 +7,27 @@ import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
+@Setter
 public class CampCreateRequest {
 
     private Long memberId;
     private String CampName;
     private String intro;
-    private String environment;
-    private String addr1;
-    private String addr2;
-    private String latitude;
-    private String longitude;
+    private Location location;
 
     private String tel;
     private String oneLineReserveYn;
 
     private String openSeason;
     private LocalDateTime openDateOfWeek;
-    private int toiletCnt;
-    private int showerCnt;
-    private int waterProofCnt;
+    private FacilityCnt facilityCnt;
 
     private String facility;
     private String leisure;

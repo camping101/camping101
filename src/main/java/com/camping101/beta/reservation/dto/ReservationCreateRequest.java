@@ -5,10 +5,14 @@ import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Builder
 @AllArgsConstructor
+@Setter
+@NoArgsConstructor
 public class ReservationCreateRequest {
 
     private Long memberId;
