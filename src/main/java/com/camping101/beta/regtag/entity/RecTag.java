@@ -2,8 +2,10 @@ package com.camping101.beta.regtag.entity;
 
 import com.camping101.beta.admin.recTag.dto.AdminRecTagCreateRequest;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -15,17 +17,16 @@ public class RecTag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "reg_tag_id")
+    @Column(name = "rec_tag_id")
     private Long recTagId;
-
-    private Long campLogId;
-
     private String name;
     private boolean useYn;
 
+    @CreatedDate
+    private LocalDateTime createdAt;
+
     public static RecTag from(AdminRecTagCreateRequest request) {
         return RecTag.builder()
-                .campLogId(request.getCampLogId())
                 .name(request.getName())
                 .useYn(false)
                 .build();

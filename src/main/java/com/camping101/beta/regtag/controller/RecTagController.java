@@ -7,7 +7,6 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,9 +19,9 @@ public class RecTagController {
     private final RecTagService recTagService;
 
     @GetMapping
-    public ResponseEntity<RecTagListResponse> getAllRecTags(@RequestBody RecTagListRequest request){
+    public ResponseEntity<RecTagListResponse> getAllRecTags(RecTagListRequest request){
 
-        var recTags = recTagService.getAllRecTags(request);
+        RecTagListResponse recTags = recTagService.getAllRecTags(request);
 
         return ResponseEntity.ok(recTags);
     }

@@ -5,6 +5,7 @@ import com.camping101.beta.comment.entity.Comment;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -17,8 +18,7 @@ public class CommentInfoResponse {
     private String writerEmail;
     private String writerNickName;
     private String profileImagePath;
-    private CampLogInfoResponse campLog;
-    private Long parentId;
+    private long parentId;
     private boolean reCommentYn;
     private String content;
     private long like;
@@ -31,7 +31,6 @@ public class CommentInfoResponse {
                 .writerEmail(comment.getMember().getEmail())
                 .writerNickName(comment.getMember().getNickname())
                 .profileImagePath(comment.getMember().getImage())
-                .campLog(CampLogInfoResponse.fromEntity(comment.getCampLog()))
                 .reCommentYn(comment.isReCommentYn())
                 .parentId(comment.getParentId())
                 .content(comment.getContent())

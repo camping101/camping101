@@ -13,6 +13,7 @@ import com.camping101.beta.util.S3FileUploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -36,9 +37,9 @@ public class MemberSignUpServiceImpl implements MemberSignUpService{
         validateIfMemberAlreadySignedUp(request.getEmail());
 
         try {
-            var s3ImageUrl = s3FileUploader.uploadFileAndGetURL(request.getImage());
-            var newMember = createNewMember(request, s3ImageUrl);
-            var mailAuth = createSignUpMailAuthCode(newMember.getEmail());
+            String s3ImageUrl = s3FileUploader.uploadFileAndGetURL(request.getImage());
+            Member newMember = createNewMember(request, s3ImageUrl);
+            MailAuth mailAuth = createSignUpMailAuthCode(newMember.getEmail());
             mailAuthSupporter.sendMailAuthCode(request.getEmail(), mailAuth.getMailAuthCode());
         } catch (Exception e) {
             logger.info("회원가입 중 이슈 발생");
@@ -55,8 +56,8 @@ public class MemberSignUpServiceImpl implements MemberSignUpService{
     }
 
     private Member createNewMember(MemberSignUpRequest request, String s3ImageUrl){
-        var encPassword = passwordEncoder.encode(request.getPassword());
-        var newMember = Member.from(request, s3ImageUrl, encPassword);
+        String encPassword = passwordEncoder.encode(request.getPassword());
+        Member newMember = Member.from(request, s3ImageUrl, encPassword);
         return memberRepository.save(newMember);
     }
 
@@ -72,14 +73,14 @@ public class MemberSignUpServiceImpl implements MemberSignUpService{
     @Transactional
     public void activateMemberByAuthCode(String email, String requestedCode) {
 
-        var member = memberRepository.findByEmail(email)
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_MAIL_AUTH_FAIL));
 
-        var optionalMailAuth = mailAuthRepository.findByEmail(email);
+        Optional<MailAuth> optionalMailAuth = mailAuthRepository.findByEmail(email);
 
         if (optionalMailAuth.isEmpty()) {
             try {
-                var mailAuth = createSignUpMailAuthCode(member.getEmail());
+                MailAuth mailAuth = createSignUpMailAuthCode(member.getEmail());
                 mailAuthSupporter.sendMailAuthCode(member.getEmail(), mailAuth.getMailAuthCode());
                 throw new MemberException(ErrorCode.MEMBER_MAIL_AUTH_RENEW);
             } catch (Exception e) {
@@ -87,7 +88,7 @@ public class MemberSignUpServiceImpl implements MemberSignUpService{
             }
         }
 
-        var mailAuth = optionalMailAuth.get();
+        MailAuth mailAuth = optionalMailAuth.get();
         validateMailAuthCodeAndResendMailIfRequired(requestedCode, mailAuth);
 
         member.activateMember();
@@ -113,5 +114,7 @@ public class MemberSignUpServiceImpl implements MemberSignUpService{
         mailAuthRepository.save(mailAuth);
 
     }
+
+
 
 }

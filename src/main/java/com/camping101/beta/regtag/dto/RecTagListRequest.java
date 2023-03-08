@@ -9,8 +9,8 @@ import lombok.*;
 @Builder
 public class RecTagListRequest {
 
-    int pageNumber = 1;
+    int pageNumber = 0;
     int recordSize = 10;
-    Boolean userYn;
+    Boolean useYn;
 
 }

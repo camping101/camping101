@@ -17,7 +17,7 @@ public class CampLogCreateRequest {
     private Long siteId;
     private LocalDateTime visitedAt;
     private String visitedWith;
-    private List<String> recTags;
+    private List<Long> recTags;
     private String title;
     private String description;
 

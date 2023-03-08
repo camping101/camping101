@@ -14,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -43,12 +44,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         logger.info("======= JwtAuthenticationFilter =======");
 
-        var email = request.getParameter("email");
-        var password = request.getParameter("password");
-        var memberType = request.getParameter("memberType");
-        var roles = List.of(memberType).stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-
-        var authentication = new UsernamePasswordAuthentication(email, password, roles);
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        String memberType = request.getParameter("memberType");
+        List<GrantedAuthority> roles = List.of(memberType).stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        Authentication authentication = new UsernamePasswordAuthentication(email, password, roles);
 
         logger.info(String.format("SignIn Attempt --> id : %s, pw : %s\n", email, password));
 
@@ -63,8 +63,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         logger.info("인증에 성공하였습니다.");
 
-        var user = (User) authentication.getPrincipal();
-        var roles = user.getAuthorities().stream()
+        User user = (User) authentication.getPrincipal();
+        List<String> roles = user.getAuthorities().stream()
                                 .map(GrantedAuthority::getAuthority)
                                 .collect(Collectors.toList());
 

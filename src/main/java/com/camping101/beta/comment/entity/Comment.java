@@ -35,7 +35,7 @@ public class Comment {
     @JoinColumn(name = "camp_log_id")
     CampLog campLog;
 
-    private Long parentId;
+    private long parentId = -1L;
     private boolean reCommentYn;
     private String content;
 

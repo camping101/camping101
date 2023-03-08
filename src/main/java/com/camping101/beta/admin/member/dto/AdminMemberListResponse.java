@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class AdminMemberListResponse {
 
     long total;
-    int pageNumber = 1;
+    int pageNumber = 0;
     int recordSize = 10;
     String memberType = MemberType.CUSTOMER.name();
     List<AdminMemberInfoResponse> content = new ArrayList<>();

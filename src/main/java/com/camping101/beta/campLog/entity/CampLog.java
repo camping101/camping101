@@ -80,7 +80,7 @@ public class CampLog {
                 .build();
     }
 
-    public void setImagePaths(List<String> imagePaths) {
+    public void changeImagePaths(List<String> imagePaths) {
         this.image = imagePaths.get(0);
         this.image1 = imagePaths.get(1);
         this.image2 = imagePaths.get(2);
@@ -89,15 +89,15 @@ public class CampLog {
         this.image5 = imagePaths.get(5);
     }
 
-    public void setRecTags(String recTags){
+    public void changeRecTags(String recTags){
         this.recTags = recTags;
     }
 
-    public void setMember(Member member) {
+    public void changeMember(Member member) {
         this.member = member;
     }
 
-    public void setSite(Site site) {
+    public void changeSite(Site site) {
         this.site = site;
     }
     public void addComment(Comment comment) {
@@ -123,6 +123,6 @@ public class CampLog {
     }
 
     public void decreaseLikesCount() {
-        this.likes = this.likes + 1;
+        this.likes = this.likes - 1;
     }
 }

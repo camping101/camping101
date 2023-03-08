@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @Builder
 public class CampLogInfoResponse {
 
+    private Long campLogId;
     private String writerEmail;
     private String writerNickName;
     private Long siteId;
@@ -36,9 +37,10 @@ public class CampLogInfoResponse {
 
     public static CampLogInfoResponse fromEntity(CampLog campLog) {
         return CampLogInfoResponse.builder()
+                .campLogId(campLog.getCampLogId())
                 .writerEmail(campLog.getMember().getEmail())
                 .writerNickName(campLog.getMember().getNickname())
-                //.siteId(campLog.getSite().getSiteId())
+                .siteId(campLog.getSite().getSiteId())
                 .visitedAt(campLog.getVisitedAt())
                 .visitedWith(campLog.getVisitedWith())
                 .recTags(Arrays.stream(campLog.getRecTags().split(","))

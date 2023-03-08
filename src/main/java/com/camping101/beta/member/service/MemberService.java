@@ -12,6 +12,6 @@ public interface MemberService {
     MemberInfoResponse updateMember(String email, Long memberId, MemberUpdateRequest request);
     MemberPasswordResetResponse sendTemporalPassword(String email);
 
-    void deleteMember(Long memberId);
+    void deleteMember(Long memberId, String requesterEmail);
 
 }

@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 public class MemberUpdateRequest {
 
-    private Long memberId;
     private MultipartFile image;
     private String nickname;
     private String phoneNumber;

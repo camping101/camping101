@@ -7,9 +7,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CampLogListRequest {
+public class CampLogLikeResponse {
 
-    int pageNumber = 0;
-    int recordSize = 10;
+    private Long campLogId;
+    private long totalLikes;
+    private boolean myLikeCheck;
 
 }

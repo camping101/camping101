@@ -6,6 +6,8 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
+
 import java.security.Principal;
 import java.util.List;
 
@@ -19,18 +21,18 @@ public class CommentController {
 
     @PostMapping
     public ResponseEntity<CommentInfoResponse> createComment(@RequestBody CommentCreateRequest request,
-                                                             Principal principal){
+                                                             @ApiIgnore Principal principal){
 
         request.setWriterEmail(principal.getName());
-        var createdComment = commentService.createComment(request);
+        CommentInfoResponse createdComment = commentService.createComment(request);
 
         return ResponseEntity.ok(createdComment);
     }
 
     @GetMapping
-    public ResponseEntity<CommentListResponse> getCommentListOfCampLog(@RequestBody CommentListRequest request){
+    public ResponseEntity<CommentListResponse> getCommentListOfCampLog(CommentListRequest request){
 
-        var commentList = commentService.getCommentListOfCampLog(request);
+        CommentListResponse commentList = commentService.getCommentListOfCampLog(request);
 
         return ResponseEntity.ok(commentList);
     }
@@ -38,24 +40,24 @@ public class CommentController {
     @GetMapping("/{commentId}")
     public ResponseEntity<List<CommentInfoResponse>> getChildrenListOfParentComment(@PathVariable Long commentId){
 
-        var reCommentList = commentService.getChildrenListOfParentComment(commentId);
+        List<CommentInfoResponse> reCommentList = commentService.getChildrenListOfParentComment(commentId);
 
         return ResponseEntity.ok(reCommentList);
     }
 
     @PutMapping
     public ResponseEntity<CommentInfoResponse> updateComment(@RequestBody CommentUpdateRequest request,
-                                                             Principal principal){
+                                                             @ApiIgnore Principal principal){
 
         request.setRequesterEmail(principal.getName());
-        var updatedComment = commentService.updateComment(request);
+        CommentInfoResponse updatedComment = commentService.updateComment(request);
 
         return ResponseEntity.ok(updatedComment);
     }
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity deleteComment(@PathVariable Long commentId,
-                                        Principal principal){
+                                        @ApiIgnore Principal principal){
 
         commentService.deleteComment(commentId, principal.getName());
 

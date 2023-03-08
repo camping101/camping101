@@ -17,7 +17,7 @@ public class CampLogUpdateRequest {
     private Long campLogId;
     private LocalDateTime visitedAt;
     private String visitedWith;
-    private List<String> recTags;
+    private List<Long> recTags;
     private String title;
     private String description;
     private MultipartFile image;

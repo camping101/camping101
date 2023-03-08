@@ -10,8 +10,8 @@ import lombok.*;
 @Builder
 public class AdminMemberListRequest {
 
-    int pageNumber = 1;
+    int pageNumber = 0;
     int recordSize = 10;
-    String memberType = MemberType.CUSTOMER.name();
+    MemberType memberType = MemberType.CUSTOMER;
 
 }

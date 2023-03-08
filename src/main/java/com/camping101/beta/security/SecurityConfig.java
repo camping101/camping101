@@ -1,29 +1,30 @@
 package com.camping101.beta.security;
 
 import com.camping101.beta.member.entity.type.MemberType;
+import com.camping101.beta.member.repository.MemberRepository;
 import com.camping101.beta.member.service.oAuth.OAuthService;
 import com.camping101.beta.security.authentication.UsernamePasswordAuthenticationProvider;
 import com.camping101.beta.security.filter.JwtAuthenticationFilter;
 import com.camping101.beta.security.filter.JwtAuthorizationFilter;
 import com.camping101.beta.util.RedisClient;
-import com.querydsl.core.util.StringUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import javax.servlet.http.HttpSession;
+
 import java.util.List;
-import java.util.Objects;
-import java.util.logging.Logger;
 
 @Configuration
 @EnableWebSecurity
@@ -34,7 +35,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtProvider jwtProvider;
     private final RedisClient redisClient;
     private final OAuthService googleOAuthService;
-    private final Logger logger = Logger.getLogger(SecurityConfig.class.getName());
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
+    @Value("${security.ignore.all.paths.startwith}")
+    private String ignoreAllPathsStartWith;
+    @Value("${security.ignore.get.paths.startwith}")
+    private String ignoreGetPathsStartWith;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
@@ -43,51 +49,58 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
-        http.cors();
-        http.csrf().disable();
-        http.formLogin()
-                .loginProcessingUrl("/api/signin");
-        http.oauth2Login();
-        http
-                .addFilterAt(new JwtAuthenticationFilter(authenticationManager(), jwtProvider, redisClient), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtAuthorizationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
-        http.authorizeRequests()
-                .antMatchers("/h2-console/**")
-                .permitAll();
-        http.authorizeRequests()
-                .mvcMatchers("/", "/api/signup/**", "/api/signin/**", "/api/signin/oauth/google")
-                .permitAll();
-        http.authorizeRequests()
-                .mvcMatchers("/api/member","/api/member/*", "/api/member/password")
+        http.cors()
+                .and()
+                .csrf().disable()
+                // Jwt filter
+                .addFilterAt(
+                        new JwtAuthenticationFilter(authenticationManager(), jwtProvider, redisClient),
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(
+                        new JwtAuthorizationFilter(jwtProvider, ignoreAllPathsStartWith, ignoreGetPathsStartWith),
+                        UsernamePasswordAuthenticationFilter.class)
+                // Path 권한
+                .authorizeRequests()
+                // - H2 및 Swagger 사용 허용
+                .antMatchers("/h2-console/**", "/swagger-ui.html", "/v2/api-docs")
+                .permitAll()
+                // - 비회원
+                .antMatchers(ignoreAllPathsStartWith.split(","))
+                .permitAll()
+                .antMatchers(HttpMethod.GET, ignoreGetPathsStartWith.split(","))
+                .permitAll()
+                // - 일반 회원 (CUSTOMER)
+                .antMatchers("/api/member","/api/member/**")
                 .hasRole(MemberType.CUSTOMER.name())
-                .mvcMatchers("/api/admin/**")
-                .hasRole(MemberType.ADMIN.name());
-        http.logout()
-                .logoutUrl("/api/logout")
-                .addLogoutHandler((request, response, authentication) -> {
-
-                    var authorization = request.getHeader("Authorization");
-
-                    if (!StringUtils.isNullOrEmpty(authorization) && authorization.startsWith("Bearer ")) {
-                        googleOAuthService.revokeAccessTokenForLogOut(authorization.substring(7));
-                    }
-
-                    HttpSession session = request.getSession();
-                    if (Objects.nonNull(session)) {
-                        logger.info("All Session Jwt Invalidated");
-                        session.invalidate();
-                    }
-                });
+                // - 캠핑장 주인 (OWNER)
+                // TODO 작성 필요
+                // - 관리자 (ADMIN)
+                .antMatchers("/api/admin/**")
+                .hasRole(MemberType.ADMIN.name())
+                .and()
+                // 로그인
+                .formLogin()
+                .loginProcessingUrl("/api/signin")
+                .and()
+                .oauth2Login()
+                .and()
+                // 로그아웃
+                .logout()
+                .logoutUrl("/api/signout")
+                .addLogoutHandler(new MemberSignOutHandler(googleOAuthService, memberRepository, jwtProvider));
     }
 
     @Override
     public void configure(WebSecurity web) {
         web.ignoring()
-                .antMatchers("/h2-console/**")
+                .antMatchers("/h2-console/**", "/swagger-ui.html/**","/swagger-ui.html/#/**", "/v2/api-docs")
                 .antMatchers("/css/**", "/vendor/**", "/js/**", "/images/**");
         web.ignoring()
                 .mvcMatchers("/swagger-ui/*", "/swagger-resources/**", "/swagger-ui.html");
+        web.ignoring()
+                .antMatchers(HttpMethod.GET, "/api/camplog","/api/site","/api/camp")
+                .antMatchers("/api/signup","/api/signin");
+        web.ignoring().antMatchers("*");
     }
 
     @Bean

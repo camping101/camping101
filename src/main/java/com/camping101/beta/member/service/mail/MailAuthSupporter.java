@@ -35,8 +35,8 @@ public class MailAuthSupporter {
 
     public boolean sendMailAuthCode(String receiver, String authCode){
 
-        var subject = "[Camping101] 캠핑 101에서 인증 메일을 전송했습니다.";
-        var htmlText = "<!DOCTYPE html>\n" +
+        String subject = "[Camping101] 캠핑 101에서 인증 메일을 전송했습니다.";
+        String htmlText = "<!DOCTYPE html>\n" +
                 "<html lang=\"ko\">\n" +
                 "<head>\n" +
                 "    <meta charset=\"UTF-8\">\n" +

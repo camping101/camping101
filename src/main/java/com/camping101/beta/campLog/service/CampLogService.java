@@ -1,23 +1,32 @@
 package com.camping101.beta.campLog.service;
 
-import com.camping101.beta.campLog.repository.CampLogRepository;
-import com.camping101.beta.regtag.entity.RecTag;
-import com.camping101.beta.regtag.repository.RecTagRepository;
 import com.camping101.beta.campLog.dto.*;
 import com.camping101.beta.campLog.entity.CampLog;
+import com.camping101.beta.campLog.exception.CampLogException;
+import com.camping101.beta.campLog.exception.ErrorCode;
+import com.camping101.beta.campLog.repository.CampLogRepository;
+import com.camping101.beta.member.entity.Member;
 import com.camping101.beta.member.repository.MemberRepository;
+import com.camping101.beta.regtag.entity.RecTag;
+import com.camping101.beta.regtag.repository.RecTagRepository;
+import com.camping101.beta.site.entity.Site;
+import com.camping101.beta.site.repository.SiteRepository;
 import com.camping101.beta.util.RedisClient;
 import com.camping101.beta.util.S3FileUploader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @Service
@@ -25,6 +34,7 @@ import java.util.logging.Logger;
 public class CampLogService {
 
     private final MemberRepository memberRepository;
+    private final SiteRepository siteRepository;
     private final CampLogRepository campLogRepository;
     private final RecTagRepository recTagRepository;
     private final S3FileUploader s3FileUploader;
@@ -34,29 +44,24 @@ public class CampLogService {
     @Transactional
     public CampLogInfoResponse createCampLog(CampLogCreateRequest request){
 
-        var member = memberRepository.findByEmail(request.getWriterEmail())
+        Member member = memberRepository.findByEmail(request.getWriterEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
 
-        // TODO
-//        var site = siteRepository.findById(request.getSiteId())
-//                .orElseThrow(() -> new RuntimeException(""));
+        Site site = siteRepository.findById(request.getSiteId())
+                .orElseThrow(() -> new RuntimeException("Site Not Found")); // TODO 사이트 예외로 변경 필요
 
-        if (request.getRecTags().size() > 4) {
-            throw new RuntimeException("추천 태그는 4개까지만 등록 가능합니다.");
-        }
-
-        var newCampLog = campLogRepository.save(CampLog.from(request));
+        CampLog newCampLog = campLogRepository.save(CampLog.from(request));
 
         try {
             List<String> imagePaths = saveImagesToS3AndGetPaths(request);
-            newCampLog.setImagePaths(imagePaths);
+            newCampLog.changeImagePaths(imagePaths);
         } catch (IOException e) {
             Arrays.stream(e.getStackTrace()).forEach(x -> logger.info(x.toString()));
         }
 
-        newCampLog.setMember(member);
-        newCampLog.setRecTags(parseRecTagsToOneString(getRecTagsByName(request.getRecTags())));
-        // newCampLog.setSite(site);
+        newCampLog.changeMember(member);
+        newCampLog.changeRecTags(getRecTagsById("", request.getRecTags()));
+        newCampLog.changeSite(site);
 
         return CampLogInfoResponse.fromEntity(newCampLog);
 
@@ -76,27 +81,24 @@ public class CampLogService {
         return imagePaths;
     }
 
-    private List<RecTag> getRecTagsByName(List<String> recTagNames) {
-
-        List<RecTag> recTags = new ArrayList<>();
-
-        for (String recTagName : recTagNames) {
-            var optionalRecTag = recTagRepository.findByName(recTagName);
-            if (optionalRecTag.isEmpty()) {
-                throw new RuntimeException("해당 추천 태그가 존재하지 않습니다.");
-            }
-            recTags.add(optionalRecTag.get());
-        }
-
-        return recTags;
-    }
-
-    private String parseRecTagsToOneString(List<RecTag> recTags){
+    private String getRecTagsById(String originalRecTags, List<Long> recTagIds) {
 
         StringBuilder sb = new StringBuilder();
 
-        for (RecTag recTagName : recTags) {
-            sb.append(recTagName).append(",");
+        int idx = 0;
+        for (Long recTagId : recTagIds) {
+            Optional<RecTag> optionalRecTag = recTagRepository.findById(recTagId);
+            if (optionalRecTag.isEmpty()) {
+                logger.warning("CamLogService.getRecTagName : 요청한 추천 태그가 존재하지 않습니다. >> 추천 태그는 기존의 것을 유지");
+                return originalRecTags;
+            }
+            idx++;
+            if (idx > 4) {
+                logger.info("추천 태그는 한 번에 4개까지만 등록이 가능합니다.");
+                break;
+            }
+            if (idx != 0) sb.append(",");
+            sb.append(optionalRecTag.get().getName());
         }
 
         return sb.toString();
@@ -104,10 +106,10 @@ public class CampLogService {
 
     public CampLogListResponse getCampLogList(CampLogListRequest request){
 
-        var page = PageRequest.of(request.getPageNumber(), request.getRecordSize(),
-                Sort.Direction.DESC, "created_at");
+        Pageable page = PageRequest.of(request.getPageNumber(), request.getRecordSize(),
+                Sort.Direction.DESC, "createdAt");
 
-        var campLogs = campLogRepository.findAll(page);
+        Page<CampLog> campLogs = campLogRepository.findAll(page);
 
         return CampLogListResponse.fromEntity(campLogs);
     }
@@ -115,8 +117,8 @@ public class CampLogService {
     @Transactional
     public CampLogInfoResponse getCampLogInfo(Long campLogId){
 
-        var campLog = campLogRepository.findById(campLogId)
-                .orElseThrow(() -> new RuntimeException(""));
+        CampLog campLog = campLogRepository.findById(campLogId)
+                .orElseThrow(() -> new CampLogException(ErrorCode.CAMPLOG_NOT_FOUND));
 
         campLog.increaseViewCount();
 
@@ -127,27 +129,28 @@ public class CampLogService {
     @Transactional
     public CampLogInfoResponse updateCampLog(CampLogUpdateRequest request){
 
-        var campLog = campLogRepository.findById(request.getCampLogId())
-                .orElseThrow(() -> new RuntimeException(""));
+        CampLog campLog = campLogRepository.findById(request.getCampLogId())
+                .orElseThrow(() -> new CampLogException(ErrorCode.CAMPLOG_NOT_FOUND));
 
         if (!campLog.getMember().getEmail().equals(request.getRequesterEmail())) {
-            throw new RuntimeException("캠프 로그를 쓴 작성자만 수정이 가능합니다.");
-        }
 
-        if (request.getRecTags().size() > 4) {
-            throw new RuntimeException("추천 태그는 4개까지만 등록 가능합니다.");
+            logger.info("CampLogService.updateCampLog : 수정을 요청한 아이디가 작성자의 아이디와 일치하지 않습니다.");
+
+            throw new CampLogException(ErrorCode.CAMPLOG_WRITER_MISMATCH);
         }
 
         campLog.updateCampLog(request);
+        campLog.changeRecTags(getRecTagsById(campLog.getRecTags(), request.getRecTags()));
 
         try {
             List<String> imagePaths = saveImagesToS3AndGetPaths(request);
-            campLog.setImagePaths(imagePaths);
+            campLog.changeImagePaths(imagePaths);
         } catch (IOException e) {
-            Arrays.stream(e.getStackTrace()).forEach(x -> logger.info(x.toString()));
+            logger.warning("CampLogService.updateCampLog : 이미지를 가져오던 중 이슈가 발생했습니다. (이미지 저장 실패)");
+            Arrays.stream(e.getStackTrace()).forEach(x -> logger.warning(x.toString()));
         }
 
-        campLog.setRecTags(parseRecTagsToOneString(getRecTagsByName(request.getRecTags())));
+        logger.info("CampLogService.updateCampLog : 수정된 캠프 로그 ID -->  " + campLog.getCampLogId());
 
         return CampLogInfoResponse.fromEntity(campLog);
     }
@@ -169,11 +172,11 @@ public class CampLogService {
     @Transactional
     public void deleteCampLog(Long campLogId, String requesterEmail){
 
-        var campLog = campLogRepository.findById(campLogId)
-                .orElseThrow(() -> new RuntimeException(""));
+        CampLog campLog = campLogRepository.findById(campLogId)
+                .orElseThrow(() -> new CampLogException(ErrorCode.CAMPLOG_NOT_FOUND));
 
         if (!campLog.getMember().getEmail().equals(requesterEmail)) {
-            throw new RuntimeException("캠프 로그를 쓴 작성자만 삭제가 가능합니다.");
+            throw new CampLogException(ErrorCode.CAMPLOG_WRITER_MISMATCH);
         }
 
         campLogRepository.delete(campLog);
@@ -181,22 +184,28 @@ public class CampLogService {
     }
 
     @Transactional
-    public void checkOrUncheckLikeOnCampLog(Long campLogId, String requesterEmail){
+    public CampLogLikeResponse checkOrUncheckLikeOnCampLog(Long campLogId, String requesterEmail){
 
-        var campLog = campLogRepository.findById(campLogId)
-                .orElseThrow(() -> new RuntimeException(""));
+        CampLog campLog = campLogRepository.findById(campLogId)
+                .orElseThrow(() -> new CampLogException(ErrorCode.CAMPLOG_NOT_FOUND));
 
-        var campLogLikeKey = CampLogLikeKey.getInstance(campLogId, requesterEmail).toString();
-        var optionalLikeValue = redisClient.get(campLogLikeKey, Boolean.class);
+        String campLogLikeKey = CampLogLikeKey.getKey(campLogId, requesterEmail);
+        Optional<Boolean> optionalLikeValue = redisClient.get(campLogLikeKey, Boolean.class);
 
-        if (optionalLikeValue.isEmpty()) {
-            redisClient.put(campLogLikeKey, true);
-            campLog.increaseLikesCount();
-        } else {
-            redisClient.put(campLogLikeKey, false);
-            campLog.decreaseLikesCount();
+        boolean isPreviouslyCheckedLike = false;
+        if (!optionalLikeValue.isEmpty()) {
+            isPreviouslyCheckedLike = optionalLikeValue.get();
+            redisClient.delete(campLogLikeKey);
         }
 
+        if (isPreviouslyCheckedLike == false) {
+            campLog.increaseLikesCount();
+        } else {
+            campLog.decreaseLikesCount();
+        }
+        redisClient.put(campLogLikeKey, !isPreviouslyCheckedLike);
+
+        return new CampLogLikeResponse(campLog.getCampLogId(), campLog.getLikes(), !isPreviouslyCheckedLike);
     }
 
 }

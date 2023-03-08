@@ -119,7 +119,6 @@ dependencies {
 	// Web MVC 관련
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools' // 컨텐츠 변경 시, 자동 재부팅
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1' // jwt

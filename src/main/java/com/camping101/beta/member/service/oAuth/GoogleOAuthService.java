@@ -1,8 +1,7 @@
 package com.camping101.beta.member.service.oAuth;
 
-import com.camping101.beta.member.dto.MemberSignInResponse;
+import com.camping101.beta.member.dto.TokenInfo;
 import com.camping101.beta.member.entity.Member;
-import com.camping101.beta.member.entity.type.SignUpType;
 import com.camping101.beta.member.exception.ErrorCode;
 import com.camping101.beta.member.exception.MemberException;
 import com.camping101.beta.member.repository.MemberRepository;
@@ -15,10 +14,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -26,9 +26,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.transaction.Transactional;
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @Service
@@ -41,11 +41,7 @@ public class GoogleOAuthService implements OAuthService {
     private final MemberRepository memberRepository;
     private final Logger logger = Logger.getLogger(MemberSignInServiceImpl.class.getName());
 
-    // 서버용 Access Token 만료 시간
-    @Value("${token.jwt.accesstoken}")
-    private long ACCESS_EXPIRE_MILLISECOND; // 12시간
-
-    // 구글 Cloud api 보안 정보
+    // 구글 API 사용 위한 보안 정보
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String CLIENT_ID;
     @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
@@ -53,56 +49,52 @@ public class GoogleOAuthService implements OAuthService {
     @Value("${spring.security.oauth2.client.registration.google.client-secret}")
     private String CLIENT_SECRET;
 
-    // 구글 토큰 서버 (엑세스 토큰 반환)
+    // 구글 토큰 서버 API (엑세스 토큰을 얻거나 갱신)
     @Value("${spring.security.oauth2.client.provider.google.token-uri}")
-    private String GOOGLE_TOKEN_SERVER_URI;
+    private String GOOGLE_TOKEN_URI;
 
-    // 구글 사용자 API 서버
-    private final String USER_INFO_BASE_URI = "https://www.googleapis.com/oauth2/v2/userinfo";
+    // 구글 idToken JWT 파싱 key
+    @Value("${oauth2.client.provider.google.jwt-key}")
+    private String GOOGLE_JWT_PARSE_KEY;
 
-    // 구글 인증 API - revoke uri (로그아웃 용도)
-    private final String AUTHORIZATION_REVOKE_URI = "https://accounts.google.com/o/oauth2/revoke";
+    // 구글 인증 서버의 Revoke URI (로그아웃 용도)
+    @Value("${oauth2.client.provider.google.all-token-revoke-uri}")
+    private String GOOGLE_AUTHORIZATION_REVOKE_URI;
+
+    @Value("${token.jwt.refreshtoken}")
+    private long refreshTokenExpirationTime;
+    
     private final JwtProvider jwtProvider;
 
-    // Flow :
-    // 1. 사용자 확인       : /api/signin/google --> 구글 인증 서버 호출 : 사용자 확인 --> api/signin/oauth/google (redirect)
-    // 2. 토큰 발급         : 1.에서 받은 code로 토큰 발급 요청 --> Redis에 토큰 정보 저장 * key=encoded access token, value=google token 정보
-    // 3. 사용자 로그인 유지 : JWT 토큰의 encodedAccessToken이 유효할 경우 로그인 상태 유지
-    // 4. 로그아웃(탈퇴 시 자동 로그아웃) 시에 Access Token revoke 요청
+    // Flow : 
+    // 사용자 확인 후 신규 토큰 발급 -> 갱신 토큰으로 인증 상태 유지 -> 탈퇴 및 로그아웃
+    // * 구글 인증 세션 : 1시간 단위
     @Override
     @Transactional(rollbackOn = {MemberException.class})
-    public MemberSignInResponse createOrUpdateMemberWhenSignIn(String code){
+    public TokenInfo signInByOAuth(String code){
 
-        var googleTokenInfo = exchangeCodeForToken(code);
-        var googleAccountInfo = exchangeAccessTokenForAccountInfo(googleTokenInfo);
-        var member = createOrUpdateMember(googleAccountInfo);
-        var serverAccessToken = createJwtToken(member, ACCESS_EXPIRE_MILLISECOND);
-        var serverRefreshToken = createJwtToken(member, Long.MAX_VALUE); // never expire
-        saveGoogleTokenInfoIntoRedis(serverAccessToken, googleTokenInfo);
-        return new MemberSignInResponse("Bearer " + serverAccessToken, "Basic " + serverRefreshToken);
+        GoogleTokenInfo googleTokenInfo = exchangeCodeForToken(code);
+        GoogleAccountInfo googleAccountInfo = parseIdTokenToGoogleAccountInfo(googleTokenInfo.getIdToken());
+        Member member = createOrUpdateMember(googleAccountInfo);
+        String serverAccessToken = createJwtToken(member, 1000 * googleTokenInfo.getExpiresIn()); // 1시간 (3600초)
+        String serverRefreshToken = createJwtToken(member, refreshTokenExpirationTime);
+        saveGoogleAccessTokenIntoRedis(serverAccessToken, googleTokenInfo.getAccessToken());
+        return new TokenInfo("Bearer " + serverAccessToken, "Basic " + serverRefreshToken);
 
-    }
-
-    private String createJwtToken(Member member, long expiredSecond) {
-        logger.info("GoogleOAuthService의 createJwtToken: expiredMilliSecond는 " + expiredSecond);
-        return jwtProvider.createToken(
-                member.getEmail(), List.of(member.getMemberType().getAuthority()), expiredSecond);
     }
 
     // 토큰 발급
     private GoogleTokenInfo exchangeCodeForToken(String code) throws MemberException{
 
-        logger.info("Just Sent Authorization Code To Google Token Server!");
-
         try {
 
             restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
-            var uri = baseUriOf(GOOGLE_TOKEN_SERVER_URI);
-            var request = postCodeForTokenRequest(code);
-            var response = restTemplate.postForEntity(uri, request, String.class);
-            var token = parseJsonToGoogleToken(response.getBody());
+            URI uri = baseUriOf(GOOGLE_TOKEN_URI);
+            HttpEntity<MultiValueMap<String, String>> request = postCodeForTokenRequest(code);
+            ResponseEntity<String> response = restTemplate.postForEntity(uri, request, String.class);
+            GoogleTokenInfo token = parseJsonToObject(response.getBody(), GoogleTokenInfo.class);
 
-            logger.info("Google Response : \n" + response.getBody());
+            logger.info("Google Token Info : \n" + response.getBody());
 
             return token;
 
@@ -116,7 +108,7 @@ public class GoogleOAuthService implements OAuthService {
 
     }
 
-    private HttpEntity<?> postCodeForTokenRequest(String code){
+    private HttpEntity<MultiValueMap<String, String>> postCodeForTokenRequest(String code){
         var headers = requestHeadersOf(MediaType.APPLICATION_FORM_URLENCODED);
         var body = exchangeCodeForTokenFormData(code);
         return new HttpEntity<>(body, headers);
@@ -132,144 +124,128 @@ public class GoogleOAuthService implements OAuthService {
         return formData;
     }
 
-    private GoogleTokenInfo parseJsonToGoogleToken(String jsonBody) throws JsonProcessingException {
-        var token = parseJsonToObject(jsonBody, GoogleTokenInfo.class);
-        token.setExpiredAt(LocalDateTime.now().plusSeconds(token.getExpiresIn()));
-        token.setRefreshToken(token.getIdToken());
-        return token;
-    }
-
-    // 사용자 정보 요청
-    private GoogleAccountInfo exchangeAccessTokenForAccountInfo(GoogleTokenInfo token) throws MemberException{
-
-        logger.info("Just Sent Access Token!");
-
+    // 회원 정보 가져오기 - idToken(JWT)를 파싱
+    private GoogleAccountInfo parseIdTokenToGoogleAccountInfo(String idToken) {
         try {
 
-            var uri = baseUriOf(USER_INFO_BASE_URI);
-            var request = getAccountInfoRequest(token.getAccessToken());
-            var response = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
+            String payload = idToken.split("\\.")[1];
+            String decodedPayload = new String(Base64Utils.decodeFromUrlSafeString(payload));
+            GoogleAccountInfo googleAccountInfo = parseJsonToObject(decodedPayload, GoogleAccountInfo.class);
 
-            logger.info("Member Info : \n" + response.getBody());
+            logger.info("사용자 정보 파싱 >>> " + googleAccountInfo.getEmail());
 
-            return parseJsonToObject(response.getBody(), GoogleAccountInfo.class);
+            return googleAccountInfo;
 
         } catch (JsonProcessingException e) {
-            logger.warning("Json parsing trouble");
+            logger.info("GoogleOAuthService.parseIdTokenGoogleAccountInfo : idToken의 payload를 json 파싱 중 오류 발생");
             throw new MemberException(ErrorCode.MEMBER_SIGN_IN_ERROR);
         } catch (Exception e) {
-            Arrays.stream(e.getStackTrace()).forEach(x -> logger.warning(x.toString()));
+            logger.info("GoogleOAuthService.parseIdTokenGoogleAccountInfo : idToken값이 잘못된 것 같습니다. 요청 정보를 다시 확인해주세요.");
             throw new MemberException(ErrorCode.MEMBER_SIGN_IN_ERROR);
         }
     }
 
-    private HttpEntity<?> getAccountInfoRequest(String accessToken) {
-        var headers = requestHeadersOf(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + accessToken);
-        headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-        return new HttpEntity<>(headers);
+    private String createJwtToken(Member member, long expiredSecond) {
+        logger.info("GoogleOAuthService의 createJwtToken: expiredMilliSecond는 " + expiredSecond);
+        return jwtProvider.createToken(
+                member.getEmail(), List.of(member.getMemberType().name()), expiredSecond);
     }
 
-    private Member createOrUpdateMember(GoogleAccountInfo googleAccountInfo) {
-        var optionalMember = memberRepository.findByEmail(googleAccountInfo.getEmail());
-        if (optionalMember.isPresent()) {
-            logger.info("This member already signed up by google account before, " +
-                    "and we don't change member info by its google account as it is.");
-            return optionalMember.get();
-        }
-        return memberRepository.save(Member.from(googleAccountInfo));
-    }
-
-    private void saveGoogleTokenInfoIntoRedis(String serverAccessToken, GoogleTokenInfo tokenInfo) throws MemberException{
+    private void saveGoogleAccessTokenIntoRedis(String serverAccessToken, String googleAccessToken) throws MemberException{
         try {
-            redisClient.put(serverAccessToken, tokenInfo);
+            redisClient.put(serverAccessToken, googleAccessToken);
+            logger.info("Redis에 저장이 잘 되었습니다!");
         } catch (Exception e) {
             logger.warning("Redis Connection should be checked!!");
             logger.warning(e.getMessage());
             throw new MemberException(ErrorCode.MEMBER_SIGN_IN_ERROR);
         }
     }
+
+    private Member createOrUpdateMember(GoogleAccountInfo googleAccountInfo) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(googleAccountInfo.getEmail());
+        if (optionalMember.isPresent()) {
+            logger.info("이미 가입을 했기 때문에 회원 정보를 수정합니다.");
+            Member member = optionalMember.get();
+            member.changeImage(googleAccountInfo.getPicture());
+            member.changeNickname(googleAccountInfo.getName());
+            return memberRepository.save(member);
+        }
+        logger.info("새롭게 회원가입 처리를 합니다.");
+        return memberRepository.save(Member.from(googleAccountInfo));
+    }
+
     
     // access token 만료 시 refresh token으로 새로 발급
     @Override
-    public MemberSignInResponse renewToken(String previousServerAccessToken, String previousRefreshToken) {
+    public TokenInfo renewToken(String previousServerAccessToken, String previousRefreshToken) {
 
-        logger.info("Just Sent refresh Token To Google Token Server!");
+        String googleAccessToken = getGoogleAccessTokenFromRedis(previousServerAccessToken);
+        GoogleTokenInfo newGoogleTokenInfo = exchangeGoogleAccessTokenForNewTokenInfo(googleAccessToken);
+        GoogleAccountInfo newGoogleAccountInfo = parseIdTokenToGoogleAccountInfo(newGoogleTokenInfo.getIdToken());
+        Member member = createOrUpdateMember(newGoogleAccountInfo);
+        String currentServerAccessToken = createJwtToken(member, 1000 * newGoogleTokenInfo.getExpiresIn());
+        String currentServerRefreshToken = createJwtToken(member, refreshTokenExpirationTime);
+        updateGoogleAccessTokenInRedis(previousServerAccessToken, currentServerAccessToken, newGoogleTokenInfo.getAccessToken());
+
+        return new TokenInfo("Bearer " + currentServerAccessToken, "Basic " + currentServerRefreshToken);
         
+    }
+
+    private String getGoogleAccessTokenFromRedis(String previousServerAccessToken) throws MemberException{
+        Optional<String> optionalGoogleAccessToken
+                = redisClient.get(previousServerAccessToken.substring(7), String.class);
+        if (optionalGoogleAccessToken.isEmpty()){
+            logger.warning("GoogleOAuthService.getTokenInfoFromRedis : Refresh Token 정보를 Redis에서 찾을 수 없습니다.");
+            throw new MemberException(ErrorCode.MEMBER_SIGN_IN_ERROR);
+        }
+        return optionalGoogleAccessToken.get();
+    }
+
+    private GoogleTokenInfo exchangeGoogleAccessTokenForNewTokenInfo(String googleAccessToken){
+
         try {
 
-            var tokenInfo = getTokenInfoFromRedis(previousServerAccessToken);
             restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
-            var uri = baseUriOf(GOOGLE_TOKEN_SERVER_URI);
-            var request = postAccessTokenRenewRequest(tokenInfo.getAccessToken(), tokenInfo.getRefreshToken());
-            var response = restTemplate.postForEntity(uri, request, String.class);
+            URI uri = baseUriOf(GOOGLE_TOKEN_URI);
+            HttpEntity<MultiValueMap<String, String>> request = postRefreshTokenRequest(googleAccessToken);
+            ResponseEntity<String> response = restTemplate.postForEntity(uri, request, String.class);
 
             logger.info("Google Response : \n" + response.getBody());
 
-            var newTokenInfo = parseJsonToGoogleToken(response.getBody());
-            var memberInfo = exchangeAccessTokenForAccountInfo(newTokenInfo);
-            var member = createOrUpdateMember(memberInfo);
-            var currentServerAccessToken = createJwtToken(member, tokenInfo.getExpiresIn());
-            var currentServerRefreshToken = createJwtToken(member, Long.MAX_VALUE); // never expire
-            updateAccessTokenInRedis(previousServerAccessToken, currentServerAccessToken, newTokenInfo);
-
-            return new MemberSignInResponse(currentServerAccessToken, currentServerRefreshToken);
+            return parseJsonToObject(response.getBody(), GoogleTokenInfo.class);
 
         } catch (JsonProcessingException e) {
-            logger.warning("Json parsing trouble");
+            logger.warning("GoogleOAuthService.refreshGoogleToken : Json parsing trouble");
             throw new MemberException(ErrorCode.MEMBER_SIGN_IN_ERROR);
         } catch (Exception e) {
+            logger.warning("GoogleOAuthService.refreshGoogleToken : Refresh Token을 전송하는 과정에서 무엇인가 잘못되었습니다!");
             Arrays.stream(e.getStackTrace()).forEach(x -> logger.warning(x.toString()));
             throw new MemberException(ErrorCode.MEMBER_SIGN_IN_ERROR);
         }
-        
+
     }
 
-    private void updateAccessTokenInRedis(String previousServerAccessToken,
-                                          String currentServerAccessToken,
-                                          GoogleTokenInfo newToken) {
-        redisClient.delete(previousServerAccessToken);
-        redisClient.put(currentServerAccessToken, newToken);
-    }
-
-    private GoogleTokenInfo getTokenInfoFromRedis(String serverAccessToken) throws MemberException{
-        var optionalTokenInfo = redisClient.get(serverAccessToken, GoogleTokenInfo.class);
-        if (optionalTokenInfo.isEmpty()){
-            logger.warning("GoogleOAuthService : Token 정보를 찾을 수 없습니다.");
-            throw new MemberException(ErrorCode.MEMBER_SIGN_IN_ERROR);
-        }
-        return optionalTokenInfo.get();
-    }
-
-    private HttpEntity<?> postAccessTokenRenewRequest(String accessToken, String refreshToken){
-        var headers = requestHeadersOf(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.set("Authorization", "Basic " + accessToken);
-        var body = bodyOfExchangeRefreshTokenForAccessTokenRequest(refreshToken);
+    private HttpEntity<MultiValueMap<String, String>> postRefreshTokenRequest(String googleAccessToken){
+        HttpHeaders headers = requestHeadersOf(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> body = bodyOfRefreshTokenFormData(googleAccessToken);
         return new HttpEntity<>(body, headers);
     }
 
-    private MultiValueMap<String, String> bodyOfExchangeRefreshTokenForAccessTokenRequest(String refreshToken){
+    private MultiValueMap<String, String> bodyOfRefreshTokenFormData(String refreshToken){
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("grant_type", "refresh_token");
+        formData.add("client_id", CLIENT_ID);
+        formData.add("client_secret", CLIENT_SECRET);
         formData.add("refresh_token", refreshToken);
+        formData.add("grant_type", "refresh_token");
         return formData;
     }
 
-    private URI baseUriOf(String USER_INFO_BASE_URI) {
-        return UriComponentsBuilder
-                .fromUriString(USER_INFO_BASE_URI)
-                .encode()
-                .build().toUri();
-    }
-
-    private HttpHeaders requestHeadersOf(MediaType mediaType) {
-        var headers = new HttpHeaders();
-        headers.setContentType(mediaType);
-        return headers;
-    }
-
-    private <T> T parseJsonToObject(String jsonResponse, Class<T> classType) throws JsonProcessingException {
-        return objectMapper.readValue(jsonResponse, classType);
+    private void updateGoogleAccessTokenInRedis(String previousServerAccessToken,
+                                                String currentServerAccessToken,
+                                                String currentGoogleAccessToken) {
+        redisClient.delete(previousServerAccessToken);
+        redisClient.put(currentServerAccessToken, currentGoogleAccessToken);
     }
 
     // 탈퇴 또는 로그아웃시 revoke 처리
@@ -278,10 +254,10 @@ public class GoogleOAuthService implements OAuthService {
 
         try {
             restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
-            var uri = baseUriOf(AUTHORIZATION_REVOKE_URI);
-            var googleTokenInfo = getTokenInfoFromRedis(serverAccessToken);
-            var request = postRevokeRequest(googleTokenInfo.getAccessToken());
-            var response = restTemplate.postForEntity(uri, request, String.class);
+            URI uri = baseUriOf(GOOGLE_AUTHORIZATION_REVOKE_URI);
+            String googleAccessToken = getGoogleAccessTokenFromRedis(serverAccessToken);
+            HttpEntity<MultiValueMap<String, String>> request = postRevokeRequest(googleAccessToken);
+            restTemplate.postForEntity(uri, request, String.class);
         } catch(MemberException e) {
             logger.info("구글 로그아웃 중 이슈 : " + e.getMessage());
         } catch (Exception e) {
@@ -290,17 +266,34 @@ public class GoogleOAuthService implements OAuthService {
 
     }
 
-    private HttpEntity<?> postRevokeRequest(String accessToken){
-        var headers = requestHeadersOf(MediaType.APPLICATION_FORM_URLENCODED);
-        var body = bodyOfRevokeRequest(accessToken);
+    private HttpEntity<MultiValueMap<String, String>> postRevokeRequest(String googleAccessToken){
+        HttpHeaders headers = requestHeadersOf(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> body = bodyOfRevokeRequest(googleAccessToken);
         return new HttpEntity<>(body, headers);
     }
 
-    private MultiValueMap<String, String> bodyOfRevokeRequest(String accessToken){
+    private MultiValueMap<String, String> bodyOfRevokeRequest(String googleAccessToken){
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("token", accessToken);
+        formData.add("token", googleAccessToken);
         return formData;
     }
 
+    // 보조 메소드들
+    private URI baseUriOf(String USER_INFO_BASE_URI) {
+        return UriComponentsBuilder
+                .fromUriString(USER_INFO_BASE_URI)
+                .encode()
+                .build().toUri();
+    }
+
+    private HttpHeaders requestHeadersOf(MediaType mediaType) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(mediaType);
+        return headers;
+    }
+
+    private <T> T parseJsonToObject(String jsonResponse, Class<T> classType) throws JsonProcessingException {
+        return objectMapper.readValue(jsonResponse, classType);
+    }
 
 }

@@ -15,11 +15,9 @@ import java.time.LocalDateTime;
 public class GoogleTokenInfo {
 
     private String accessToken;
-    private String refreshToken;
     private long expiresIn; // millisecond
     private String scope;
     private String tokenType;
     private String idToken;
-    private LocalDateTime expiredAt;
 
 }

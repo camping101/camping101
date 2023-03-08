@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class CampLogListResponse {
 
     long total;
-    int pageNumber = 1;
+    int pageNumber = 0;
     int recordSize = 10;
     List<CampLogInfoResponse> campLogs = new ArrayList<>();
 

@@ -26,9 +26,9 @@ public class AdminRecTagController {
     }
 
     @GetMapping
-    public ResponseEntity<RecTagListResponse> getAllRecTags(@RequestBody RecTagListRequest request){
+    public ResponseEntity<RecTagListResponse> getAllRecTags(RecTagListRequest request){
 
-        var recTags = adminRecTagService.getAllRecTags(request);
+        RecTagListResponse recTags = adminRecTagService.getAllRecTags(request);
 
         return ResponseEntity.ok(recTags);
     }

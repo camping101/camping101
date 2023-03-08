@@ -1,13 +1,16 @@
 package com.camping101.beta.security;
 
-import com.camping101.beta.member.entity.type.SignUpType;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 @Component
@@ -22,7 +25,10 @@ public class JwtProvider {
 
         Map<String, Object> payloads = new HashMap<>();
         payloads.put("email", email);
-        payloads.put("memberType", memberType);
+
+        if (!CollectionUtils.isEmpty(memberType)) {
+            payloads.put("memberType", memberType.stream().findFirst().get());
+        }
 
         long expiredTime = new Date().getTime() + expiredSecond;
 
@@ -45,12 +51,22 @@ public class JwtProvider {
                 .getBody();
     }
 
+    public Claims getClaim(String jwtToken, String key)
+            throws MalformedJwtException, ExpiredJwtException,
+            SignatureException, UnsupportedJwtException {
+
+        return Jwts.parser()
+                .setSigningKey(key)
+                .parseClaimsJws(jwtToken)
+                .getBody();
+    }
+
     public String getEmail(Claims claim) {
         return claim.get("email", String.class);
     }
 
     public List<String> getMemberType(Claims claim) {
-        return (List<String>) claim.get("memberType", Object.class);
+        return List.of(claim.get("memberType", String.class));
     }
 
 }

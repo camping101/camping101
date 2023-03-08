@@ -26,7 +26,8 @@ public class MemberController {
     public ResponseEntity<MemberInfoResponse> getMemberInfo(@ApiIgnore Principal principal,
                                                             @PathVariable Long memberId){
 
-        var memberInfoResponse = memberService.getMemberInfo(principal.getName(), memberId);
+        MemberInfoResponse memberInfoResponse
+                = memberService.getMemberInfo(principal.getName(), memberId);
 
         return ResponseEntity.ok(memberInfoResponse);
     }
@@ -35,7 +36,8 @@ public class MemberController {
     public ResponseEntity<MemberPasswordResetResponse> sendTemporalPassword(
             @RequestBody Map<String, String> emailMap){
 
-        var memberPasswordResetResponse = memberService.sendTemporalPassword(emailMap.get("email"));
+        MemberPasswordResetResponse memberPasswordResetResponse
+                = memberService.sendTemporalPassword(emailMap.get("email"));
 
         return ResponseEntity.ok(memberPasswordResetResponse);
     }
@@ -45,7 +47,8 @@ public class MemberController {
                                                                @PathVariable Long memberId,
                                                                MemberUpdateRequest request){
 
-        var memberUpdateResponse = memberService.updateMember(principal.getName(), memberId, request);
+        MemberInfoResponse memberUpdateResponse
+                = memberService.updateMember(principal.getName(), memberId, request);
 
         return ResponseEntity.ok(memberUpdateResponse);
     }
@@ -55,10 +58,9 @@ public class MemberController {
                              @PathVariable Long memberId,
                              @ApiIgnore HttpServletResponse response) throws IOException {
 
-        memberService.getMemberInfo(principal.getName(), memberId);
-        memberService.deleteMember(memberId);
+        memberService.deleteMember(memberId, principal.getName());
 
-        response.sendRedirect("/api/member/logout");
+        response.sendRedirect("/api/signout");
     }
 
 }

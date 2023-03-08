@@ -1,16 +1,23 @@
 package com.camping101.beta.comment.service;
 
+import com.camping101.beta.campLog.entity.CampLog;
 import com.camping101.beta.campLog.repository.CampLogRepository;
 import com.camping101.beta.comment.dto.*;
 import com.camping101.beta.comment.entity.Comment;
+import com.camping101.beta.comment.exception.CommentException;
+import com.camping101.beta.comment.exception.ErrorCode;
 import com.camping101.beta.comment.repository.CommentRepository;
+import com.camping101.beta.member.entity.Member;
 import com.camping101.beta.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
@@ -27,16 +34,16 @@ public class CommentService {
     @Transactional
     public CommentInfoResponse createComment(CommentCreateRequest request) {
 
-        var member = memberRepository.findByEmail(request.getWriterEmail())
+        Member member = memberRepository.findByEmail(request.getWriterEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
 
-        var campLog = campLogRepository.findById(request.getCampLogId())
-                .orElseThrow(() -> new RuntimeException(""));
+        CampLog campLog = campLogRepository.findById(request.getCampLogId())
+                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND));
 
-        var commentCntOfCampLog = commentRepository.countAllByCampLog(campLog);
+        long commentCntOfCampLog = commentRepository.countAllByCampLog(campLog);
         validateIfCommentsCntOfCampLogAlreadyReachedFive(commentCntOfCampLog);
 
-        var commentsOfCampLogByMember = commentRepository.findAllByMemberAndCampLog(member, campLog);
+        List<Comment> commentsOfCampLogByMember = commentRepository.findAllByMemberAndCampLog(member, campLog);
         validateIfCommentAlreadyWrittenByMember(request, commentsOfCampLogByMember);
 
         Comment newComment = commentRepository.save(Comment.from(request));
@@ -47,60 +54,62 @@ public class CommentService {
     }
 
     private static void validateIfCommentsCntOfCampLogAlreadyReachedFive(long commentCntOfCampLog) {
-
+        // 하나의 캠프 로그에 최대 댓글 수 5개
         if (commentCntOfCampLog >= 5) {
-            throw new RuntimeException("하나의 캠프 로그에는 최대 5개의 댓글이 달릴 수 있습니다.");
+            throw new CommentException(ErrorCode.COMMENT_MAX_LIMIT_REACHED);
         }
-
     }
 
     private static void validateIfCommentAlreadyWrittenByMember(CommentCreateRequest request,
                                                                 List<Comment> commentsOfCampLogByMember) {
         if (!CollectionUtils.isEmpty(commentsOfCampLogByMember)){
             int mainCommentCnt = 0;
-            int reCommentCnt = 0;
+
+            // 현재 캠프 로그에서 본인이 작성한 댓글들 중에서
             for (Comment commentByMember : commentsOfCampLogByMember) {
+                // 깊이가 0인 댓글의 갯수 확인
                 if (Objects.isNull(commentByMember.getParentId())
                         && commentByMember.isReCommentYn() == false) {
                     mainCommentCnt++;
-                } else {
-                    reCommentCnt++;
+                    if (mainCommentCnt >= 1) break;
+                }
+                // 깊이가 1인 댓글(=대댓글) 확인
+                else {
+                    // 이미 부모 댓글에 대댓글을 달은 경우 더 이상 작성 불가
+                    if (commentByMember.getParentId() == request.getParentId()) {
+                        throw new CommentException(ErrorCode.RE_COMMENT_MAX_LIMIT_REACHED);
+                    }
                 }
             }
 
+            // 깊이가 0인 댓글이 1개 이상일 때, 깊이 0인 댓글 더 이상 작성 불가
             if ((Objects.isNull(request.getParentId())
                     && request.isReCommentYn() == false
-                    && mainCommentCnt >= 1)){
-                throw new RuntimeException("하나의 캠프 로그에 하나의 댓글만 작성 가능합니다.");
-            }
-
-            if (Objects.nonNull(request.getParentId())
-                    && request.isReCommentYn()
-                    && reCommentCnt >= 1){
-                throw new RuntimeException("하나의 댓글에 하나의 대댓글만 작성 가능합니다.");
+                    && mainCommentCnt >= 1) && request.getParentId() == -1){
+                throw new CommentException(ErrorCode.COMMENT_MAX_LIMIT_REACHED);
             }
         }
     }
 
     public CommentListResponse getCommentListOfCampLog(CommentListRequest request) {
 
-        var campLog = campLogRepository.findById(request.getCampLogId())
-                .orElseThrow(() -> new RuntimeException(""));
+        CampLog campLog = campLogRepository.findById(request.getCampLogId())
+                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND));
 
-        var page = PageRequest.of(request.getPageNumber(), request.getRecordSize(),
-                Sort.Direction.DESC, "created_at");
+        Pageable page = PageRequest.of(request.getPageNumber(), request.getRecordSize(),
+                Sort.Direction.DESC, "createdAt");
 
-        var commentList = commentRepository.findAllByCampLog(campLog, page);
+        Page<Comment> commentList = commentRepository.findAllByCampLog(campLog, page);
 
-        return CommentListResponse.fromEntity(commentList);
+        return CommentListResponse.fromEntity(commentList, campLog);
     }
 
     public List<CommentInfoResponse> getChildrenListOfParentComment(Long commentId) {
 
-        var commentList = commentRepository.findAllByParentId(commentId);
+        List<Comment> commentList = commentRepository.findAllByParentId(commentId);
 
         if (CollectionUtils.isEmpty(commentList)) {
-            throw new RuntimeException("");
+            throw new CommentException(ErrorCode.COMMENT_NOT_FOUND);
         }
 
         return commentList.stream()
@@ -111,11 +120,11 @@ public class CommentService {
     @Transactional
     public CommentInfoResponse updateComment(CommentUpdateRequest request) {
 
-        var comment = commentRepository.findById(request.getCommentId())
-                .orElseThrow(() -> new RuntimeException("해당 댓글을 찾을 수 없습니다."));
+        Comment comment = commentRepository.findById(request.getCommentId())
+                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND));
 
         if (!comment.getMember().getEmail().equals(request.getRequesterEmail())) {
-            throw new RuntimeException("댓글을 쓴 작성자만 수정이 가능합니다.");
+            throw new CommentException(ErrorCode.COMMENT_WRITER_MISMATCH);
         }
 
         comment.changeContent(request.getContent());
@@ -126,11 +135,11 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long commentId, String requesterEmail) {
 
-        var comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("해당 댓글을 찾을 수 없습니다."));
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND));
 
         if (!comment.getMember().getEmail().equals(requesterEmail)) {
-            throw new RuntimeException("댓글을 쓴 작성자만 삭제가 가능합니다.");
+            throw new CommentException(ErrorCode.COMMENT_WRITER_MISMATCH);
         }
 
         commentRepository.delete(comment);

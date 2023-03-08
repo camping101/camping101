@@ -10,7 +10,7 @@ import lombok.*;
 public class CommentListRequest {
 
     private Long campLogId;
-    int pageNumber = 1;
+    int pageNumber = 0;
     int recordSize = 5;
 
 }

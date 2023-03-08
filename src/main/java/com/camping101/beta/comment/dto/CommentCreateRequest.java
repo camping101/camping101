@@ -11,7 +11,7 @@ public class CommentCreateRequest {
 
     private String writerEmail;
     private Long campLogId;
-    private Long parentId;
+    private long parentId = -1;
     private boolean reCommentYn;
     private String content;
 

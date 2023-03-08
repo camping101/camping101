@@ -1,12 +1,7 @@
 package com.camping101.beta.member.dto;
 
-import com.camping101.beta.campLog.entity.CampLog;
 import com.camping101.beta.member.entity.Member;
-import com.camping101.beta.member.entity.type.MemberType;
-import com.camping101.beta.member.entity.type.SignUpType;
 import lombok.*;
-
-import java.util.List;
 
 @Getter
 @Setter

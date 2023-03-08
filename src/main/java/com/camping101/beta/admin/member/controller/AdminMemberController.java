@@ -4,6 +4,7 @@ import com.camping101.beta.admin.member.dto.AdminMemberInfoResponse;
 import com.camping101.beta.admin.member.dto.AdminMemberListRequest;
 import com.camping101.beta.admin.member.dto.AdminMemberListResponse;
 import com.camping101.beta.admin.member.service.AdminMemberService;
+import com.camping101.beta.member.entity.status.MemberStatus;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +19,9 @@ public class AdminMemberController {
     private final AdminMemberService adminMemberService;
 
     @GetMapping
-    public ResponseEntity<AdminMemberListResponse> getMemberList(@RequestBody AdminMemberListRequest request){
+    public ResponseEntity<AdminMemberListResponse> getMemberList(AdminMemberListRequest request){
 
-        var memberList = adminMemberService.getMemberList(request);
+        AdminMemberListResponse memberList = adminMemberService.getMemberList(request);
 
         return ResponseEntity.ok(memberList);
     }
@@ -28,16 +29,16 @@ public class AdminMemberController {
     @GetMapping("/{memberId}")
     public ResponseEntity<AdminMemberInfoResponse> getMemberInfo(@PathVariable Long memberId){
 
-        var memberInfo = adminMemberService.getMemberInfo(memberId);
+        AdminMemberInfoResponse memberInfo = adminMemberService.getMemberInfo(memberId);
 
         return ResponseEntity.ok(memberInfo);
     }
 
     @PutMapping
     public ResponseEntity<AdminMemberInfoResponse> updateMemberStatus(@RequestParam Long memberId,
-                                                                      @RequestParam String memberStatus){
+                                                                      @RequestParam MemberStatus memberStatus){
 
-        var updatedMember = adminMemberService.updateMemberStatus(memberId, memberStatus);
+        AdminMemberInfoResponse updatedMember = adminMemberService.updateMemberStatus(memberId, memberStatus);
 
         return ResponseEntity.ok(updatedMember);
     }
