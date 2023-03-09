@@ -52,7 +52,6 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools' // 컨텐츠 변경 시, 자동 재부팅
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1' // jwt
 	implementation group: 'org.apache.commons',name: 'commons-collections4',version: '4.3' // jwt support
-	implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
 
 	// RDB / NoSQL
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
