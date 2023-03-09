@@ -26,6 +26,8 @@ public class CampAuthController {
 
     private final CampAuthService campAuthService;
 
+    
+    
     // 관리자페이지 - 캠핑장 목록 조회
     // 관리자가 캠핑장 목록 가져오기
 
