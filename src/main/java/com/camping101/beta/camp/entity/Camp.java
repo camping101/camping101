@@ -3,7 +3,7 @@ package com.camping101.beta.camp.entity;
 import static com.camping101.beta.camp.entity.ManageStatus.AUTHORIZED;
 import static javax.persistence.EnumType.STRING;
 
-import com.camping101.beta.admin.entity.CampAuth;
+import com.camping101.beta.admin.campAuth.entity.CampAuth;
 import com.camping101.beta.camp.dto.CampCreateRequest;
 import com.camping101.beta.camp.dto.CampCreateResponse;
 import com.camping101.beta.camp.dto.CampDetailsAdminResponse;
