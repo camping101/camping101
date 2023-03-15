@@ -17,9 +17,7 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Configuration
 @EnableSwagger2
@@ -32,6 +30,8 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(DocumentationType.SPRING_WEB)
                 .host(host.substring(7))
+                .consumes(getConsumeContentTypes())
+                .produces(getProduceContentTypes())
                 .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.camping101.beta"))
@@ -39,6 +39,18 @@ public class SwaggerConfig {
                 .build()
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()));
+    }
+
+    private Set<String> getConsumeContentTypes() {
+        Set<String> consumes = new HashSet<>();
+        consumes.add("application/json;charset=UTF-8");
+        return consumes;
+    }
+
+    private Set<String> getProduceContentTypes() {
+        Set<String> produces = new HashSet<>();
+        produces.add("application/json;charset=UTF-8");
+        return produces;
     }
 
     private SecurityContext securityContext() {
