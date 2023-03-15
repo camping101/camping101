@@ -1,11 +1,10 @@
 package com.camping101.beta.camp.service;
 
 import static com.camping101.beta.camp.entity.ManageStatus.AUTHORIZED;
-import static com.camping101.beta.camp.entity.ManageStatus.UNAUTHORIZED;
 import static com.camping101.beta.camp.exception.ErrorCode.CAMP_NOT_FOUND;
 
-import com.camping101.beta.admin.entity.CampAuth;
-import com.camping101.beta.admin.repository.CampAuthRepository;
+import com.camping101.beta.admin.campAuth.entity.CampAuth;
+import com.camping101.beta.admin.campAuth.repository.CampAuthRepository;
 import com.camping101.beta.camp.dto.CampCreateRequest;
 import com.camping101.beta.camp.dto.CampCreateResponse;
 import com.camping101.beta.camp.dto.CampDetailsAdminResponse;
@@ -15,16 +14,12 @@ import com.camping101.beta.camp.dto.CampModifyRequest;
 import com.camping101.beta.camp.dto.CampModifyResponse;
 import com.camping101.beta.camp.dto.campdetaildto.CampDetailsResponse;
 import com.camping101.beta.camp.entity.Camp;
-import com.camping101.beta.camp.entity.FacilityCnt;
-import com.camping101.beta.camp.entity.Location;
 import com.camping101.beta.camp.exception.CampException;
-import com.camping101.beta.camp.exception.ErrorCode;
 import com.camping101.beta.camp.repository.CampRepository;
 import com.camping101.beta.member.entity.Member;
 import com.camping101.beta.member.repository.MemberRepository;
 import com.camping101.beta.site.entity.Site;
 import com.camping101.beta.site.service.SiteService;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
