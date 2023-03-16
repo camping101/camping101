@@ -7,9 +7,13 @@ logging system failed to initialize using configuration from 'null'
 - 원인 : Logback이 ./logs/info.log에 대한 쓰기 권한이 없음 
 - 해결 : "sudo chmod 777 {dir or file}" 을 통해 쓰기 권한 부여하여 해결
 
+<br>
+
 ## ISSUE 2 : AWS 인바이드 규칙에 IP 주소를 추가하였으나 접속 불가
 - 원인 : 추가했던 IPv4 주소가 공유기에서 임시 발급한 사설 IP 주소였음을 확인 (IpConfig로 확인한 주소)
 - 해결 : whatismyip 웹사이트를 통해 공용 IP 주소를 확인하여 수정
+
+<br>
 
 ## ISSUE 3 : 캠핑장 삭제 시 DataIntegrityViolationException 발생
 ```bash
@@ -18,6 +22,8 @@ DataIntegrityViolationException could not execute statement
 - 원인 : 캠핑장 삭제시 캠핑장 승인 테이블의 속성에 camp_id가 남아있어 무결성 문제로 예외 발생
 - 해결 : CampAuth -> Camp 단방향 연관관계에서, CampAuth <-> Camp 양방향 연관관계로 변경 후, <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Camp 엔터티의 CampAuth List 필드에 cascade = CascadeType.Remove 속성 추가
+
+<br>
  
 ## ISSUE 4 : GET 요청 시 아래와 같은 예외 발생
 ```bash
