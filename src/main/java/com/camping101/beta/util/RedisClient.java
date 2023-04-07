@@ -3,29 +3,47 @@ package com.camping101.beta.util;
 import com.amazonaws.util.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RedisClient {
 
     private final ObjectMapper objectMapper;
     private final RedisTemplate<String, String> redisTemplate;
-    private final Logger logger = Logger.getLogger(RedisClient.class.getName());
 
     public <T> boolean put(String key, T data) {
         try {
             String value = objectMapper.writeValueAsString(data);
-            logger.info(value);
-            redisTemplate.opsForValue().set(parseToUTF8String(key), parseToUTF8String(value));
+            log.info("RedisClient.put : {}", value);
+            ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+            valueOperations.set(parseToUTF8String(key), parseToUTF8String(value));
             return true;
         } catch (Exception e) {
-            Arrays.stream(e.getStackTrace()).forEach(x -> logger.warning(x.toString()));
+            Arrays.stream(e.getStackTrace()).forEach(x -> log.warn(x.toString()));
+            return false;
+        }
+    }
+
+    public <T> boolean put(String key, T data, long expiredSeconds) {
+        try {
+            String value = objectMapper.writeValueAsString(data);
+            log.info("RedisClient.put : {}", value);
+            ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+            valueOperations.set(parseToUTF8String(key), parseToUTF8String(value));
+            redisTemplate.expire(parseToUTF8String(key), expiredSeconds, TimeUnit.SECONDS);
+            return true;
+        } catch (Exception e) {
+            Arrays.stream(e.getStackTrace()).forEach(x -> log.warn(x.toString()));
             return false;
         }
     }
@@ -37,7 +55,7 @@ public class RedisClient {
                     Optional.empty() : Optional.of(objectMapper.readValue(value, classType));
         } catch (Exception e) {
             e.getStackTrace();
-            Arrays.stream(e.getStackTrace()).forEach(x -> logger.warning(x.toString()));
+            Arrays.stream(e.getStackTrace()).forEach(x -> log.warn(x.toString()));
             return Optional.empty();
         }
     }
