@@ -5,23 +5,22 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.camping101.beta.member.service.MemberSignUpServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class S3FileUploader {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
     private final AmazonS3 amazonS3;
-    private final Logger logger = Logger.getLogger(MemberSignUpServiceImpl.class.getName());
 
     public String uploadFileAndGetURL(MultipartFile multipartFile) {
 
@@ -41,11 +40,11 @@ public class S3FileUploader {
 
        } catch(IOException | SdkClientException e) {
 
-           logger.info("이미지 저장 실패 : 연결 이상");
+           log.info("이미지 저장 실패 : 연결 이상");
 
        } catch(Exception e) {
 
-           logger.info("이미지 저장 실패 : (이미지가 없을 가능성이 높습니다.)" + e.getMessage());
+           log.info("이미지 저장 실패 : (이미지가 없을 가능성이 높습니다.)" + e.getMessage());
        }
 
         return "";

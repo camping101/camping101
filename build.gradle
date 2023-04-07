@@ -10,10 +10,9 @@ buildscript {
 
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '2.7.8'
-	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+	id 'org.springframework.boot' version '2.7.9'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
-	id 'jacoco'
+	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 }
 
 group = 'camping101'
@@ -24,94 +23,32 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
-}
-
-test {
-	useJUnitPlatform()
-	systemProperty "jasypt.encryptor.password", project.getProperties().get("jasypt.encryptor.password")
-	finalizedBy jacocoTestReport // 테스트 끝나고 리포트 실행
+	querydsl.extendsFrom compileClasspath
 }
 
 repositories {
 	mavenCentral()
 }
 
-// feign client 사용을 위한 스프링클라우드 설정
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+	main.java.srcDir querydslDir
+}
+
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
+}
+
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
 	}
-}
-
-dependencies {
-
-	// Web MVC 관련
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools' // 컨텐츠 변경 시, 자동 재부팅
-	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1' // jwt
-	implementation group: 'org.apache.commons',name: 'commons-collections4',version: '4.3' // jwt support
-	implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
-
-	// RDB / NoSQL
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-	implementation 'org.mariadb.jdbc:mariadb-java-client'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'   // jpa
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis' // redis
-	implementation 'com.querydsl:querydsl-jpa:5.0.0'      // querydsl
-	implementation 'com.querydsl:querydsl-apt:5.0.0'
-	annotationProcessor 'com.querydsl:querydsl-apt:5.0.0'
-	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'  // p6spy  : 쿼리 시각화
-	runtimeOnly 'com.h2database:h2' // 테스트용
-
-	testImplementation('it.ozimov:embedded-redis:0.7.3'){
-		exclude group: 'org.slf4j', module: 'slf4j-simple' // slf4j 중복 방지용
-	}
-
-	// Test
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-
-	// Swagger
-	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
-	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
-
-	// ETC
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4' // Jasypt : 보완키 암호화
-
-
-}
-
-jacoco{
-	toolVersion = "0.8.7"
-}
-
-jacocoTestReport {
-	dependsOn test
-	reports {
-		html.enabled true
-		xml.enabled false
-		csv.enabled false
-	}
-	finalizedBy 'jacocoTestCoverageVerification'
-}
-
-tasks.jacocoTestCoverageVerification {
-//	violationRules {
-//		rule {
-//			enabled = true;
-//			element = 'CLASS'
-//
-//			limit {
-//				counter = 'METHOD'
-//				value = 'COVEREDRATIO'
-//				minimum = 0.5
-//			}
-//		}
-//	}
 }
 
 dependencies {
@@ -132,19 +69,21 @@ dependencies {
 	implementation 'org.mariadb.jdbc:mariadb-java-client'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'   // jpa
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis' // redis
-	implementation 'com.querydsl:querydsl-jpa:5.0.0'      // querydsl
-	implementation 'com.querydsl:querydsl-apt:5.0.0'
-	annotationProcessor 'com.querydsl:querydsl-apt:5.0.0'
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'  // p6spy  : 쿼리 시각화
 	runtimeOnly 'com.h2database:h2' // 테스트용
 
-	testImplementation('it.ozimov:embedded-redis:0.7.3'){
-		exclude group: 'org.slf4j', module: 'slf4j-simple' // slf4j 중복 방지용
-	}
+	// QueryDSL
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation('it.ozimov:embedded-redis:0.7.3'){
+		exclude group: 'org.slf4j', module: 'slf4j-simple' // slf4j 중복 방지용
+	}
 
 	// Swagger
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
@@ -160,23 +99,11 @@ dependencies {
 
 }
 
-jar {
-	enabled = false
+test {
+	useJUnitPlatform()
+	systemProperty "jasypt.encryptor.password", project.getProperties().get("jasypt.encryptor.password")
 }
 
-//querydsl 추가 시작
-def querydslDir = "$buildDir/generated/querydsl"
-querydsl {
-	jpa = true
-	querydslSourcesDir = querydslDir
+clean {
+	delete querydslDir
 }
-sourceSets {
-	main.java.srcDir querydslDir
-}
-configurations {
-	querydsl.extendsFrom compileClasspath
-}
-compileQuerydsl {
-	options.annotationProcessorPath = configurations.querydsl
-}
-
