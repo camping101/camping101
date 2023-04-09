@@ -1,6 +1,6 @@
 package com.camping101.beta.web.domain.member.service.oAuth;
 
-import com.camping101.beta.web.domain.member.dto.TokenInfo;
+import com.camping101.beta.web.domain.member.dto.token.TokenInfo;
 
 public interface OAuthService {
 

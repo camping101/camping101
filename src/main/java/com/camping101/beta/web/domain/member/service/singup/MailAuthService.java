@@ -1,17 +1,17 @@
-package com.camping101.beta.web.domain.member.service.mail;
+package com.camping101.beta.web.domain.member.service.singup;
 
 import com.camping101.beta.db.entity.member.MailAuth;
 import com.camping101.beta.util.CustomMailSender;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
+import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Component
+@Service
 @RequiredArgsConstructor
-public class MailAuthSupporter {
+public class MailAuthService {
 
     private final CustomMailSender customMailSender;
 
@@ -20,11 +20,8 @@ public class MailAuthSupporter {
 
     public boolean isAuthCodeMatching(MailAuth mailAuth, String authCodeToCompare){
 
-        if (Objects.nonNull(mailAuth.getMailAuthCode())) {
-            return mailAuth.getMailAuthCode().equals(authCodeToCompare);
-        }
-
-        return false;
+        return !Objects.isNull(mailAuth.getMailAuthCode())
+                && StringUtils.equals(mailAuth.getMailAuthCode(), authCodeToCompare);
     }
 
     public boolean isAuthCodeExpired(MailAuth mailAuth) {
@@ -45,7 +42,7 @@ public class MailAuthSupporter {
                 "<body>\n" +
                 "    <form action = 'http://localhost:8080/api/signup/mail/auth'>\n" +
                 "        <input type = hidden name = 'email' value = '" + receiver + "'>" +
-                "        <input type = hidden name = 'authCode' value = '" + authCode + "'>" +
+                "        <input type = hidden name = 'mailAuthCode' value = '" + authCode + "'>" +
                 "        <input type = 'submit' value = '인증하기'>\n" +
                 "    </form>\n" +
                 "</body>\n" +

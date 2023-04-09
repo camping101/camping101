@@ -2,13 +2,13 @@ package com.camping101.beta.web.domain.member.service.oAuth;
 
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.util.JsonParser;
-import com.camping101.beta.web.domain.member.dto.TokenInfo;
+import com.camping101.beta.web.domain.member.dto.token.TokenInfo;
 import com.camping101.beta.web.domain.member.exception.ErrorCode;
 import com.camping101.beta.web.domain.member.exception.MemberException;
 import com.camping101.beta.web.domain.member.repository.MemberRepository;
-import com.camping101.beta.web.domain.token.RefreshToken;
-import com.camping101.beta.web.domain.token.exception.TokenException;
-import com.camping101.beta.web.domain.token.service.TokenService;
+import com.camping101.beta.db.entity.token.RefreshToken;
+import com.camping101.beta.web.domain.member.exception.TokenException;
+import com.camping101.beta.web.domain.member.service.token.TokenService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Optional;
 import static com.camping101.beta.global.config.GoogleOAuthConfig.*;
-import static com.camping101.beta.web.domain.token.exception.ErrorCode.INVALID_REFRESH_TOKEN;
+import static com.camping101.beta.web.domain.member.exception.ErrorCode.INVALID_REFRESH_TOKEN;
 
 /**
  * 구글 OAuth
@@ -132,12 +132,12 @@ public class GoogleOAuthService implements OAuthService {
         if (optionalMember.isPresent()) {
             // 이미 가입한 경우 회원 프로필, 닉네임 업데이트
             Member member = optionalMember.get();
-            member.changeImage(googleAccountInfo.getPicture());
-            member.changeNickname(googleAccountInfo.getName());
+            member.setProfileImagePath(googleAccountInfo.getPicture());
+            member.setNickname(googleAccountInfo.getName());
             return memberRepository.save(member);
         }
 
-        return memberRepository.save(Member.from(googleAccountInfo));
+        return memberRepository.save(googleAccountInfo.toActivatedMember());
     }
 
     // 서버 AT 토큰 갱신

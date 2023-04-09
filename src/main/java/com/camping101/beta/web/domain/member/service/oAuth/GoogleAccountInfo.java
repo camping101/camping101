@@ -1,5 +1,9 @@
 package com.camping101.beta.web.domain.member.service.oAuth;
 
+import com.camping101.beta.db.entity.member.Member;
+import com.camping101.beta.db.entity.member.status.MemberStatus;
+import com.camping101.beta.db.entity.member.type.MemberType;
+import com.camping101.beta.db.entity.member.type.SignUpType;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
@@ -19,5 +23,16 @@ public class GoogleAccountInfo implements Serializable {
     private String givenName;
     private String familyName;
     private String picture;
+
+    public Member toActivatedMember() {
+        return Member.builder()
+                .profileImagePath(this.picture)
+                .email(this.email)
+                .nickname(this.givenName)
+                .signUpType(SignUpType.GOOGLE)
+                .memberType(MemberType.CUSTOMER)
+                .memberStatus(MemberStatus.IN_USE)
+                .build();
+    }
 
 }

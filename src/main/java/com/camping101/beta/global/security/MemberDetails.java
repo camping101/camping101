@@ -3,10 +3,11 @@ package com.camping101.beta.global.security;
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.member.status.MemberStatus;
 import com.camping101.beta.db.entity.member.type.MemberType;
+import com.camping101.beta.db.entity.member.type.SignUpType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import java.time.LocalDateTime;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,10 @@ public class MemberDetails implements UserDetails {
         return getAuthorities().stream().map(GrantedAuthority::getAuthority).map(MemberType::valueOf).findFirst();
     }
 
+    public SignUpType getSignUpType(){
+        return member.getSignUpType();
+    }
+
     @Override
     public String getUsername() {
         return member.getEmail();
@@ -43,16 +48,12 @@ public class MemberDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return MemberStatus.NOT_ACTIVATED.equals(member.getMemberStatus()) ||
-                MemberStatus.IN_USE.equals(member.getMemberStatus()) ||
-                MemberStatus.WITHDRAW.equals(member.getMemberStatus())
-                        && member.getDeletedAt().plusYears(1)
-                                 .isBefore(LocalDateTime.now());
+        return !MemberStatus.WITHDRAW.equals(member.getMemberStatus());
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return MemberStatus.STOPPED.equals(member.getMemberStatus()) == false;
+        return !MemberStatus.STOPPED.equals(member.getMemberStatus()) && isAccountNonExpired();
     }
 
     @Override

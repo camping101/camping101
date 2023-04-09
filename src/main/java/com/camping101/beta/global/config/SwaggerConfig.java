@@ -44,6 +44,8 @@ public class SwaggerConfig {
     private Set<String> getConsumeContentTypes() {
         Set<String> consumes = new HashSet<>();
         consumes.add("application/json;charset=UTF-8");
+        consumes.add("application/x-www-form-urlencoded");
+        consumes.add("multipart/form-data");
         return consumes;
     }
 
@@ -60,7 +62,7 @@ public class SwaggerConfig {
     }
 
     private List<SecurityReference> defaultAuth() {
-        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessToken");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
         return Arrays.asList(new SecurityReference("Authorization", authorizationScopes));

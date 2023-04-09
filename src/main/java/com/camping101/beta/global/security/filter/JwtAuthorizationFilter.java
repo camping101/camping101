@@ -1,16 +1,18 @@
 package com.camping101.beta.global.security.filter;
 
+import com.camping101.beta.global.security.MemberDetails;
 import com.camping101.beta.util.FilterResponseHandler;
-import com.camping101.beta.web.domain.token.service.TokenService;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.lang.Objects;
+import com.camping101.beta.web.domain.member.service.signin.MemberSignInService;
+import com.camping101.beta.web.domain.member.service.token.TokenService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -25,6 +27,7 @@ import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 @Slf4j
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
+    private final MemberSignInService memberSignInService;
     private final TokenService tokenService;
     private final String ignoreAllPathsStartWith;
     private final String ignoreGetPathsStartWith;
@@ -36,11 +39,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         log.info("JwtAuthorizationFilter 접근 경로 : {}", request.getServletPath());
 
-        if (validateIfPathDoesNotNeedAuthentication(request.getServletPath(), request.getMethod())) {
+        if (isPermittedPath(request.getServletPath(), request.getMethod())) {
 
             filterChain.doFilter(request, response);
 
-        } else if (!tokenService.notEmptyAndStartsWithBearer(accessToken)) {
+        } else if (!tokenService.isNotBlankAndStartsWithBearer(accessToken)) {
 
             FilterResponseHandler.sendFilterExceptionResponse(response, "헤더에 Access Token이 없습니다.", SC_BAD_REQUEST);
 
@@ -48,7 +51,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             try {
 
-                Authentication authentication = tokenService.generateAuthenticationByAccessToken(accessToken);
+                String email = tokenService.extractEmailByAccessToken(accessToken);
+                MemberDetails memberDetails = memberSignInService.loadUserByUsername(email);
+                Authentication authentication = new UsernamePasswordAuthenticationToken(memberDetails, null, memberDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 filterChain.doFilter(request, response);
 
@@ -64,13 +69,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    private boolean validateIfPathDoesNotNeedAuthentication(String servletPath, String httpMethod) {
+    private boolean isPermittedPath(String servletPath, String httpMethod) {
         return isPermittedAllPath(servletPath) || isPermittedGetPath(servletPath, httpMethod);
     }
 
     private boolean isPermittedAllPath(String servletPath){
 
-        return Arrays.stream(ignoreAllPathsStartWith.split(",")).filter(x -> servletPath.startsWith(x)).count() >= 1;
+        boolean result = Arrays.stream(ignoreAllPathsStartWith.split(",")).filter(x -> servletPath.startsWith(x)).count() >= 1;
+
+        log.info("JwtAuthorizationFilter.isPermittedAllPath ? {} -> {}", servletPath, result);
+
+        return result;
     }
 
     private boolean isPermittedGetPath(String servletPath, String httpMethod) {

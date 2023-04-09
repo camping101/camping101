@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@Api(tags = {"추천태그 조회 API (비회원 가능)"})
+@Api(tags = {"캠핑 101 - 추천태그 조회 API"})
 @RequestMapping("/api/camplog/regtag")
 public class RecTagController {
 

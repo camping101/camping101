@@ -1,34 +1,38 @@
 package com.camping101.beta.db.entity.member;
 
-import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.camping101.beta.db.entity.BaseEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.envers.AuditOverride;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EntityListeners(value = {AuditingEntityListener.class})
-public class TemporalPassword {
+@AuditOverride(forClass = BaseEntity.class)
+public class TemporalPassword extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "temp_pswd_id")
     private Long id;
-    private Long memberId;
+    @OneToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
     private String temporalPassword;
+    private LocalDateTime expiredAt;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    public static TemporalPassword of(Long memberId, String temporalPassword) {
+    public static TemporalPassword from(Member member, String temporalPassword, LocalDateTime expiredAt) {
         return TemporalPassword.builder()
-                .memberId(memberId)
+                .member(member)
                 .temporalPassword(temporalPassword)
+                .expiredAt(expiredAt)
                 .build();
     }
 

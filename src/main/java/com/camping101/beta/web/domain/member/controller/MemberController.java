@@ -1,66 +1,46 @@
 package com.camping101.beta.web.domain.member.controller;
 
-import com.camping101.beta.web.domain.member.dto.MemberInfoResponse;
-import com.camping101.beta.web.domain.member.dto.MemberUpdateRequest;
-import com.camping101.beta.web.domain.member.service.MemberService;
+import com.camping101.beta.global.security.MemberDetails;
+import com.camping101.beta.web.domain.member.dto.mypage.MemberInfoResponse;
+import com.camping101.beta.web.domain.member.dto.mypage.MemberUpdateRequest;
+import com.camping101.beta.web.domain.member.service.mypage.MemberService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
-import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
-@Api(tags = "마이페이지 API")
+@Api(tags = "캠핑 101 - 마이페이지 API")
 public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/{memberId}/temporal-password")
-    public ResponseEntity<Void> temporalPasswordSend(@ApiIgnore Principal principal,
-                                                     @PathVariable Long memberId){
-
-        memberService.sendTemporalPassword(principal.getName(), memberId);
-
-        return ResponseEntity.ok().build();
-    }
-
     @GetMapping
-    public ResponseEntity<Long> memberId(@ApiIgnore Principal principal){
+    public ResponseEntity<MemberInfoResponse> myMemberInfo(@ApiIgnore @AuthenticationPrincipal MemberDetails memberDetails){
 
-        Long memberId = memberService.getMemberId(principal.getName());
-
-        return ResponseEntity.ok(memberId);
-
-    }
-
-    @GetMapping("/{memberId}")
-    public ResponseEntity<MemberInfoResponse> myMemberInfo(@ApiIgnore Principal principal,
-                                                           @PathVariable Long memberId){
-
-        MemberInfoResponse memberInfoResponse = memberService.getMemberInfo(principal.getName(), memberId);
+        MemberInfoResponse memberInfoResponse = memberService.getMemberInfo(memberDetails.getEmail(), memberDetails.getMemberId());
 
         return ResponseEntity.ok(memberInfoResponse);
     }
 
-    @PutMapping("/{memberId}")
-    public ResponseEntity<MemberInfoResponse> memberUpdate(@ApiIgnore Principal principal,
-                                                           @PathVariable Long memberId,
+    @PutMapping
+    public ResponseEntity<MemberInfoResponse> memberUpdate(@ApiIgnore @AuthenticationPrincipal MemberDetails memberDetails,
                                                            MemberUpdateRequest request){
 
         MemberInfoResponse memberUpdateResponse
-                = memberService.updateMember(principal.getName(), memberId, request);
+                = memberService.updateMember(memberDetails.getEmail(), memberDetails.getMemberId(), request);
 
         return ResponseEntity.ok(memberUpdateResponse);
     }
 
-    @DeleteMapping("/{memberId}")
-    public ResponseEntity<Void> memberDelete(@ApiIgnore Principal principal,
-                                             @PathVariable Long memberId) {
+    @DeleteMapping
+    public ResponseEntity<Void> memberDelete(@ApiIgnore @AuthenticationPrincipal MemberDetails memberDetails) {
 
-        memberService.deleteMember(principal.getName(), memberId);
+        memberService.deleteMember(memberDetails.getEmail(), memberDetails.getMemberId());
 
         return ResponseEntity.ok().build();
     }

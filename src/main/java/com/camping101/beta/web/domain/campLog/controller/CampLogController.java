@@ -13,7 +13,7 @@ import java.security.Principal;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/camplog")
-@Api(tags = {"캠프 로그 API"})
+@Api(tags = {"캠핑 101 - 캠프 로그 API"})
 public class CampLogController {
 
     private final CampLogService campLogService;

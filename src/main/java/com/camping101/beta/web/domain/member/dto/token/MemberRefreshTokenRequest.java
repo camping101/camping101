@@ -1,16 +1,15 @@
-package com.camping101.beta.web.domain.member.dto;
+package com.camping101.beta.web.domain.member.dto.token;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.io.Serializable;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class MemberRefreshTokenRequest implements Serializable {
+public class MemberRefreshTokenRequest {
 
     private String refreshToken;
 

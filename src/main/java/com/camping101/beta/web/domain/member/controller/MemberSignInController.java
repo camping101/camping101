@@ -1,12 +1,12 @@
 package com.camping101.beta.web.domain.member.controller;
 
-import com.camping101.beta.web.domain.member.dto.MemberSignInRequest;
-import com.camping101.beta.web.domain.member.dto.MemberRefreshTokenRequest;
-import com.camping101.beta.web.domain.member.dto.TokenInfo;
-import com.camping101.beta.web.domain.member.exception.ErrorCode;
+import com.camping101.beta.global.security.MemberDetails;
+import com.camping101.beta.web.domain.member.dto.token.MemberRefreshTokenRequest;
+import com.camping101.beta.web.domain.member.dto.token.TokenInfo;
 import com.camping101.beta.web.domain.member.exception.MemberException;
-import com.camping101.beta.web.domain.member.service.MemberSignInService;
 import com.camping101.beta.web.domain.member.service.oAuth.OAuthService;
+import com.camping101.beta.web.domain.member.service.signin.MemberSignInService;
+import com.camping101.beta.web.domain.member.service.temporalPassword.TemporalPasswordService;
 import com.querydsl.core.util.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -22,22 +23,23 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.camping101.beta.global.config.GoogleOAuthConfig.clientId;
+import static com.camping101.beta.web.domain.member.exception.ErrorCode.INVALID_REFRESH_TOKEN;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/signin")
-@Api(tags = {"로그인 API"})
+@Api(tags = {"캠핑 101 - 로그인 API"})
 @Slf4j
 public class MemberSignInController {
 
     private final MemberSignInService memberSignInService;
     private final OAuthService googleOAuthService;
+    private final TemporalPasswordService temporalPasswordService;
 
-    @PostMapping("/mail/authenticate")
-    @ApiIgnore
-    public ResponseEntity<Void> emailMemberAuthenticate(MemberSignInRequest memberSignInRequest) {
+    @PostMapping("/temporal-password")
+    public ResponseEntity<Void> temporalPasswordSend(@ApiIgnore @AuthenticationPrincipal MemberDetails memberDetails){
 
-        memberSignInService.authenticateEmailMember(memberSignInRequest);
+        temporalPasswordService.sendTemporalPassword(memberDetails.getMemberId());
 
         return ResponseEntity.ok().build();
     }
@@ -100,11 +102,9 @@ public class MemberSignInController {
 
             log.info("MemberSignInController.refreshToken : Refresh Token 이 없거나 Basic으로 시작하지 않습니다.");
 
-            throw new MemberException(ErrorCode.REFRESH_TOKEN_INVALID);
+            throw new MemberException(INVALID_REFRESH_TOKEN);
         }
 
     }
-
-
 
 }

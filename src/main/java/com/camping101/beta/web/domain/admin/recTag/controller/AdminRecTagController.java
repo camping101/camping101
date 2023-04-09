@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/rectag")
-@Api(tags = "관리자 추천 태그 API")
+@Api(tags = "관리자사이트 - 추천 태그 API")
 public class AdminRecTagController {
 
     private final AdminRecTagService adminRecTagService;

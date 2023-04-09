@@ -7,6 +7,7 @@ import com.camping101.beta.web.domain.site.dto.SiteModifyRequest;
 import com.camping101.beta.web.domain.site.dto.SiteModifyResponse;
 import com.camping101.beta.web.domain.site.dto.sitedetailsresponse.SiteDetailsResponse;
 import com.camping101.beta.web.domain.site.service.SiteService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/site")
 @RequiredArgsConstructor
+@Api(tags = "캠핑 101 - 사이트 API")
 public class SiteController {
 
     private final SiteService siteService;

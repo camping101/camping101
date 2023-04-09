@@ -1,4 +1,4 @@
-package com.camping101.beta.web.domain.token;
+package com.camping101.beta.db.entity.token;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.camping101.beta.web.domain.member.dto;
+package com.camping101.beta.web.domain.member.dto.mypage;
 
 import lombok.*;
 

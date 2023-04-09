@@ -1,14 +1,21 @@
-package com.camping101.beta.web.domain.member.dto;
+package com.camping101.beta.web.domain.member.dto.mypage;
 
 import com.camping101.beta.db.entity.member.Member;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
+
+import java.io.Serializable;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MemberInfoResponse {
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+public class MemberInfoResponse implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Long memberId;
     private String image;
@@ -21,7 +28,7 @@ public class MemberInfoResponse {
     public static MemberInfoResponse fromEntity(Member member) {
         return MemberInfoResponse.builder()
                 .memberId(member.getMemberId())
-                .image(member.getImage())
+                .image(member.getProfileImagePath())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .phoneNumber(member.getPhoneNumber())

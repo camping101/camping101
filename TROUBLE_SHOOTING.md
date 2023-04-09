@@ -60,3 +60,32 @@ DataIntegrityViolationException could not execute statement
         return produces;
     }
 ```
+
+<br>
+
+## ISSUE 5 : Swagger 요청 시 400 에러
+![img.png](.github/img/swagger-error.png)
+- 원인 : "/webjars" 하위 경로에 대한 접근 허용 X 
+- 해결 : swagger의 WebSecurity ignore 경로의 "/webjars/"를 "/webjars/**"로 변경 
+```java
+@Override
+public void configure(WebSecurity web) {
+
+    web.ignoring()
+            .antMatchers("/h2-console/**","/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/v2/api-docs")
+            .antMatchers("/css/**", "/vendor/**", "/js/**", "/images/**")
+            .antMatchers(HttpMethod.OPTIONS, "/**");
+}
+```
+
+<br>
+
+## ISSUE 6 : Security ProviderNotFoundException for UsernamePasswordAuthenticationToken
+- 원인 : CustomAuthenticationProvider의 supports 부분에 UsernamePasswordAuthenticationToken으로 설정하지 않았음
+- 해결 : 아래와 같이 코드 수정하여 해결
+```java
+@Override
+public boolean supports(Class<?> authentication) {
+    return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
+}
+```

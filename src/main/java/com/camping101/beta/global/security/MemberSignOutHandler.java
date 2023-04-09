@@ -4,7 +4,7 @@ import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.member.type.SignUpType;
 import com.camping101.beta.web.domain.member.repository.MemberRepository;
 import com.camping101.beta.web.domain.member.service.oAuth.OAuthService;
-import com.camping101.beta.web.domain.token.service.TokenService;
+import com.camping101.beta.web.domain.member.service.token.TokenService;
 import com.querydsl.core.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +27,11 @@ public class MemberSignOutHandler implements LogoutHandler {
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 
-        var authorizationHeader = request.getHeader("Authorization");
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        String accessToken = request.getHeader("Authorization");
 
-        if (!StringUtils.isNullOrEmpty(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
-            revokeGoogleAccessTokenIfMemberIsSingedUpByGoogle(authorizationHeader);
+        if (tokenService.isNotBlankAndStartsWithBearer(accessToken)) {
+            revokeGoogleAccessTokenIfMemberIsSingedUpByGoogle(accessToken);
         }
 
         HttpSession session = request.getSession();

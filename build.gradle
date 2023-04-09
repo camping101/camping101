@@ -57,7 +57,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools' // 컨텐츠 변경 시, 자동 재부팅
+	implementation 'org.springframework.data:spring-data-envers'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1' // jwt
 	implementation group: 'org.apache.commons',name: 'commons-collections4',version: '4.3' // jwt support
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'

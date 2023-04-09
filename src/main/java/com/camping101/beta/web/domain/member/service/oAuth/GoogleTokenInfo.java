@@ -6,13 +6,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
 @NoArgsConstructor
 @Getter
 @Setter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class GoogleTokenInfo {
+public class GoogleTokenInfo implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String accessToken;
     private String refreshToken;

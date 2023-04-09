@@ -1,7 +1,7 @@
 package com.camping101.beta.web.domain.member.controller;
 
-import com.camping101.beta.web.domain.member.dto.MemberSignUpRequest;
-import com.camping101.beta.web.domain.member.service.MemberSignUpService;
+import com.camping101.beta.web.domain.member.dto.signup.MemberSignUpRequest;
+import com.camping101.beta.web.domain.member.service.singup.MemberSignUpService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/signup")
-@Api(tags = {"회원가입 API"})
+@Api(tags = {"캠핑 101 - 회원가입 API"})
 public class MemberSignUpController {
 
     private final MemberSignUpService memberSignUpService;
@@ -27,9 +27,9 @@ public class MemberSignUpController {
 
     @GetMapping("/mail/auth")
     public ResponseEntity<?> activateMemberByAuthCode(@RequestParam String email,
-                                                      @RequestParam String authCode){
+                                                      @RequestParam String mailAuthCode){
 
-        memberSignUpService.activateMemberByAuthCode(email, authCode);
+        memberSignUpService.activateMemberByMailAuthCode(email, mailAuthCode);
 
         return ResponseEntity.ok().build();
     }
