@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/camplog/comment")
-@Api(tags = {"댓글 API"})
+@Api(tags = {"캠핑 101 - 댓글 API"})
 public class CommentController {
 
     private final CommentService commentService;

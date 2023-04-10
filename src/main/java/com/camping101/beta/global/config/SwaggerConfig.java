@@ -19,6 +19,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.*;
 
+import static com.camping101.beta.global.security.SecurityConfig.AUTHORIZATION_HEADER;
+
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
@@ -28,7 +30,7 @@ public class SwaggerConfig {
 
     @Bean
     public Docket api() {
-        return new Docket(DocumentationType.SPRING_WEB)
+        return new Docket(DocumentationType.OAS_30)
                 .host(host.substring(7))
                 .consumes(getConsumeContentTypes())
                 .produces(getProduceContentTypes())
@@ -41,9 +43,19 @@ public class SwaggerConfig {
                 .securitySchemes(Arrays.asList(apiKey()));
     }
 
+    private ApiInfo apiInfo(){
+        return new ApiInfoBuilder()
+                .title("캠핑101 API Document")
+                .description("캠핑101의 API를 사용해보세요.")
+                .version("1.0.0")
+                .build();
+    }
+
     private Set<String> getConsumeContentTypes() {
         Set<String> consumes = new HashSet<>();
         consumes.add("application/json;charset=UTF-8");
+        consumes.add("application/x-www-form-urlencoded;charset=UTF-8");
+        consumes.add("multipart/form-data;charset=UTF-8");
         return consumes;
     }
 
@@ -63,19 +75,13 @@ public class SwaggerConfig {
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
-        return Arrays.asList(new SecurityReference("Authorization", authorizationScopes));
+        return Arrays.asList(new SecurityReference(AUTHORIZATION_HEADER, authorizationScopes));
     }
 
     private ApiKey apiKey(){
-        return new ApiKey("Authorization", "Authorization", "Header");
+        return new ApiKey(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER, "Header");
     }
 
-    private ApiInfo apiInfo(){
-        return new ApiInfoBuilder()
-                .title("캠핑101 API Document")
-                .description("캠핑101의 API를 사용해보세요.")
-                .version("1.0.0")
-                .build();
-    }
+
 
 }

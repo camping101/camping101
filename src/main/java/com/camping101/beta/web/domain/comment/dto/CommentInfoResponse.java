@@ -28,7 +28,7 @@ public class CommentInfoResponse {
                 .commentId(comment.getCommentId())
                 .writerEmail(comment.getMember().getEmail())
                 .writerNickName(comment.getMember().getNickname())
-                .profileImagePath(comment.getMember().getImage())
+                .profileImagePath(comment.getMember().getProfileImagePath())
                 .reCommentYn(comment.isReCommentYn())
                 .parentId(comment.getParentId())
                 .content(comment.getContent())

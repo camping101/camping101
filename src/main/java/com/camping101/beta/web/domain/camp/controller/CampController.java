@@ -9,6 +9,7 @@ import com.camping101.beta.web.domain.camp.dto.CampModifyRequest;
 import com.camping101.beta.web.domain.camp.dto.CampModifyResponse;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.CampDetailsResponse;
 import com.camping101.beta.web.domain.camp.service.CampService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/camp")
+@Api(tags = "캠핑 101 - 캠핑장 API")
 public class CampController {
 
     private final CampService campService;

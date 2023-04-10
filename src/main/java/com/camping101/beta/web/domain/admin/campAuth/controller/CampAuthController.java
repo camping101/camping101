@@ -6,6 +6,7 @@ import com.camping101.beta.web.domain.admin.campAuth.dto.CampAuthSearchRequest;
 import com.camping101.beta.web.domain.admin.campAuth.service.CampAuthService;
 import java.util.List;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin")
+@Api(tags = "주인사이트 - 캠핑장관리 API")
 public class CampAuthController {
 
     private final CampAuthService campAuthService;

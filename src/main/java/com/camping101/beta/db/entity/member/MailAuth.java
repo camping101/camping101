@@ -1,10 +1,10 @@
 package com.camping101.beta.db.entity.member;
 
+import com.camping101.beta.db.entity.BaseEntity;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.hibernate.envers.AuditOverride;
+
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -12,22 +12,22 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EntityListeners({AuditingEntityListener.class})
-public class MailAuth {
+@AuditOverride(forClass = BaseEntity.class)
+public class MailAuth extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mail_auth_id")
     private Long id;
 
-    private String email;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
     private String mailAuthCode;
-    @CreatedDate
-    private LocalDateTime createdAt;
 
-    public static MailAuth from(String email, String mailAuthCode) {
+    public static MailAuth from(Member member, String mailAuthCode) {
         return MailAuth.builder()
-                .email(email)
+                .member(member)
                 .mailAuthCode(mailAuthCode)
                 .build();
     }

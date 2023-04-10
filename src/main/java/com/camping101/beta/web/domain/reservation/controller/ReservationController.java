@@ -5,6 +5,8 @@ import com.camping101.beta.web.domain.reservation.dto.ReservationListResponse;
 import com.camping101.beta.web.domain.reservation.dto.ReservationOwnerListResponse;
 import com.camping101.beta.web.domain.reservation.service.ReservationService;
 import java.util.List;
+
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/reservation")
+@Api(tags = "캠핑 101 - 예약 API")
 public class ReservationController {
 
     private final ReservationService reservationService;

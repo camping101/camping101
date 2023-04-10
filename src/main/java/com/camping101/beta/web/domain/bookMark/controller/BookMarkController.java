@@ -5,6 +5,7 @@ import com.camping101.beta.web.domain.bookMark.dto.BookMarkCreateResponse;
 import com.camping101.beta.web.domain.bookMark.dto.BookMarkListResponse;
 import com.camping101.beta.web.domain.bookMark.service.BookMarkService;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/bookmark")
+@Api(tags = "캠핑 101 - 북마크 API")
 public class BookMarkController {
     private final BookMarkService bookMarkService;
 

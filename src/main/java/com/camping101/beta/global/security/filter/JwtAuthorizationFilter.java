@@ -1,23 +1,27 @@
 package com.camping101.beta.global.security.filter;
 
+import com.camping101.beta.global.security.authentication.MemberDetails;
 import com.camping101.beta.util.FilterResponseHandler;
-import com.camping101.beta.web.domain.token.service.TokenService;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.lang.Objects;
+import com.camping101.beta.web.domain.member.service.token.TokenService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+
+import static com.camping101.beta.global.security.SecurityConfig.AUTHORIZATION_HEADER;
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 
@@ -32,15 +36,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String accessToken = request.getHeader("Authorization");
+        String accessToken = request.getHeader(AUTHORIZATION_HEADER);
 
         log.info("JwtAuthorizationFilter 접근 경로 : {}", request.getServletPath());
+        log.info("JwtAuthorizationFilter로 들어온 Access Token : {}", accessToken);
 
-        if (validateIfPathDoesNotNeedAuthentication(request.getServletPath(), request.getMethod())) {
+        if (isPermittedPath(request.getServletPath(), request.getMethod())) {
 
             filterChain.doFilter(request, response);
 
-        } else if (!tokenService.notEmptyAndStartsWithBearer(accessToken)) {
+        } else if (!tokenService.isNotBlankAndStartsWithBearer(accessToken)) {
 
             FilterResponseHandler.sendFilterExceptionResponse(response, "헤더에 Access Token이 없습니다.", SC_BAD_REQUEST);
 
@@ -48,7 +53,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             try {
 
-                Authentication authentication = tokenService.generateAuthenticationByAccessToken(accessToken);
+                MemberDetails memberDetails = tokenService.getMemberDetailsByAccessToken(accessToken);
+
+                if (tokenService.isAccessTokenInBlackList(memberDetails.getMemberId(), accessToken)) {
+                    FilterResponseHandler.sendFilterExceptionResponse(response, "로그아웃된 Access Token 입니다.", SC_BAD_REQUEST);
+                }
+
+                Authentication authentication = new UsernamePasswordAuthenticationToken(memberDetails, null, memberDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 filterChain.doFilter(request, response);
 
@@ -64,13 +75,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    private boolean validateIfPathDoesNotNeedAuthentication(String servletPath, String httpMethod) {
+    private boolean isPermittedPath(String servletPath, String httpMethod) {
         return isPermittedAllPath(servletPath) || isPermittedGetPath(servletPath, httpMethod);
     }
 
     private boolean isPermittedAllPath(String servletPath){
 
-        return Arrays.stream(ignoreAllPathsStartWith.split(",")).filter(x -> servletPath.startsWith(x)).count() >= 1;
+        boolean result = Arrays.stream(ignoreAllPathsStartWith.split(",")).filter(x -> servletPath.startsWith(x)).count() >= 1;
+
+        log.info("JwtAuthorizationFilter.isPermittedAllPath ? {} -> {}", servletPath, result);
+
+        return result;
     }
 
     private boolean isPermittedGetPath(String servletPath, String httpMethod) {

@@ -2,20 +2,16 @@ package com.camping101.beta.util;
 
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.member.type.MemberType;
-import com.camping101.beta.global.security.authentication.UsernamePasswordAuthentication;
+import com.camping101.beta.db.entity.member.type.SignUpType;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -28,16 +24,18 @@ public class JwtProvider {
 
     public String createToken(Member member, long expiredSecond) {
 
-        return createToken(member.getEmail(), member.getMemberId(), member.getMemberType(), expiredSecond);
+        return createToken(member.getEmail(), member.getMemberId(),
+                           member.getMemberType(), member.getSignUpType(), expiredSecond);
 
     }
 
-    public String createToken(String email, Long memberId, MemberType memberType, long expiredSecond) {
+    public String createToken(String email, Long memberId, MemberType memberType, SignUpType signUpType, long expiredSecond) {
 
         Map<String, Object> payloads = new HashMap<>();
         payloads.put("email", email);
         payloads.put("memberId", memberId);
         payloads.put("memberType", memberType.name());
+        payloads.put("signUpType", signUpType.name());
 
         long expiredTime = new Date().getTime() + expiredSecond;
 
@@ -71,14 +69,8 @@ public class JwtProvider {
         return MemberType.valueOf(claim.get("memberType", String.class));
     }
 
-    public Authentication getAuthentication(String jwtToken) throws MalformedJwtException, ExpiredJwtException,
-            SignatureException, UnsupportedJwtException{
-
-        Claims claims = getClaim(jwtToken);
-        String email = getEmail(claims);
-        List<GrantedAuthority> roles = List.of(new SimpleGrantedAuthority(getMemberType(claims).name()));
-        return new UsernamePasswordAuthentication(email, null, roles);
-
+    public SignUpType getSignUpType(Claims claim) {
+        return SignUpType.valueOf(claim.get("signUpType", String.class));
     }
 
 }

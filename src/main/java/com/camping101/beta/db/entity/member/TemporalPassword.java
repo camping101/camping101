@@ -1,35 +1,22 @@
 package com.camping101.beta.db.entity.member;
 
-import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import javax.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 import java.time.LocalDateTime;
 
-@Entity
+@RedisHash(value = "temporalPassword", timeToLive = 60L * 5) // 5분
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EntityListeners(value = {AuditingEntityListener.class})
 public class TemporalPassword {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "temp_pswd_id")
-    private Long id;
-    private Long memberId;
     private String temporalPassword;
-
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    public static TemporalPassword of(Long memberId, String temporalPassword) {
-        return TemporalPassword.builder()
-                .memberId(memberId)
-                .temporalPassword(temporalPassword)
-                .build();
-    }
+    private Long memberId;
 
 }
