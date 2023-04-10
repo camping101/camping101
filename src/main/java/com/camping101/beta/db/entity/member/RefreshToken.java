@@ -1,4 +1,4 @@
-package com.camping101.beta.db.entity.token;
+package com.camping101.beta.db.entity.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,7 +6,9 @@ import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
-@RedisHash(value = "refreshToken", timeToLive = 60 * 60 * 24 * 14) // 2 week
+import java.time.LocalDateTime;
+
+@RedisHash(value = "refreshToken")
 @AllArgsConstructor
 @Builder
 @Getter
@@ -16,7 +18,6 @@ public class RefreshToken {
     private String refreshToken;
     private String googleRefreshToken;
     private Long memberId;
-    private String email;
-    private String memberType;
+    private LocalDateTime expiredAt;
 
 }

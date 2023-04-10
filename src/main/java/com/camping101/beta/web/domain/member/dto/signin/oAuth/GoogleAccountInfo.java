@@ -1,4 +1,4 @@
-package com.camping101.beta.web.domain.member.service.oAuth;
+package com.camping101.beta.web.domain.member.dto.signin.oAuth;
 
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.member.status.MemberStatus;

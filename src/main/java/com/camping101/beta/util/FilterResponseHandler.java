@@ -4,6 +4,7 @@ import com.camping101.beta.web.domain.member.exception.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -20,9 +21,15 @@ public class FilterResponseHandler {
 
     }
 
-    public static void sendSuccessResponse(HttpServletResponse response,
-                                           Map<String, String> responseMap)
-                                                       throws IOException {
+    public static void sendSuccessResponse(HttpServletResponse response, String message) throws IOException {
+
+        Map<String, String> responseMap = new HashMap<>();
+        responseMap.put("message", message);
+
+        sendSuccessResponse(response, responseMap);
+    }
+
+    public static void sendSuccessResponse(HttpServletResponse response, Map<String, String> responseMap) throws IOException {
 
         new ObjectMapper().writeValue(response.getWriter(), responseMap);
     }

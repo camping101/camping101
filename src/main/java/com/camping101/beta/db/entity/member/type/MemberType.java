@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-public enum MemberType {
+public enum MemberType implements GrantedAuthority{
 
     CUSTOMER, OWNER, ADMIN;
 
@@ -22,4 +22,8 @@ public enum MemberType {
         return MemberType.valueOf(optionalMemberTypeString.get().toUpperCase(Locale.ROOT));
     }
 
+    @Override
+    public String getAuthority() {
+        return this.name();
+    }
 }

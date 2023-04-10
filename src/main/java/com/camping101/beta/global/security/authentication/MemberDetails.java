@@ -1,9 +1,10 @@
-package com.camping101.beta.global.security;
+package com.camping101.beta.global.security.authentication;
 
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.member.status.MemberStatus;
 import com.camping101.beta.db.entity.member.type.MemberType;
 import com.camping101.beta.db.entity.member.type.SignUpType;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,8 +24,9 @@ public class MemberDetails implements UserDetails {
 
     public String getEmail() { return getUsername(); }
 
-    public Optional<MemberType> getMemberType() {
-        return getAuthorities().stream().map(GrantedAuthority::getAuthority).map(MemberType::valueOf).findFirst();
+    public MemberType getMemberType() {
+        return getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority).map(MemberType::valueOf).findFirst().get();
     }
 
     public SignUpType getSignUpType(){

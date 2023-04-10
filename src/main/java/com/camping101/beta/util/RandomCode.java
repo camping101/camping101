@@ -11,8 +11,7 @@ public class RandomCode {
     }
 
     public static String createRandomEightString(){
-        // 랜덤 아스키 8자리
-        return RandomStringUtils.randomAscii(8);
+        return RandomStringUtils.randomAlphanumeric(8);
     }
 
 }

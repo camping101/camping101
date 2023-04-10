@@ -29,9 +29,8 @@ public enum ErrorCode {
     TEMPORAL_PASSWORD_EXPIRED("임시 비밀번호 사용 유효 시간이 지났습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // Token
-    INVALID_REFRESH_TOKEN("잘못된 리프레시 토큰입니다.", HttpStatus.BAD_REQUEST),
-    INVALID_ACCESS_TOKEN("잘못된 엑세스 토큰입니다.", HttpStatus.BAD_REQUEST),
-    REFRESH_TOKEN_NOT_FOUND_IN_REDIS("리플래시 토큰을 레디스에서 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+    INVALID_REFRESH_TOKEN("리프래시 토큰이 만료되었거나 잘못되었습니다.", HttpStatus.BAD_REQUEST),
+    INVALID_ACCESS_TOKEN("엑세스 토큰이 만료되었거나 잘못되었습니다.", HttpStatus.BAD_REQUEST);
 
     private final String message;
     private final HttpStatus httpStatus;

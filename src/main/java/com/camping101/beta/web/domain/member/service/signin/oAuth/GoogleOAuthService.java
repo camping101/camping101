@@ -1,15 +1,18 @@
-package com.camping101.beta.web.domain.member.service.oAuth;
+package com.camping101.beta.web.domain.member.service.signin.oAuth;
 
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.util.JsonParser;
+import com.camping101.beta.web.domain.member.dto.signin.oAuth.GoogleAccountInfo;
+import com.camping101.beta.web.domain.member.dto.signin.oAuth.GoogleTokenInfo;
 import com.camping101.beta.web.domain.member.dto.token.TokenInfo;
 import com.camping101.beta.web.domain.member.exception.ErrorCode;
 import com.camping101.beta.web.domain.member.exception.MemberException;
 import com.camping101.beta.web.domain.member.repository.MemberRepository;
-import com.camping101.beta.db.entity.token.RefreshToken;
+import com.camping101.beta.db.entity.member.RefreshToken;
 import com.camping101.beta.web.domain.member.exception.TokenException;
 import com.camping101.beta.web.domain.member.service.token.TokenService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.jsonwebtoken.lang.Strings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -29,13 +32,6 @@ import java.util.Optional;
 import static com.camping101.beta.global.config.GoogleOAuthConfig.*;
 import static com.camping101.beta.web.domain.member.exception.ErrorCode.INVALID_REFRESH_TOKEN;
 
-/**
- * 구글 OAuth
- * - 구글의 경우 엑세스 토큰(AT)을 리플레시 토큰(RT)로도 사용함
- * - 구글의 엑세스 토큰은 유효 시간이 정해지지 않음.
- * - 인증 Process :
- *   구글 로그인 -> 구글 AT 발급 -> 회원 생성 및 수정 -> 서버 AT, RT 발급 -> 레디스에 구글 AT와 함께 RefreshToken 저장
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -71,7 +67,9 @@ public class GoogleOAuthService implements OAuthService {
 
             log.info("GoogleOAuthService.getGoogleTokenInfo : {}", response.getBody());
 
-            return jsonParser.parseJsonToObject(response.getBody(), GoogleTokenInfo.class);
+            GoogleTokenInfo googleTokenInfo = jsonParser.parseJsonToObject(response.getBody(), GoogleTokenInfo.class);
+
+            return googleTokenInfo;
 
         } catch (JsonProcessingException e) {
 
@@ -95,12 +93,10 @@ public class GoogleOAuthService implements OAuthService {
 
     private MultiValueMap<String, String> tokenRequestFormData(String code){
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("client_id", clientId);
-        formData.add("client_secret", clientSecret);
-        formData.add("redirect_uri", redirectUri);
+        formData.add("client_id", googleClientId);
+        formData.add("client_secret", googleClientSecret);
+        formData.add("redirect_uri", googleRedirectUri);
         formData.add("grant_type", "authorization_code");
-        formData.add("access_type", "offline");
-        formData.add("prompt", "content");
         formData.add("code", code);
         return formData;
     }
@@ -125,6 +121,7 @@ public class GoogleOAuthService implements OAuthService {
         }
     }
 
+    // 회원 생성 또는 수정
     private Member createOrUpdateMember(GoogleAccountInfo googleAccountInfo) {
 
         Optional<Member> optionalMember = memberRepository.findByEmail(googleAccountInfo.getEmail());
@@ -140,64 +137,50 @@ public class GoogleOAuthService implements OAuthService {
         return memberRepository.save(googleAccountInfo.toActivatedMember());
     }
 
-    // 서버 AT 토큰 갱신
+    // 구글 엑세스 토큰 갱신
     @Override
-    public TokenInfo reissueAccessTokenByRefreshToken(String refreshToken) throws TokenException{
-
-        RefreshToken rt = tokenService.findRefreshTokenFromRedis(refreshToken)
-                .orElseThrow(() -> new TokenException(INVALID_REFRESH_TOKEN));
-
-
-
-        GoogleTokenInfo newGoogleTokenInfo = reissueGoogleAccessToken(rt.getGoogleRefreshToken());
-        GoogleAccountInfo newGoogleAccountInfo = parseIdTokenToGoogleAccountInfo(newGoogleTokenInfo.getIdToken());
-
-        Member member = createOrUpdateMember(newGoogleAccountInfo);
-        String newAccessToken = tokenService.createAccessToken(member);
-        // TODO 여기부터
-        String newRefreshToken = tokenService.createRefreshToken(newGoogleTokenInfo.getAccessToken(), member);
-
-        return new TokenInfo(newAccessToken, newRefreshToken);
-        
-    }
-
-    // 구글 RT 토큰 갱신 - 실제로는 AT(Access Token)이나, 구글의 경우 RT(Refresh Token)로도 사용됨
-    private GoogleTokenInfo reissueGoogleAccessToken(String googleAccessToken){
+    public String reissueAccessTokenByRefreshToken(String googleRefreshToken) throws TokenException{
 
         try {
 
             restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
             URI uri = baseUriOf(googleTokenUri);
-            HttpEntity<MultiValueMap<String, String>> request = postRefreshTokenRequest(googleAccessToken);
+            HttpEntity<MultiValueMap<String, String>> request = postRefreshTokenRequest(googleRefreshToken);
             ResponseEntity<String> response = restTemplate.postForEntity(uri, request, String.class);
 
             log.info("Google Response : \n" + response.getBody());
 
-            return jsonParser.parseJsonToObject(response.getBody(), GoogleTokenInfo.class);
+            GoogleTokenInfo googleTokenInfo = jsonParser.parseJsonToObject(response.getBody(), GoogleTokenInfo.class);
+
+            return googleTokenInfo.getAccessToken();
 
         } catch (JsonProcessingException e) {
+
             log.warn("GoogleOAuthService.refreshGoogleToken : Json parsing trouble");
-            throw new MemberException(ErrorCode.MEMBER_SIGN_IN_ERROR);
+            throw new TokenException(INVALID_REFRESH_TOKEN);
+
         } catch (Exception e) {
+
             log.warn("GoogleOAuthService.refreshGoogleToken : Refresh Token을 전송하는 과정에서 무엇인가 잘못되었습니다!");
             Arrays.stream(e.getStackTrace()).forEach(x -> log.warn(x.toString()));
-            throw new MemberException(ErrorCode.MEMBER_SIGN_IN_ERROR);
-        }
+            throw new TokenException(INVALID_REFRESH_TOKEN);
 
+        }
+        
     }
 
-    private HttpEntity<MultiValueMap<String, String>> postRefreshTokenRequest(String googleAccessToken){
+    private HttpEntity<MultiValueMap<String, String>> postRefreshTokenRequest(String googleRefreshToken){
         HttpHeaders headers = requestHeadersOf(MediaType.APPLICATION_FORM_URLENCODED);
-        MultiValueMap<String, String> body = bodyOfRefreshTokenFormData(googleAccessToken);
+        MultiValueMap<String, String> body = bodyOfRefreshTokenFormData(googleRefreshToken);
         return new HttpEntity<>(body, headers);
     }
 
     private MultiValueMap<String, String> bodyOfRefreshTokenFormData(String refreshToken){
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("client_id", clientId);
-        formData.add("client_secret", clientSecret);
-        formData.add("refresh_token", refreshToken);
+        formData.add("client_id", googleClientId);
+        formData.add("client_secret", googleClientSecret);
         formData.add("grant_type", "refresh_token");
+        formData.add("refresh_token", refreshToken);
         return formData;
     }
 
@@ -206,15 +189,21 @@ public class GoogleOAuthService implements OAuthService {
     public void revokeAccessTokenForLogOut(String serverAccessToken) {
 
         try {
+
             restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
             URI uri = baseUriOf(googleRevokeUri);
             String googleAccessToken = "tokenService."; // TODO
             HttpEntity<MultiValueMap<String, String>> request = postRevokeRequest(googleAccessToken);
             restTemplate.postForEntity(uri, request, String.class);
+
         } catch(MemberException e) {
+
             log.info("구글 로그아웃 중 이슈 : " + e.getMessage());
+
         } catch (Exception e) {
+
             log.warn("구글 로그아웃 중 이슈 : " + e.getMessage());
+
         }
 
     }

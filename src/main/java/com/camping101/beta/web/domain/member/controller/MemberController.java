@@ -1,15 +1,19 @@
 package com.camping101.beta.web.domain.member.controller;
 
-import com.camping101.beta.global.security.MemberDetails;
+import com.camping101.beta.global.security.authentication.MemberDetails;
+import com.camping101.beta.web.domain.member.dto.mypage.MemberSignOutRequest;
 import com.camping101.beta.web.domain.member.dto.mypage.MemberInfoResponse;
 import com.camping101.beta.web.domain.member.dto.mypage.MemberUpdateRequest;
 import com.camping101.beta.web.domain.member.service.mypage.MemberService;
+import com.camping101.beta.web.domain.member.service.token.TokenService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,6 +22,7 @@ import springfox.documentation.annotations.ApiIgnore;
 public class MemberController {
 
     private final MemberService memberService;
+    private final TokenService tokenService;
 
     @GetMapping
     public ResponseEntity<MemberInfoResponse> myMemberInfo(@ApiIgnore @AuthenticationPrincipal MemberDetails memberDetails){
@@ -27,7 +32,7 @@ public class MemberController {
         return ResponseEntity.ok(memberInfoResponse);
     }
 
-    @PutMapping
+    @PutMapping(consumes = "multipart/form-data")
     public ResponseEntity<MemberInfoResponse> memberUpdate(@ApiIgnore @AuthenticationPrincipal MemberDetails memberDetails,
                                                            MemberUpdateRequest request){
 
@@ -35,6 +40,19 @@ public class MemberController {
                 = memberService.updateMember(memberDetails.getEmail(), memberDetails.getMemberId(), request);
 
         return ResponseEntity.ok(memberUpdateResponse);
+    }
+
+    @DeleteMapping("/signout")
+    public ResponseEntity<Void> memberSignOut(@ApiIgnore @AuthenticationPrincipal MemberDetails memberDetails,
+                                              @Valid @RequestBody MemberSignOutRequest request) {
+
+        // 레디스의 Refresh Token 삭제
+        tokenService.deleteRefreshTokenByMemberId(memberDetails.getMemberId());
+
+        // 레디스에 Access Token을 Black List로 등록
+        tokenService.addAccessTokenToBlackList(memberDetails.getMemberId(), request.getAccessToken());
+
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping

@@ -1,6 +1,5 @@
 package com.camping101.beta.global.security.authentication;
 
-import com.camping101.beta.global.security.MemberDetails;
 import com.camping101.beta.web.domain.member.service.signin.MemberSignInService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -15,9 +15,9 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @AllArgsConstructor
 @Builder
-public class MemberSignUpRequest {
+public class SignUpByEmailRequest {
 
-    private MultipartFile profileImagePath;
+    private MultipartFile profileImage;
     @NotBlank
     private String email;
     @NotBlank

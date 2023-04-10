@@ -4,7 +4,7 @@ import com.camping101.beta.db.entity.member.MailAuth;
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.util.RandomCode;
 import com.camping101.beta.util.S3FileUploader;
-import com.camping101.beta.web.domain.member.dto.signup.MemberSignUpRequest;
+import com.camping101.beta.web.domain.member.dto.signup.SignUpByEmailRequest;
 import com.camping101.beta.web.domain.member.exception.ErrorCode;
 import com.camping101.beta.web.domain.member.exception.MemberException;
 import com.camping101.beta.web.domain.member.repository.MailAuthRepository;
@@ -29,7 +29,7 @@ public class MemberSignUpServiceImpl implements MemberSignUpService{
 
     @Override
     @Transactional(rollbackOn = MemberException.class)
-    public void signUpByEmail(MemberSignUpRequest request) {
+    public void signUpByEmail(SignUpByEmailRequest request) {
 
         validateIfMemberAlreadySignedUp(request.getEmail());
 
@@ -48,9 +48,9 @@ public class MemberSignUpServiceImpl implements MemberSignUpService{
 
     }
 
-    private Member createNewMember(MemberSignUpRequest request){
+    private Member createNewMember(SignUpByEmailRequest request){
 
-        String s3ProfileImagePath = s3FileUploader.uploadFileAndGetURL(request.getProfileImagePath());
+        String s3ProfileImagePath = s3FileUploader.uploadFileAndGetURL(request.getProfileImage());
         String encPassword = passwordEncoder.encode(request.getPassword());
 
         Member newMember = request.toNotActivatedMember(s3ProfileImagePath, encPassword);

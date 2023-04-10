@@ -2,8 +2,8 @@ package com.camping101.beta.web.domain.member.service.temporalPassword;
 
 public interface TemporalPasswordService {
 
-    void sendTemporalPassword(Long memberId);
+    void sendTemporalPassword(String email);
 
-    boolean isTemporalPasswordMatching(Long memberId, String temporalPasswordToCompare);
+    boolean isTemporalPasswordMatching(String temporalPasswordToCompare, Long memberId);
 
 }

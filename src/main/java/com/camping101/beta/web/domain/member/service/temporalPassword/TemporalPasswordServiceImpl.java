@@ -9,6 +9,7 @@ import com.camping101.beta.web.domain.member.exception.MemberException;
 import com.camping101.beta.web.domain.member.repository.MemberRepository;
 import com.camping101.beta.web.domain.member.repository.TemporalPasswordRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,6 +19,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TemporalPasswordServiceImpl implements TemporalPasswordService{
 
     private final TemporalPasswordRepository temporalPasswordRepository;
@@ -28,25 +30,35 @@ public class TemporalPasswordServiceImpl implements TemporalPasswordService{
     private long temporalPasswordExpirationSeconds;
 
     @Override
-    public void sendTemporalPassword(Long memberId){
+    public void sendTemporalPassword(String email){
 
-        Member member = memberRepository.findById(memberId)
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
 
-        TemporalPassword tempPassword = createLimitedTimeTemporalPassword(member);
+        TemporalPassword tempPassword = createLimitedTimeTemporalPassword(member.getMemberId());
 
         sendTemporalPasswordToMail(member.getEmail(), tempPassword.getTemporalPassword());
 
+        log.info("TemporalPasswordServiceImpl.sendTemporalPassword : 임시 비밀번호 발송 완료");
+
     }
 
-    private TemporalPassword createLimitedTimeTemporalPassword(Member member) {
+    private TemporalPassword createLimitedTimeTemporalPassword(Long memberId) {
 
-        temporalPasswordRepository.findByMember(member).ifPresent(temporalPasswordRepository::delete);
+        temporalPasswordRepository.findByMemberId(memberId).ifPresent(temporalPasswordRepository::delete);
 
         String randomTemporalPasswordCode = RandomCode.createRandomEightString();
-        LocalDateTime expiredAt = LocalDateTime.now().plusSeconds(temporalPasswordExpirationSeconds);
 
-        return temporalPasswordRepository.save(TemporalPassword.from(member, randomTemporalPasswordCode, expiredAt));
+        TemporalPassword newTemporalPassword = temporalPasswordRepository.save(
+                TemporalPassword.builder()
+                        .temporalPassword(randomTemporalPasswordCode)
+                        .memberId(memberId)
+                        .build()
+        );
+
+        log.info("TemporalPasswordServiceImpl.createLimitedTimeTemporalPassword : 임시 비밀번호 \"{}\" 생성", randomTemporalPasswordCode);
+
+        return newTemporalPassword;
     }
 
     private void sendTemporalPasswordToMail(String email, String temporalPasswordCode) {
@@ -73,17 +85,18 @@ public class TemporalPasswordServiceImpl implements TemporalPasswordService{
     }
 
     @Override
-    public boolean isTemporalPasswordMatching(Long memberId, String temporalPasswordToCompare) {
+    public boolean isTemporalPasswordMatching(String temporalPassword, Long memberId) {
 
-        Optional<TemporalPassword> optionalTemporalPassword = temporalPasswordRepository.findByMemberId(memberId);
+        Optional<TemporalPassword> optionalTemporalPassword = temporalPasswordRepository.findById(temporalPassword);
 
-        if (optionalTemporalPassword.isEmpty()) return false;
+        if (optionalTemporalPassword.isEmpty()) {
 
-        TemporalPassword temporalPassword = optionalTemporalPassword.get();
+            log.info("TemporalPasswordServiceImpl.isTemporalPasswordMatching : 레디스에 저장된 임시 비밀번호 없음");
 
-        if (temporalPassword.getExpiredAt().isBefore(LocalDateTime.now())) return false;
+            return false;
+        }
 
-        return StringUtils.equals(temporalPassword.getTemporalPassword(), temporalPasswordToCompare);
+        return optionalTemporalPassword.get().getMemberId().equals(memberId);
     }
 
 }

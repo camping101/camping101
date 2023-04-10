@@ -1,13 +1,13 @@
 package com.camping101.beta.web.domain.member.service.token;
 
+import com.camping101.beta.db.entity.member.AccessTokenBlackList;
 import com.camping101.beta.db.entity.member.Member;
+import com.camping101.beta.db.entity.member.RefreshToken;
 import com.camping101.beta.db.entity.member.type.MemberType;
 import com.camping101.beta.db.entity.member.type.SignUpType;
-import com.camping101.beta.db.entity.token.RefreshToken;
-import com.camping101.beta.global.security.MemberDetails;
+import com.camping101.beta.global.security.authentication.MemberDetails;
 import com.camping101.beta.util.JwtProvider;
-import com.camping101.beta.web.domain.member.exception.MemberException;
-import com.camping101.beta.web.domain.member.exception.TokenException;
+import com.camping101.beta.web.domain.member.repository.AccessTokenBlackListRepository;
 import com.camping101.beta.web.domain.member.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -18,17 +18,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static com.camping101.beta.db.entity.member.type.SignUpType.GOOGLE;
-import static com.camping101.beta.web.domain.member.exception.ErrorCode.INVALID_REFRESH_TOKEN;
-import static com.camping101.beta.web.domain.member.exception.ErrorCode.MEMBER_TYPE_NOT_FOUND;
 
 /**
  * Token Provider
- * - Access Token, Refresh Token 생성 및 Redis 저장 관리
+ * - Access Token 생성
+ * - Refresh Token 생성 및 Redis 저장 (저장 시, Bearer는 빼고 저장한다.)
  */
 
 @Component
@@ -38,40 +37,44 @@ public class TokenService {
 
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AccessTokenBlackListRepository accessTokenBlackListRepository;
 
     @Value("${token.jwt.accesstoken}")
     private long accessExpireMillisecond;
     @Value("${token.jwt.refreshtoken}")
     private long refreshExpireMillisecond;
 
-    private final static String ACCESS_TOKEN_PREFIX = "Bearer ";
-    private final static String REFRESH_TOKEN_PREFIX = "Basic ";
+    private final static String TOKEN_PREFIX = "Bearer ";
 
-    public Optional<RefreshToken> findRefreshTokenFromRedis(String refreshToken){
+    public Optional<RefreshToken> findRefreshTokenById(String refreshToken){
 
-        return refreshTokenRepository.findByRefreshToken(refreshToken);
+        return refreshTokenRepository.findById(refreshToken.substring(TOKEN_PREFIX.length()));
     }
 
-    public Long extractMemberIdByAccessToken(String accessToken) throws MalformedJwtException, ExpiredJwtException, SignatureException, UnsupportedJwtException{
+    public MemberDetails getMemberDetailsByAccessToken(String accessToken) throws MalformedJwtException, ExpiredJwtException, SignatureException, UnsupportedJwtException{
 
-        Claims claims = jwtProvider.getClaim(accessToken);
+        Member member = extractMemberFromToken(accessToken);
 
-        return jwtProvider.getMemberId(claims);
+        return new MemberDetails(member);
     }
 
-    public Long extractMemberIdByRefreshToken(String refreshToken) throws TokenException{
+    private Member extractMemberFromToken(String token) throws MalformedJwtException, ExpiredJwtException, SignatureException, UnsupportedJwtException{
 
-        RefreshToken rt = findRefreshTokenFromRedis(refreshToken)
-                .orElseThrow(() -> new TokenException(INVALID_REFRESH_TOKEN));
+        Claims claims = jwtProvider.getClaim(token.substring(TOKEN_PREFIX.length()));
+        Long memberId = jwtProvider.getMemberId(claims);
+        String email = jwtProvider.getEmail(claims);
+        MemberType memberType = jwtProvider.getMemberType(claims);
+        SignUpType signUpType = jwtProvider.getSignUpType(claims);
 
-        return rt.getMemberId();
-    }
+        Member member = Member.builder()
+                .memberId(memberId)
+                .email(email)
+                .memberType(memberType)
+                .signUpType(signUpType)
+                .build();
 
-    public String extractEmailByAccessToken(String accessToken) throws MalformedJwtException, ExpiredJwtException, SignatureException, UnsupportedJwtException{
+        return member;
 
-        Claims claims = jwtProvider.getClaim(accessToken);
-
-        return jwtProvider.getEmail(claims);
     }
 
     public void setTokenHeader(HttpServletResponse response,
@@ -83,18 +86,10 @@ public class TokenService {
         response.setHeader("refresh_token", refreshToken);
     }
 
-    public Map<String, String> tokenBody(String accessToken, String refreshToken) {
-        Map<String, String> responseMap = new HashMap<>();
-        responseMap.put("access_token", accessToken);
-        responseMap.put("refresh_token", refreshToken);
-        return responseMap;
-    }
+    public String createAccessToken(MemberDetails memberDetails) {
 
-    public String createAccessToken(MemberDetails memberDetails) throws MemberException{
-
-        MemberType memberType = memberDetails.getMemberType().orElseThrow(() -> new MemberException(MEMBER_TYPE_NOT_FOUND));
-
-        return createAccessToken(memberDetails.getEmail(), memberDetails.getMemberId(), memberType, memberDetails.getSignUpType());
+       return createAccessToken(memberDetails.getEmail(), memberDetails.getMemberId(),
+               memberDetails.getMemberType(), memberDetails.getSignUpType());
     }
 
     public String createAccessToken(Member member){
@@ -103,7 +98,7 @@ public class TokenService {
 
         log.info("TokenProvider.createAccessToken : Bearer {}", rawAccessToken);
 
-        return String.format("%s%s", ACCESS_TOKEN_PREFIX, rawAccessToken);
+        return String.format("%s%s", TOKEN_PREFIX, rawAccessToken);
     }
 
     public String createAccessToken(String email, Long memberId, MemberType memberType, SignUpType signUpType){
@@ -112,32 +107,43 @@ public class TokenService {
 
         log.info("TokenProvider.createAccessToken : Bearer {}", rawAccessToken);
 
-        return String.format("%s%s", ACCESS_TOKEN_PREFIX, rawAccessToken);
+        return String.format("%s%s", TOKEN_PREFIX, rawAccessToken);
     }
 
-    public String createRefreshToken(MemberDetails memberDetails) throws MemberException{
+    public String createAccessTokenByRefreshToken(String refreshToken) throws MalformedJwtException, ExpiredJwtException, SignatureException, UnsupportedJwtException{
 
-        MemberType memberType = memberDetails.getMemberType().orElseThrow(() -> new MemberException(MEMBER_TYPE_NOT_FOUND));
+        Member member = extractMemberFromToken(refreshToken);
 
-        return createRefreshToken(memberDetails.getEmail(), memberDetails.getMemberId(), memberType, memberDetails.getSignUpType());
+        return createAccessToken(member);
+    }
+
+    public String createRefreshToken(MemberDetails memberDetails) {
+
+        return createRefreshToken(memberDetails.getEmail(), memberDetails.getMemberId(),
+                memberDetails.getMemberType(), memberDetails.getSignUpType());
+    }
+
+    public String createRefreshToken(Member member) {
+
+        return createRefreshToken(member.getEmail(), member.getMemberId(),
+                member.getMemberType(), member.getSignUpType());
     }
 
     public String createRefreshToken(String email, Long memberId, MemberType memberType, SignUpType signUpType){
 
         String rawRefreshToken = jwtProvider.createToken(email, memberId, memberType, signUpType, refreshExpireMillisecond);
 
-        log.info("TokenProvider.createRefreshToken : Basic {}", rawRefreshToken);
+        log.info("TokenProvider.createRefreshToken : Bearer {}", rawRefreshToken);
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .refreshToken(rawRefreshToken)
                 .memberId(memberId)
-                .email(email)
-                .memberType(memberType.name())
+                .expiredAt(LocalDateTime.now().plusSeconds(refreshExpireMillisecond / 1000))
                 .build();
 
         refreshTokenRepository.save(refreshToken);
 
-        return String.format("%s%s", REFRESH_TOKEN_PREFIX, rawRefreshToken);
+        return String.format("%s%s", TOKEN_PREFIX, rawRefreshToken);
     }
 
     public String createRefreshToken(String googleRefreshToken, Member member) {
@@ -149,35 +155,53 @@ public class TokenService {
 
         String rawRefreshToken = jwtProvider.createToken(email, memberId, memberType, signUpType, refreshExpireMillisecond);
 
-        log.info("TokenProvider.createRefreshToken : Basic {}", rawRefreshToken);
+        log.info("TokenProvider.createRefreshToken : Bearer {}", rawRefreshToken);
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .refreshToken(rawRefreshToken)
                 .googleRefreshToken(googleRefreshToken)
                 .memberId(memberId)
-                .email(email)
-                .memberType(memberType.name())
+                .expiredAt(LocalDateTime.now().plusSeconds(refreshExpireMillisecond / 1000))
                 .build();
 
         refreshTokenRepository.save(refreshToken);
 
-        return String.format("%s%s", REFRESH_TOKEN_PREFIX, rawRefreshToken);
+        return String.format("%s%s", TOKEN_PREFIX, rawRefreshToken);
     }
 
     public boolean isNotBlankAndStartsWithBearer(String accessToken) {
 
-        return StringUtils.hasText(accessToken) && accessToken.startsWith(ACCESS_TOKEN_PREFIX);
+        return StringUtils.hasText(accessToken) && accessToken.startsWith(TOKEN_PREFIX);
     }
 
-    public boolean isNotEmptyAndStartsWithBasic(String refreshToken) {
+    public boolean isAccessTokenInBlackList(Long memberId, String accessToken) {
 
-        if (!StringUtils.hasText(refreshToken)) return false;
+        Optional<AccessTokenBlackList> accessTokenBlackList = accessTokenBlackListRepository.findById(memberId);
 
-        return refreshToken.startsWith(REFRESH_TOKEN_PREFIX);
+        if (accessTokenBlackList.isEmpty()) return false;
+
+        return accessTokenBlackList.get().getBlackList().contains(accessToken.substring(TOKEN_PREFIX.length()));
     }
 
-    public boolean isRefreshTokenValid(String refreshToken) {
-        return refreshTokenRepository.existsByRefreshToken(refreshToken);
+    public void addAccessTokenToBlackList(Long memberId, String accessToken) {
+
+        Optional<AccessTokenBlackList> optionalAccessTokenBlackList = accessTokenBlackListRepository.findById(memberId);
+
+        AccessTokenBlackList accessTokenBlackList;
+
+        if (optionalAccessTokenBlackList.isPresent()) {
+            accessTokenBlackList = optionalAccessTokenBlackList.get();
+            accessTokenBlackList.getBlackList().add(accessToken.substring(TOKEN_PREFIX.length()));
+        } else {
+            accessTokenBlackList = new AccessTokenBlackList(memberId, Arrays.asList(accessToken));
+        }
+
+        accessTokenBlackListRepository.save(accessTokenBlackList);
+
+    }
+
+    public void deleteRefreshTokenByMemberId(Long memberId) {
+        refreshTokenRepository.deleteAll(refreshTokenRepository.findAllByMemberId(memberId));
     }
 
 }

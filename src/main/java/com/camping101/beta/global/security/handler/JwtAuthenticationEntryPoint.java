@@ -1,4 +1,4 @@
-package com.camping101.beta.global.security.authentication;
+package com.camping101.beta.global.security.handler;
 
 import com.camping101.beta.util.FilterResponseHandler;
 import org.springframework.security.authentication.AccountExpiredException;
@@ -7,22 +7,20 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import static com.nimbusds.oauth2.sdk.http.HTTPResponse.SC_UNAUTHORIZED;
 
-public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        AuthenticationException exception) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
-        FilterResponseHandler.sendFilterExceptionResponse(response, getExceptionMessage(exception), 401);
+        FilterResponseHandler.sendFilterExceptionResponse(response, getExceptionMessage(exception), SC_UNAUTHORIZED);
 
-        response.sendRedirect("/api/signin/fail");
     }
 
     private String getExceptionMessage(AuthenticationException exception){
@@ -44,3 +42,5 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     }
 
 }
+
+

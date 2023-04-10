@@ -8,7 +8,6 @@ import com.camping101.beta.web.domain.member.exception.TokenException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -25,18 +24,6 @@ public class GlobalExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(exceptionResponse, e.getErrorCode().getHttpStatus());
-    }
-
-    @ExceptionHandler(value = UsernameNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleUsernameNotFoundException(UsernameNotFoundException e) {
-
-        ExceptionResponse exceptionResponse = ExceptionResponse.builder()
-                .status(403)
-                .reasonOfError("회원이 존재하지 않습니다.")
-                .errorMessage(e.getMessage())
-                .build();
-
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(value = CommentException.class)

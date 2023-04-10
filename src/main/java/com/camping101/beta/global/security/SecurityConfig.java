@@ -1,13 +1,12 @@
 package com.camping101.beta.global.security;
 
 import com.camping101.beta.db.entity.member.type.MemberType;
-import com.camping101.beta.global.security.authentication.CustomAuthenticationFailureHandler;
-import com.camping101.beta.global.security.authentication.CustomAuthenticationSuccessHandler;
+import com.camping101.beta.global.security.handler.JwtAuthenticationEntryPoint;
 import com.camping101.beta.global.security.authentication.UsernamePasswordAuthenticationProvider;
+import com.camping101.beta.global.security.handler.JwtAccessDeniedHandler;
+import com.camping101.beta.global.security.filter.JwtAuthenticationFilter;
 import com.camping101.beta.global.security.filter.JwtAuthorizationFilter;
-import com.camping101.beta.web.domain.member.repository.MemberRepository;
 import com.camping101.beta.web.domain.member.service.signin.MemberSignInService;
-import com.camping101.beta.web.domain.member.service.oAuth.OAuthService;
 import com.camping101.beta.web.domain.member.service.token.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 import java.util.List;
 
 @Configuration
@@ -32,9 +32,8 @@ import java.util.List;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final MemberSignInService memberSignInService;
-    private final OAuthService googleOAuthService;
-    private final MemberRepository memberRepository;
     private final TokenService tokenService;
+    public final static String AUTHORIZATION_HEADER = "Authorization";
 
     @Value("${security.ignore.all.paths.startwith}")
     private String ignoreAllPathsStartWith;
@@ -52,22 +51,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .cors().and()
                 .csrf().disable()
+                .httpBasic().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
-                .formLogin()
-                .loginProcessingUrl("/api/signin/mail")
-                .usernameParameter("email")
-                .passwordParameter("password")
-                .successHandler(new CustomAuthenticationSuccessHandler(tokenService))
-                .failureHandler(new CustomAuthenticationFailureHandler()).and()
-                .addFilterBefore(new JwtAuthorizationFilter(memberSignInService, tokenService, ignoreAllPathsStartWith, ignoreGetPathsStartWith), UsernamePasswordAuthenticationFilter.class)
-
-                .logout().logoutUrl("/api/signout")
-                .addLogoutHandler(new MemberSignOutHandler(googleOAuthService, memberRepository, tokenService))
-                .and()
+                .addFilterAt(new JwtAuthenticationFilter(authenticationManager(), tokenService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthorizationFilter(tokenService, ignoreAllPathsStartWith, ignoreGetPathsStartWith), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .accessDeniedHandler(new JwtAccessDeniedHandler())
+                .authenticationEntryPoint(new JwtAuthenticationEntryPoint()).and()
 
                 .authorizeRequests()
-                .antMatchers("/h2-console/**", "/swagger-ui.html", "/v2/api-docs")
+                .antMatchers("/h2-console/**", "/swagger-ui", "/swagger-ui/**", "/v2/api-docs")
                 .permitAll()
 
                 .antMatchers(ignoreAllPathsStartWith.split(","))
@@ -75,18 +69,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, ignoreGetPathsStartWith.split(","))
                 .permitAll()
 
-                .antMatchers("/api/member","/api/member/**")
-                .hasRole(MemberType.CUSTOMER.name())
+                .antMatchers("/api/member","/api/member/**", "/api/signout")
+                .hasAnyAuthority(MemberType.CUSTOMER.name(), MemberType.ADMIN.name(), MemberType.OWNER.name())
 
                 .antMatchers("/api/admin/**")
-                .hasRole(MemberType.ADMIN.name()).and();
+                .hasAuthority(MemberType.ADMIN.name()).and();
     }
 
     @Override
     public void configure(WebSecurity web) {
 
         web.ignoring()
-                .antMatchers("/h2-console/**","/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/v2/api-docs")
+                .antMatchers("/h2-console/**","/swagger-ui/**", "/swagger-resources/**", "/webjars/**", "/v3/api-docs")
                 .antMatchers("/css/**", "/vendor/**", "/js/**", "/images/**")
                 .antMatchers(HttpMethod.OPTIONS, "/**");
     }

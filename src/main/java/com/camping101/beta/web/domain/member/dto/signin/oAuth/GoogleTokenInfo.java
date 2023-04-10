@@ -1,4 +1,4 @@
-package com.camping101.beta.web.domain.member.service.oAuth;
+package com.camping101.beta.web.domain.member.dto.signin.oAuth;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
