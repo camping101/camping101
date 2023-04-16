@@ -23,7 +23,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.util.List;
 
 @Configuration
@@ -71,6 +70,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers("/api/member","/api/member/**", "/api/signout")
                 .hasAnyAuthority(MemberType.CUSTOMER.name(), MemberType.ADMIN.name(), MemberType.OWNER.name())
+
+                .antMatchers("/api/camp","/api/camp/**", "/api/site", "/api/site/**")
+                .hasAuthority(MemberType.CUSTOMER.name())
 
                 .antMatchers("/api/admin/**")
                 .hasAuthority(MemberType.ADMIN.name()).and();
