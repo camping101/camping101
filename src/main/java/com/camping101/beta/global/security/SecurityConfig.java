@@ -63,11 +63,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/h2-console/**", "/swagger-ui", "/swagger-ui/**", "/v2/api-docs")
                 .permitAll()
 
-                .antMatchers(ignoreAllPathsStartWith.split(","))
-                .permitAll()
-                .antMatchers(HttpMethod.GET, ignoreGetPathsStartWith.split(","))
-                .permitAll()
-
                 .antMatchers("/api/member","/api/member/**", "/api/signout")
                 .hasAnyAuthority(MemberType.CUSTOMER.name(), MemberType.ADMIN.name(), MemberType.OWNER.name())
 
@@ -75,7 +70,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .hasAuthority(MemberType.CUSTOMER.name())
 
                 .antMatchers("/api/admin/**")
-                .hasAuthority(MemberType.ADMIN.name()).and();
+                .hasAuthority(MemberType.ADMIN.name())
+
+                .antMatchers(ignoreAllPathsStartWith.split(","))
+                .permitAll()
+                .antMatchers(HttpMethod.GET, ignoreGetPathsStartWith.split(","))
+                .permitAll();
     }
 
     @Override
