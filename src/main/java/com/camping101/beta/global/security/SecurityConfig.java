@@ -1,13 +1,14 @@
 package com.camping101.beta.global.security;
 
 import com.camping101.beta.db.entity.member.type.MemberType;
-import com.camping101.beta.global.security.handler.JwtAuthenticationEntryPoint;
 import com.camping101.beta.global.security.authentication.UsernamePasswordAuthenticationProvider;
-import com.camping101.beta.global.security.handler.JwtAccessDeniedHandler;
 import com.camping101.beta.global.security.filter.JwtAuthenticationFilter;
 import com.camping101.beta.global.security.filter.JwtAuthorizationFilter;
+import com.camping101.beta.global.security.handler.JwtAccessDeniedHandler;
+import com.camping101.beta.global.security.handler.JwtAuthenticationEntryPoint;
 import com.camping101.beta.web.domain.member.service.signin.MemberSignInService;
 import com.camping101.beta.web.domain.member.service.token.TokenService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +24,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -41,50 +41,67 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(new UsernamePasswordAuthenticationProvider(memberSignInService));
+        auth.authenticationProvider(
+            new UsernamePasswordAuthenticationProvider(memberSignInService));
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http
-                .cors().and()
-                .csrf().disable()
-                .httpBasic().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+            .cors().and()
+            .csrf().disable()
+            .httpBasic().disable()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
-                .addFilterAt(new JwtAuthenticationFilter(authenticationManager(), tokenService), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtAuthorizationFilter(tokenService, ignoreAllPathsStartWith, ignoreGetPathsStartWith), UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling()
-                .accessDeniedHandler(new JwtAccessDeniedHandler())
-                .authenticationEntryPoint(new JwtAuthenticationEntryPoint()).and()
+            .addFilterAt(new JwtAuthenticationFilter(authenticationManager(), tokenService),
+                UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new JwtAuthorizationFilter(tokenService, ignoreAllPathsStartWith,
+                ignoreGetPathsStartWith), UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling()
+            .accessDeniedHandler(new JwtAccessDeniedHandler())
+            .authenticationEntryPoint(new JwtAuthenticationEntryPoint()).and()
 
-                .authorizeRequests()
-                .antMatchers("/h2-console/**", "/swagger-ui", "/swagger-ui/**", "/v2/api-docs")
-                .permitAll()
+            .authorizeRequests()
+            .antMatchers("/h2-console/**", "/swagger-ui", "/swagger-ui/**", "/v2/api-docs")
+            .permitAll()
 
-                .antMatchers("/api/member","/api/member/**", "/api/signout")
-                .hasAnyAuthority(MemberType.CUSTOMER.name(), MemberType.ADMIN.name(), MemberType.OWNER.name())
+            .antMatchers("/api/member", "/api/member/**", "/api/signout")
+            .hasAnyAuthority(MemberType.CUSTOMER.name(), MemberType.ADMIN.name(),
+                MemberType.OWNER.name())
 
-                .antMatchers("/api/camp","/api/camp/**", "/api/site", "/api/site/**")
-                .hasAuthority(MemberType.CUSTOMER.name())
+            .antMatchers(HttpMethod.GET, "/api/camp/owner/**", "/api/camp/detail/owner/**", "/api/site/owner/**")
+            .hasAnyAuthority(MemberType.OWNER.name())
 
-                .antMatchers("/api/admin/**")
-                .hasAuthority(MemberType.ADMIN.name())
+            .antMatchers(HttpMethod.POST, "/api/camp", "api/site/**")
+            .hasAnyAuthority(MemberType.OWNER.name())
 
-                .antMatchers(ignoreAllPathsStartWith.split(","))
-                .permitAll()
-                .antMatchers(HttpMethod.GET, ignoreGetPathsStartWith.split(","))
-                .permitAll();
+            .antMatchers(HttpMethod.PUT, "/api/camp",  "api/site/**")
+            .hasAnyAuthority(MemberType.OWNER.name())
+
+            .antMatchers(HttpMethod.DELETE, "/api/camp/**",  "api/site/**")
+            .hasAnyAuthority(MemberType.OWNER.name())
+
+            .antMatchers(HttpMethod.GET,"/api/camp/detail/customer/**", "/api/site/customer/**")
+            .hasAuthority(MemberType.CUSTOMER.name())
+
+            .antMatchers("/api/admin/**")
+            .hasAuthority(MemberType.ADMIN.name())
+
+            .antMatchers(ignoreAllPathsStartWith.split(","))
+            .permitAll()
+            .antMatchers(HttpMethod.GET, ignoreGetPathsStartWith.split(","))
+            .permitAll();
     }
 
     @Override
     public void configure(WebSecurity web) {
 
         web.ignoring()
-                .antMatchers("/h2-console/**","/swagger-ui/**", "/swagger-resources/**", "/webjars/**", "/v3/api-docs")
-                .antMatchers("/css/**", "/vendor/**", "/js/**", "/images/**")
-                .antMatchers(HttpMethod.OPTIONS, "/**");
+            .antMatchers("/h2-console/**", "/swagger-ui/**", "/swagger-resources/**", "/webjars/**",
+                "/v3/api-docs")
+            .antMatchers("/css/**", "/vendor/**", "/js/**", "/images/**")
+            .antMatchers(HttpMethod.OPTIONS, "/**");
     }
 
     @Bean
