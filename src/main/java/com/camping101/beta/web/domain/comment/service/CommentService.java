@@ -67,8 +67,7 @@ public class CommentService {
             // 현재 캠프 로그에서 본인이 작성한 댓글들 중에서
             for (Comment commentByMember : commentsOfCampLogByMember) {
                 // 깊이가 0인 댓글의 갯수 확인
-                if (Objects.isNull(commentByMember.getParentId())
-                        && commentByMember.isReCommentYn() == false) {
+                if (commentByMember.isReCommentYn() == false) {
                     mainCommentCnt++;
                     if (mainCommentCnt >= 1) break;
                 }
