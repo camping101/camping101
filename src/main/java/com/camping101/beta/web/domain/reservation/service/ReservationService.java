@@ -53,21 +53,21 @@ public class ReservationService {
 //    3. 확인 시 결제창으로 이동한다.
 //    4. 회원(손님)이 결제를 완료하면 회원(주인)의 카카오톡으로 자동 알림이 전송된다.
     public ReservationCreateResponse registerReservation(
-        ReservationCreateRequest reservationCreateRequest) {
+        ReservationCreateRequest rq) {
 
-        Reservation reservation = Reservation.toEntity(reservationCreateRequest);
+        Reservation reservation = Reservation.toEntity(rq);
         reservationRepository.save(reservation);
 
-        Site findSite = siteRepository.findById(reservationCreateRequest.getSiteId())
+        Site findSite = siteRepository.findById(rq.getSiteId())
             .orElseThrow(() -> {
                 throw new SiteException(ErrorCode.SITE_NOT_FOUND);
             });
 
         // 사이트 계산
-        reservation.addPayment(findSite.getPrice(), reservationCreateRequest.getStartDate(),
-            reservationCreateRequest.getEndDate());
+        reservation.addPayment(findSite.getPrice(), rq.getStartDate(),
+            rq.getEndDate());
 
-        Member findMember = memberRepository.findById(reservationCreateRequest.getMemberId())
+        Member findMember = memberRepository.findById(rq.getMemberId())
             .orElseThrow(() -> {
                 throw new RuntimeException("존재하는 회원이 없습니다");
             });

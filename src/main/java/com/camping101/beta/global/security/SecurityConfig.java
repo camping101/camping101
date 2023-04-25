@@ -70,16 +70,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .hasAnyAuthority(MemberType.CUSTOMER.name(), MemberType.ADMIN.name(),
                 MemberType.OWNER.name())
 
-            .antMatchers(HttpMethod.GET, "/api/camp/owner/**", "/api/camp/detail/owner/**", "/api/site/owner/**")
+//            .antMatchers(HttpMethod.GET, "/api/camp/owner/**", "/api/camp/detail/owner/**", "/api/site/owner/**")
+//            .hasAnyAuthority(MemberType.OWNER.name())
+
+            .antMatchers(HttpMethod.POST, "/api/camp", "/api/site/**")
             .hasAnyAuthority(MemberType.OWNER.name())
 
-            .antMatchers(HttpMethod.POST, "/api/camp", "api/site/**")
+            .antMatchers(HttpMethod.PUT, "/api/camp",  "/api/site/**")
             .hasAnyAuthority(MemberType.OWNER.name())
 
-            .antMatchers(HttpMethod.PUT, "/api/camp",  "api/site/**")
-            .hasAnyAuthority(MemberType.OWNER.name())
-
-            .antMatchers(HttpMethod.DELETE, "/api/camp/**",  "api/site/**")
+            .antMatchers(HttpMethod.DELETE, "/api/camp/**",  "/api/site/**")
             .hasAnyAuthority(MemberType.OWNER.name())
 
             .antMatchers(HttpMethod.GET,"/api/camp/detail/customer/**", "/api/site/customer/**")

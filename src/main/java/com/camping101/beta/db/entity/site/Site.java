@@ -47,9 +47,9 @@ public class Site {
     private Camp camp;
     @OneToMany(mappedBy = "site")
     private List<Reservation> reservationList = new ArrayList<>();
+
     @OneToMany(mappedBy = "site")
     private List<CampLog> campLogList = new ArrayList<>();
-
     private String name;
     private String rpImage; //대표이미지
     private String introduction;
@@ -72,6 +72,7 @@ public class Site {
     private String policy;
     private int price;
     private LocalDateTime refundableDate;
+    private boolean isReserved;
 
     public void addCamp(Camp camp) {
 

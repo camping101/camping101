@@ -99,7 +99,6 @@ public class Reservation {
             .endDate(reservationCreateRequest.getEndDate())
             .humanCapacity(reservationCreateRequest.getHumanCapacity())
             .status(COMP)
-            .payment(reservationCreateRequest.getPayment())
             .campLogYn(false)
             .campLogWritableYn(true)
             .build();

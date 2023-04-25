@@ -24,8 +24,4 @@ public class ReservationCreateRequest {
 
     private int humanCapacity;
 
-    private int payment;
-
-
-
 }
