@@ -1,6 +1,5 @@
 package com.camping101.beta.db.type;
 
-import com.camping101.beta.web.domain.admin.campAuth.dto.PermitCampAuthRs;
 import com.camping101.beta.db.entity.camp.Camp;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -46,7 +45,7 @@ public class CampAuth {
     @Column(updatable = false, insertable = true)
     private LocalDateTime createdAt;
 
-    public static CampAuth toEntity(Camp camp) {
+    public static CampAuth createCampAuth(Camp camp) {
         return CampAuth.builder()
             .campAuthStatus(CampAuthStatus.UNAUTHORIZED)
             .camp(camp)

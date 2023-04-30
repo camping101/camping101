@@ -9,7 +9,7 @@ import java.util.List;
 import lombok.Getter;
 
 @Getter
-public class CampDetailsResponse {
+public class FindCampDetailsRs {
 
     private Long campId;
     private String name;
@@ -28,11 +28,11 @@ public class CampDetailsResponse {
     private String firstImage;
     private String homepage;
     private String businessNo;
-    private List<SiteInCamp> siteInCampLists = new ArrayList<>();
-    private List<CampLogInCamp> campLogInCampLists = new ArrayList<>();
+    private List<SiteInCamp> siteInCampList = new ArrayList<>();
+    private List<CampLogInCamp> campLogInCampList = new ArrayList<>();
 
 
-    public CampDetailsResponse(Long campId, String name, String intro, ManageStatus manageStatus,
+    public FindCampDetailsRs(Long campId, String name, String intro, ManageStatus manageStatus,
         Location location, String tel, String oneLineReserveYn, String openSeason,
         LocalDateTime openDateOfWeek, FacilityCnt facilityCnt, String facility, String leisure,
         String animalCapable, String equipmentTools, String firstImage, String homepage,
@@ -57,10 +57,10 @@ public class CampDetailsResponse {
     }
 
     public void addSiteInCamp(List<SiteInCamp> sites) {
-        this.siteInCampLists = sites;
+        this.siteInCampList = sites;
     }
 
     public void addCampLogInCamp(List<CampLogInCamp> campLogs) {
-        this.campLogInCampLists = campLogs;
+        this.campLogInCampList = campLogs;
     }
 }

@@ -1,14 +1,16 @@
 package com.camping101.beta.web.domain.camp.controller;
 
-import com.camping101.beta.web.domain.camp.dto.CampCreateRequest;
-import com.camping101.beta.web.domain.camp.dto.CampCreateResponse;
+import com.camping101.beta.global.path.ApiPath;
+import com.camping101.beta.web.domain.camp.dto.CreateCampRq;
+import com.camping101.beta.web.domain.camp.dto.CreateCampRs;
 import com.camping101.beta.web.domain.camp.dto.CampDetailsAdminResponse;
 import com.camping101.beta.web.domain.camp.dto.CampDetailsOwnerResponse;
-import com.camping101.beta.web.domain.camp.dto.CampListResponse;
+import com.camping101.beta.web.domain.camp.dto.FindCampListRs;
 import com.camping101.beta.web.domain.camp.dto.CampModifyRequest;
 import com.camping101.beta.web.domain.camp.dto.CampModifyResponse;
-import com.camping101.beta.web.domain.camp.dto.campdetaildto.CampDetailsResponse;
+import com.camping101.beta.web.domain.camp.dto.campdetaildto.FindCampDetailsRs;
 import com.camping101.beta.web.domain.camp.service.CampService;
+import com.camping101.beta.web.domain.camp.service.FindCampService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,99 +22,96 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/camp")
 @Api(tags = "캠핑 101 - 캠핑장 API")
 public class CampController {
 
     private final CampService campService;
+    private final FindCampService findCampService;
 
     // 캠핑장 서비스 이용 요청 + 관리자에게 캠핑장 승인 요청
-    @PostMapping
-    public ResponseEntity<CampCreateResponse> campAdd(
-        @RequestBody CampCreateRequest campCreateRequest) {
+    @PostMapping(ApiPath.CAMP)
+    public ResponseEntity<CreateCampRs> campAdd(
+        @RequestBody CreateCampRq rq) {
 
-        CampCreateResponse response = campService.registerCamp(campCreateRequest);
+        CreateCampRs rs = campService.registerCamp(rq);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(rs);
     }
 
     // 자신의 캠핑장 목록 조회(주인)
-    @GetMapping("/owner/{memberId}")
-    public ResponseEntity<Page<CampListResponse>> ownerCampList(
-        @PathVariable Long memberId,
+    @GetMapping(ApiPath.CAMP_OWNER_MEMBER_ID)
+    public ResponseEntity<Page<FindCampListRs>> ownerCampList(
+        @PathVariable("member-id") Long memberId,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int size) {
 
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        Page<CampListResponse> response = campService.findOwnerCampList(pageRequest, memberId);
-        return ResponseEntity.ok(response);
+        Page<FindCampListRs> rs = findCampService.findOwnerCampList(pageRequest, memberId);
+        return ResponseEntity.ok(rs);
     }
 
     // 캠핑장 목록 조회(회원, 비회원, 관리자)
-    @GetMapping
-    public ResponseEntity<Page<CampListResponse>> campList(
+    @GetMapping(ApiPath.CAMP)
+    public ResponseEntity<Page<FindCampListRs>> campList(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int size) {
 
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<CampListResponse> responses = campService.findCampList(pageRequest);
-        return ResponseEntity.ok(responses);
-
+        Page<FindCampListRs> rs = findCampService.findCampList(pageRequest);
+        return ResponseEntity.ok(rs);
     }
 
-
     // 캠핑장 상세 정보 조회 - 손님
-    @GetMapping("/detail/customer/{campId}")
-    public ResponseEntity<CampDetailsResponse> campDetailsCustomer(@PathVariable Long campId,
+    @GetMapping(ApiPath.CAMP_DETAILS_CUSTOMER_CAMP_ID)
+    public ResponseEntity<FindCampDetailsRs> campDetailsCustomer(@PathVariable("camp-id") Long campId,
                                                                    @RequestParam(defaultValue = "0") int sitePage,
                                                                    @RequestParam(defaultValue = "5") int siteSize,
                                                                    @RequestParam(defaultValue = "0") int campLogPage,
                                                                    @RequestParam(defaultValue = "5") int campLogSize
     ) {
 
-        PageRequest sitePageRequest = PageRequest.of(sitePage, siteSize);
-        PageRequest campLogPageRequest = PageRequest.of(campLogPage, campLogSize);
+        PageRequest sitePageRq = PageRequest.of(sitePage, siteSize);
+        PageRequest campLogPageRq = PageRequest.of(campLogPage, campLogSize);
 
-        CampDetailsResponse response = campService.findCampDetails(campId, sitePageRequest,
-            campLogPageRequest);
-        return ResponseEntity.ok(response);
+        FindCampDetailsRs rs = findCampService.findCampDetails(campId, sitePageRq,
+            campLogPageRq);
+        return ResponseEntity.ok(rs);
     }
 
     // 캠핑장 상세 정보 조회 - 캠핑장 주인
     @GetMapping("/detail/owner/{campId}")
     public ResponseEntity<CampDetailsOwnerResponse> campDetailsOwner(@PathVariable Long campId) {
 
-        CampDetailsOwnerResponse response = campService.findCampDetailsOwner(campId);
-        return ResponseEntity.ok(response);
+        CampDetailsOwnerResponse rs = campService.findCampDetailsOwner(campId);
+        return ResponseEntity.ok(rs);
     }
 
     // 관리자가 캠핑장 상세 정보 조회
     @GetMapping("/detail/admin/{campId}")
     public ResponseEntity<CampDetailsAdminResponse> campDetailsAdmin(@PathVariable Long campId) {
 
-        CampDetailsAdminResponse response = campService.findCampDetailsAdmin(campId);
-        return ResponseEntity.ok(response);
+        CampDetailsAdminResponse rs = campService.findCampDetailsAdmin(campId);
+        return ResponseEntity.ok(rs);
 
     }
 
     // 캠핑장 상세 정보 수정
-    @PutMapping
+    @PutMapping(ApiPath.CAMP)
     public ResponseEntity<CampModifyResponse> campModify(@RequestBody CampModifyRequest campModifyRequest) {
 
-        CampModifyResponse response = campService.modifyCamp(campModifyRequest);
-        return ResponseEntity.ok(response);
+        CampModifyResponse rs = campService.modifyCamp(campModifyRequest);
+        return ResponseEntity.ok(rs);
     }
 
     // 캠핑장 서비스 탈퇴 요청
-    @DeleteMapping("/{campId}")
-    public ResponseEntity<?> campDelete(@PathVariable Long campId) {
+    @DeleteMapping(ApiPath.CAMP_ID)
+    public ResponseEntity<?> campDelete(@PathVariable("camp-id") Long campId) {
 
         campService.removeCamp(campId);
         return ResponseEntity.ok("캠핑장 삭제 완료");

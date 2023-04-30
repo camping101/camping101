@@ -3,11 +3,8 @@ package com.camping101.beta.db.entity.camp;
 import static javax.persistence.EnumType.STRING;
 
 import com.camping101.beta.db.type.CampAuth;
-import com.camping101.beta.web.domain.camp.dto.CampCreateRequest;
-import com.camping101.beta.web.domain.camp.dto.CampCreateResponse;
 import com.camping101.beta.web.domain.camp.dto.CampDetailsAdminResponse;
 import com.camping101.beta.web.domain.camp.dto.CampDetailsOwnerResponse;
-import com.camping101.beta.web.domain.camp.dto.CampListResponse;
 import com.camping101.beta.web.domain.camp.dto.CampModifyRequest;
 import com.camping101.beta.web.domain.camp.dto.CampModifyResponse;
 import com.camping101.beta.db.entity.member.Member;
@@ -89,70 +86,6 @@ public class Camp {
 
     @OneToMany(mappedBy = "camp", cascade = CascadeType.REMOVE)
     private List<CampAuth> campAuthList = new ArrayList<>();
-
-
-    public static Camp toEntity(CampCreateRequest campCreateRequest) {
-
-        return Camp.builder()
-            .name(campCreateRequest.getCampName())
-            .intro(campCreateRequest.getIntro())
-            .manageStatus(ManageStatus.UNAUTHORIZED)
-            .location(campCreateRequest.getLocation())
-            .tel(campCreateRequest.getTel())
-            .oneLineReserveYn(campCreateRequest.getOneLineReserveYn())
-            .openSeason(campCreateRequest.getOpenSeason())
-            .openDateOfWeek(campCreateRequest.getOpenDateOfWeek())
-            .facilityCnt(campCreateRequest.getFacilityCnt())
-            .facility(campCreateRequest.getFacility())
-            .leisure(campCreateRequest.getLeisure())
-            .animalCapable(campCreateRequest.getAnimalCapable())
-            .equipmentTools(campCreateRequest.getEquipmentTools())
-            .firstImage(campCreateRequest.getFirstImage())
-            .homepage(campCreateRequest.getHomepage())
-            .businessNo(campCreateRequest.getBusinessNo())
-            .build();
-
-    }
-
-    public static CampCreateResponse toCampCreateResponse(Camp camp) {
-
-        return CampCreateResponse.builder()
-            .campId(camp.getCampId())
-            .campName(camp.getName())
-            .intro(camp.getIntro())
-            .manageStatus(String.valueOf(camp.getManageStatus())) // => 캠핑장 생성이 완료되었습니다. 관리자가 요청을 확인합니다.
-            .location(camp.getLocation())
-            .tel(camp.getTel())
-            .oneLineReserveYn(camp.getOneLineReserveYn())
-            .openSeason(camp.getOpenSeason())
-            .openDateOfWeek(camp.getOpenDateOfWeek())
-            .facilityCnt(camp.getFacilityCnt())
-            .facility(camp.getFacility())
-            .leisure(camp.getLeisure())
-            .animalCapable(camp.getAnimalCapable())
-            .equipmentTools(camp.getEquipmentTools())
-            .firstImage(camp.getFirstImage())
-            .homepage(camp.getHomepage())
-            .businessNo(camp.getBusinessNo())
-            .build();
-
-    }
-
-
-    public static CampListResponse toCampListResponse(Camp camp) {
-
-        return CampListResponse.builder()
-            .memberId(camp.getMember().getMemberId())
-            .campId(camp.getCampId())
-            .campName(camp.getName())
-            .intro(camp.getIntro())
-            .manageStatus(camp.getManageStatus())
-            .location(camp.getLocation())
-            .openSeason(camp.getOpenSeason())
-            .animalCapable(camp.getAnimalCapable())
-            .firstImage(camp.getFirstImage())
-            .build();
-    }
 
     public static CampDetailsOwnerResponse toCampDetailsOwnerResponse(Camp camp) {
 

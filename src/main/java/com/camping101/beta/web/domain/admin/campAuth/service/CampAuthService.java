@@ -3,6 +3,7 @@ package com.camping101.beta.web.domain.admin.campAuth.service;
 import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.type.CampAuth;
 import com.camping101.beta.web.domain.admin.campAuth.dto.PermitCampAuthRs;
+import com.camping101.beta.web.domain.admin.campAuth.repository.CampAuthRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CampAuthService {
 
     private final FindCampAuthService findCampAuthService;
+    private final CampAuthRepository campAuthRepository;
 
     // 캠핑장 상세에서 승인
     public PermitCampAuthRs permitCampAuth(Long campAuthId) {
@@ -42,5 +44,12 @@ public class CampAuthService {
 
         return rs;
 
+    }
+
+    // 관리자에게 캠핑장 생성 요청하기
+    public void requestCampAuth(Camp camp) {
+
+        CampAuth campAuth = CampAuth.createCampAuth(camp);
+        campAuthRepository.save(campAuth);
     }
 }

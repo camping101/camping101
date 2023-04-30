@@ -72,7 +72,7 @@ public class Site {
     private String policy;
     private int price;
     private LocalDateTime refundableDate;
-    private boolean isReserved;
+    private SiteStatus siteStatus;
 
     public void addCamp(Camp camp) {
 
@@ -100,6 +100,7 @@ public class Site {
             .policy(siteCreateRequest.getPolicy())
             .price(siteCreateRequest.getPrice())
             .refundableDate(siteCreateRequest.getRefundableDate())
+            .siteStatus(SiteStatus.AVAILABLE)
             .build();
 
     }

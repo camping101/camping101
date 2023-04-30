@@ -1,6 +1,6 @@
 package com.camping101.beta.web.domain.camp.service;
 
-import com.camping101.beta.web.domain.camp.dto.campdetaildto.CampDetailsResponse;
+import com.camping101.beta.web.domain.camp.dto.campdetaildto.FindCampDetailsRs;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.CampLogInCamp;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.QCampLogInCamp;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.SiteInCamp;
@@ -36,10 +36,10 @@ public class CampQueryService {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public CampDetailsResponse findCampAndSiteAndCampLog(Long campId, Pageable sitePageable,
+    public FindCampDetailsRs findCampAndSiteAndCampLog(Long campId, Pageable sitePageable,
         Pageable campLogPageable) {
 
-        CampDetailsResponse response = findCamp(campId);
+        FindCampDetailsRs rs = findCampDetails(campId);
         List<SiteInCamp> sites = findSite(campId, sitePageable);
 
         // 트러블슈팅 : 해당 캠프에 해당하는 모든 캠프로그들을 가져와야함.
@@ -51,19 +51,19 @@ public class CampQueryService {
         List<Long> siteIds = findSiteIds(campId);
         for (Long siteId : siteIds) {
             List<CampLogInCamp> campLogs = findCampLog(siteId,campLogPageable);
-            response.addCampLogInCamp(campLogs);
+            rs.addCampLogInCamp(campLogs);
         }
 
-        response.addSiteInCamp(sites);
+        rs.addSiteInCamp(sites);
 
-        return response;
+        return rs;
 
     }
 
-    private CampDetailsResponse findCamp(Long campId) {
+    private FindCampDetailsRs findCampDetails(Long campId) {
 
         return em.createQuery(
-                "select new com.camping101.beta.web.domain.camp.dto.campdetaildto.CampDetailsResponse("
+                "select new com.camping101.beta.web.domain.camp.dto.campdetaildto.FindCampDetailsRs("
                     + "c.campId,"
                     + "c.name,"
                     + "c.intro,"
@@ -80,7 +80,7 @@ public class CampQueryService {
                     + "c.equipmentTools,"
                     + "c.firstImage,"
                     + "c.homepage,"
-                    + "c.businessNo) from Camp c where c.campId =: campId", CampDetailsResponse.class)
+                    + "c.businessNo) from Camp c where c.campId =: campId", FindCampDetailsRs.class)
             .setParameter("campId", campId)
             .getSingleResult();
     }

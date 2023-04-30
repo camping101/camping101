@@ -1,31 +1,25 @@
 package com.camping101.beta.web.domain.camp.service;
 
-import static com.camping101.beta.db.entity.camp.ManageStatus.AUTHORIZED;
 import static com.camping101.beta.web.domain.camp.exception.ErrorCode.CAMP_NOT_FOUND;
 
-import com.camping101.beta.db.type.CampAuth;
-import com.camping101.beta.web.domain.admin.campAuth.repository.CampAuthRepository;
-import com.camping101.beta.web.domain.camp.dto.CampCreateRequest;
-import com.camping101.beta.web.domain.camp.dto.CampCreateResponse;
+import com.camping101.beta.web.domain.admin.campAuth.service.CampAuthService;
+import com.camping101.beta.web.domain.camp.dto.CreateCampRq;
+import com.camping101.beta.web.domain.camp.dto.CreateCampRs;
 import com.camping101.beta.web.domain.camp.dto.CampDetailsAdminResponse;
 import com.camping101.beta.web.domain.camp.dto.CampDetailsOwnerResponse;
-import com.camping101.beta.web.domain.camp.dto.CampListResponse;
 import com.camping101.beta.web.domain.camp.dto.CampModifyRequest;
 import com.camping101.beta.web.domain.camp.dto.CampModifyResponse;
-import com.camping101.beta.web.domain.camp.dto.campdetaildto.CampDetailsResponse;
 import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.web.domain.camp.exception.CampException;
 import com.camping101.beta.web.domain.camp.repository.CampRepository;
 import com.camping101.beta.db.entity.member.Member;
-import com.camping101.beta.web.domain.member.repository.MemberRepository;
 import com.camping101.beta.db.entity.site.Site;
+import com.camping101.beta.web.domain.member.service.FindMemberService;
 import com.camping101.beta.web.domain.site.service.SiteService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,68 +30,27 @@ import org.springframework.transaction.annotation.Transactional;
 public class CampService {
 
     private final CampRepository campRepository;
-    private final MemberRepository memberRepository;
+    private final FindMemberService findMemberService;
     private final CampQueryService campQueryService;
-    private final CampAuthRepository campAuthRepository;
+    private final CampAuthService campAuthService;
     private final SiteService siteService;
 
     // 캠핑장 서비스 이용 요청
-    public CampCreateResponse registerCamp(CampCreateRequest campCreateRequest) {
+    public CreateCampRs registerCamp(CreateCampRq rq) {
 
-        Camp camp = Camp.toEntity(campCreateRequest);
+        Camp camp = CreateCampRq.createCamp(rq);
         campRepository.save(camp);
 
-        Long memberId = campCreateRequest.getMemberId();
-        Member findMember = memberRepository.findById(memberId).orElseThrow(() -> {
-            throw new RuntimeException("존재하는 회원이 없습니다");
-        });
+        Member findMember = findMemberService.findMemberOrElseThrow(rq.getMemberId());
 
         camp.addMember(findMember);
-        requestAuth(camp);
+
+        campAuthService.requestCampAuth(camp);
 
         log.info("{} 캠핑장이 생성되었습니다. 관리자 승인이 완료되어야 캠핑장 서비스를 이용할 수 있습니다."
             , camp.getName());
-        return Camp.toCampCreateResponse(camp);
 
-    }
-
-    // 관리자에게 캠핑장 생성 요청하기
-    private void requestAuth(Camp camp) {
-
-        CampAuth campAuth = CampAuth.toEntity(camp);
-        campAuthRepository.save(campAuth);
-    }
-
-    // 캠핑장 목록 조회(페이징 처리 하기) (주인)
-    @Transactional(readOnly = true)
-    public Page<CampListResponse> findOwnerCampList(Pageable pageable, Long memberId) {
-
-        Member findMember = memberRepository.findById(memberId).orElseThrow(() -> {
-            throw new RuntimeException("존재하는 회원이 없습니다.");
-        });
-
-        Page<Camp> camps = campRepository.findAllByMemberAndManageStatus(pageable, findMember,
-            AUTHORIZED);
-
-        return camps.map(Camp::toCampListResponse);
-    }
-
-    // 캠핑장 목록 조회(페이징 처리 하기) (손님 + 비회원)
-    @Transactional(readOnly = true)
-    public Page<CampListResponse> findCampList(Pageable pageable) {
-
-        Page<Camp> camps = campRepository.findAllByManageStatus(pageable,AUTHORIZED);
-        return camps.map(Camp::toCampListResponse);
-    }
-
-    // 캠핑장 상세 정보 조회 -> 회원(손님)
-    // 해당 캠핑장의 사이트 목록을 같이 가져온다.
-    // 해당 사이트의 모든 캠프로그들도 같이 가져온다.
-    @Transactional(readOnly = true)
-    public CampDetailsResponse findCampDetails(Long campId, Pageable sitePageable,
-        Pageable campLogPageable) {
-
-        return campQueryService.findCampAndSiteAndCampLog(campId, sitePageable, campLogPageable);
+        return CreateCampRs.createCampRs(camp);
     }
 
     // 캠핑장 상세 정보 조회 -> 주인(캠핑장 사장)

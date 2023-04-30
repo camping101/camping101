@@ -2,8 +2,8 @@ package com.camping101.beta.web.domain.bookMark.service;
 
 import com.camping101.beta.db.entity.bookMark.BookMark;
 import com.camping101.beta.db.entity.member.Member;
+import com.camping101.beta.global.exception.CannotFindBookMarkException;
 import com.camping101.beta.web.domain.bookMark.dto.FindBookMarkListRs;
-import com.camping101.beta.web.domain.bookMark.exception.CannotFindBookMarkException;
 import com.camping101.beta.web.domain.bookMark.repository.BookMarkRepository;
 import com.camping101.beta.web.domain.member.service.FindMemberService;
 import lombok.RequiredArgsConstructor;

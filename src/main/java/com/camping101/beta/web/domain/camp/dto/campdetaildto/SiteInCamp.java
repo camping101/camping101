@@ -13,7 +13,6 @@ import lombok.Getter;
 public class SiteInCamp {
 
     private Long siteId;
-//    private Long campId;
     private String name;
     private String rpImage; //대표이미지
     private String introduction;
@@ -24,6 +23,5 @@ public class SiteInCamp {
     private int leastScheduling;
     private SiteCapacity siteCapacity;
     private int price;
-
 
 }

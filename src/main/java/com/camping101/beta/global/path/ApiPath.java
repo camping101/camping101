@@ -12,5 +12,12 @@ public class ApiPath {
 
     public static final String ADMIN_CAMPAUTH_ID = "/api/admin/{campAuth-id}";
 
+    public static final String CAMP = "/api/camp";
+
+    public static final String CAMP_ID = "/api/camp/{camp-id}";
+
+    public static final String CAMP_OWNER_MEMBER_ID = "/api/camp/owner/{member-id}";
+
+    public static final String CAMP_DETAILS_CUSTOMER_CAMP_ID = "/api/camp/detail/customer/{camp-id}";
 
 }
