@@ -1,4 +1,4 @@
-package com.camping101.beta.global.exception;
+package com.camping101.beta.global.exception.handler;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

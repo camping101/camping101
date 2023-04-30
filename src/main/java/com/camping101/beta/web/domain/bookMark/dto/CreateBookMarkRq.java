@@ -11,9 +11,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @NoArgsConstructor
-public class BookMarkCreateRequest {
+public class CreateBookMarkRq {
 
-    private Long bookMarkId;
     private Long memberId;
     private Long campLogId;
     private String title;

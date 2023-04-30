@@ -1,4 +1,4 @@
-package com.camping101.beta.global.exception;
+package com.camping101.beta.global.exception.handler;
 
 import com.camping101.beta.web.domain.admin.recTag.exception.RecTagException;
 import com.camping101.beta.web.domain.campLog.exception.CampLogException;
