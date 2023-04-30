@@ -212,4 +212,7 @@ public class Site {
     }
 
 
+    public void changeSiteStatus() {
+        this.siteStatus = SiteStatus.RESERVED;
+    }
 }

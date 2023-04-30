@@ -14,20 +14,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
-public class ReservationQueryService {
+@Transactional(readOnly = true)
+public class FindReservationQueryService {
 
     private final EntityManager em;
     private final JPAQueryFactory queryFactory;
 
     @Autowired
-    public ReservationQueryService(EntityManager em) {
+    public FindReservationQueryService(EntityManager em) {
         this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
     }
 
     // 해당 기간에 해당하는 모든 회원의 예약 내역 가져오기
-    @Transactional(readOnly = true)
     public List<Reservation> findReservationList(int month, Long memberId) {
 
         DateTemplate<LocalDateTime> dateFormat = Expressions.dateTemplate(
