@@ -1,6 +1,6 @@
 package com.camping101.beta.db.type;
 
-import com.camping101.beta.web.domain.admin.campAuth.dto.CampAuthAddResponse;
+import com.camping101.beta.web.domain.admin.campAuth.dto.PermitCampAuthRs;
 import com.camping101.beta.db.entity.camp.Camp;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -51,17 +51,6 @@ public class CampAuth {
             .campAuthStatus(CampAuthStatus.UNAUTHORIZED)
             .camp(camp)
             .build();
-    }
-
-    public static CampAuthAddResponse toCampAuthAddResponse(CampAuth campAuth , Camp camp) {
-
-        return CampAuthAddResponse.builder()
-            .campAuthId(campAuth.getCampAuthId())
-            .campId(camp.getCampId())
-            .campName(camp.getName())
-            .campAuthStatus(String.valueOf(campAuth.getCampAuthStatus()))
-            .build();
-
     }
 
     public void editCampAuthStatus() {

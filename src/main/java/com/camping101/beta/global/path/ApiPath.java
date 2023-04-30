@@ -8,4 +8,9 @@ public class ApiPath {
 
     public static final String BOOKMARK_MEMBER_ID = "/api/bookmark/{member-id}";
 
+    public static final String ADMIN = "/api/admin";
+
+    public static final String ADMIN_CAMPAUTH_ID = "/api/admin/{campAuth-id}";
+
+
 }

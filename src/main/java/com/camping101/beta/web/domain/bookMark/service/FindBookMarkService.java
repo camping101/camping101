@@ -5,7 +5,6 @@ import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.web.domain.bookMark.dto.FindBookMarkListRs;
 import com.camping101.beta.web.domain.bookMark.exception.CannotFindBookMarkException;
 import com.camping101.beta.web.domain.bookMark.repository.BookMarkRepository;
-import com.camping101.beta.web.domain.member.repository.MemberRepository;
 import com.camping101.beta.web.domain.member.service.FindMemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

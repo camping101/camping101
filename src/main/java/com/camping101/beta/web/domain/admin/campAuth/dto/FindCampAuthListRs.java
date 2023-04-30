@@ -5,14 +5,11 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CampAuthListResponse {
+public class FindCampAuthListRs {
 
     private Long campAuthId;
     private Long campId;
     private String campName;
     private String campAuthStatus;
-
-
-
 
 }

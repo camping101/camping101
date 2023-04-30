@@ -5,11 +5,8 @@ import com.camping101.beta.web.domain.bookMark.dto.CreateBookMarkRs;
 import com.camping101.beta.db.entity.bookMark.BookMark;
 import com.camping101.beta.web.domain.bookMark.repository.BookMarkRepository;
 import com.camping101.beta.db.entity.campLog.CampLog;
-import com.camping101.beta.web.domain.campLog.repository.CampLogRepository;
 import com.camping101.beta.db.entity.member.Member;
-import com.camping101.beta.web.domain.campLog.service.CampLogService;
 import com.camping101.beta.web.domain.campLog.service.FindCampLogService;
-import com.camping101.beta.web.domain.member.repository.MemberRepository;
 
 import com.camping101.beta.web.domain.member.service.FindMemberService;
 import lombok.RequiredArgsConstructor;
