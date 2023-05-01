@@ -3,10 +3,8 @@ package com.camping101.beta.db.entity.camp;
 import static javax.persistence.EnumType.STRING;
 
 import com.camping101.beta.db.type.CampAuth;
-import com.camping101.beta.web.domain.camp.dto.CampDetailsAdminResponse;
-import com.camping101.beta.web.domain.camp.dto.CampDetailsOwnerResponse;
-import com.camping101.beta.web.domain.camp.dto.CampModifyRequest;
-import com.camping101.beta.web.domain.camp.dto.CampModifyResponse;
+import com.camping101.beta.web.domain.camp.dto.FindCampDetailsOwnerRs;
+import com.camping101.beta.web.domain.camp.dto.ModifyCampRq;
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.site.Site;
 import java.time.LocalDateTime;
@@ -87,97 +85,25 @@ public class Camp {
     @OneToMany(mappedBy = "camp", cascade = CascadeType.REMOVE)
     private List<CampAuth> campAuthList = new ArrayList<>();
 
-    public static CampDetailsOwnerResponse toCampDetailsOwnerResponse(Camp camp) {
+    public Camp updateCamp(ModifyCampRq modifyCampRq) {
 
-        return CampDetailsOwnerResponse.builder()
-            .campId(camp.getCampId())
-            .campName(camp.getName())
-            .intro(camp.getIntro())
-            .manageStatus(camp.getManageStatus())
-            .location(camp.getLocation())
-            .tel(camp.getTel())
-            .oneLineReserveYn(camp.getOneLineReserveYn())
-            .openSeason(camp.getOpenSeason())
-            .openDateOfWeek(camp.getOpenDateOfWeek())
-            .facilityCnt(camp.getFacilityCnt())
-            .facility(camp.getFacility())
-            .leisure(camp.getLeisure())
-            .animalCapable(camp.getAnimalCapable())
-            .equipmentTools(camp.getEquipmentTools())
-            .firstImage(camp.getFirstImage())
-            .homepage(camp.getHomepage())
-            .businessNo(camp.getBusinessNo())
-            .build();
-    }
-
-    public Camp updateCamp(CampModifyRequest campModifyRequest) {
-
-        this.campId = campModifyRequest.getCampId();
-        this.intro = campModifyRequest.getIntro();
-        this.manageStatus = campModifyRequest.getManageStatus();
-        this.location = campModifyRequest.getLocation();
-        this.tel = campModifyRequest.getTel();
-        this.oneLineReserveYn = campModifyRequest.getOneLineReserveYn();
-        this.openSeason = campModifyRequest.getOpenSeason();
-        this.openDateOfWeek = campModifyRequest.getOpenDateOfWeek();
-        this.facilityCnt = campModifyRequest.getFacilityCnt();
-        this.facility = campModifyRequest.getFacility();
-        this.leisure = campModifyRequest.getLeisure();
-        this.animalCapable = campModifyRequest.getAnimalCapable();
-        this.equipmentTools = campModifyRequest.getEquipmentTools();
-        this.firstImage = campModifyRequest.getFirstImage();
-        this.homepage = campModifyRequest.getHomepage();
-        this.businessNo = campModifyRequest.getBusinessNo();
+        this.campId = modifyCampRq.getCampId();
+        this.intro = modifyCampRq.getIntro();
+        this.location = modifyCampRq.getLocation();
+        this.tel = modifyCampRq.getTel();
+        this.oneLineReserveYn = modifyCampRq.getOneLineReserveYn();
+        this.openSeason = modifyCampRq.getOpenSeason();
+        this.openDateOfWeek = modifyCampRq.getOpenDateOfWeek();
+        this.facilityCnt = modifyCampRq.getFacilityCnt();
+        this.facility = modifyCampRq.getFacility();
+        this.leisure = modifyCampRq.getLeisure();
+        this.animalCapable = modifyCampRq.getAnimalCapable();
+        this.equipmentTools = modifyCampRq.getEquipmentTools();
+        this.firstImage = modifyCampRq.getFirstImage();
+        this.homepage = modifyCampRq.getHomepage();
+        this.businessNo = modifyCampRq.getBusinessNo();
 
         return this;
-
-    }
-
-    public static CampModifyResponse toCampModifyResponse(Camp camp) {
-
-        return CampModifyResponse.builder()
-            .memberId(camp.getMember().getMemberId())
-            .campId(camp.getCampId())
-            .intro(camp.getIntro())
-            .manageStatus(camp.getManageStatus())
-            .location(camp.getLocation())
-            .tel(camp.getTel())
-            .oneLineReserveYn(camp.getOneLineReserveYn())
-            .openSeason(camp.getOpenSeason())
-            .openDateOfWeek(camp.getOpenDateOfWeek())
-            .facilityCnt(camp.getFacilityCnt())
-            .facility(camp.getFacility())
-            .leisure(camp.getLeisure())
-            .animalCapable(camp.getAnimalCapable())
-            .equipmentTools(camp.getEquipmentTools())
-            .firstImage(camp.getFirstImage())
-            .homepage(camp.getHomepage())
-            .businessNo(camp.getBusinessNo())
-            .build();
-
-    }
-
-    public static CampDetailsAdminResponse toCampDetailsAdminResponse(Camp camp) {
-
-        return CampDetailsAdminResponse.builder()
-            .campId(camp.getCampId())
-            .campName(camp.getName())
-            .intro(camp.getIntro())
-            .manageStatus(camp.getManageStatus())
-            .location(camp.getLocation())
-            .tel(camp.getTel())
-            .oneLineReserveYn(camp.getOneLineReserveYn())
-            .openSeason(camp.getOpenSeason())
-            .openDateOfWeek(camp.getOpenDateOfWeek())
-            .facilityCnt(camp.getFacilityCnt())
-            .facility(camp.getFacility())
-            .leisure(camp.getLeisure())
-            .animalCapable(camp.getAnimalCapable())
-            .equipmentTools(camp.getEquipmentTools())
-            .firstImage(camp.getFirstImage())
-            .homepage(camp.getHomepage())
-            .businessNo(camp.getBusinessNo())
-            .build();
 
     }
 

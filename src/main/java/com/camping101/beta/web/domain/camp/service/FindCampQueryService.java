@@ -20,15 +20,15 @@ import static com.camping101.beta.db.entity.member.QMember.member;
 import static com.camping101.beta.db.entity.site.QSite.site;
 
 @Service
-@Transactional
-public class CampQueryService {
+@Transactional(readOnly = true)
+public class FindCampQueryService {
     private final EntityManager em;
     private final CampRepository campRepository;
     private final SiteRepository siteRepository;
     private final JPAQueryFactory queryFactory;
 
 
-    public CampQueryService(EntityManager em, CampRepository campRepository,
+    public FindCampQueryService(EntityManager em, CampRepository campRepository,
         SiteRepository siteRepository) {
         this.em = em;
         this.campRepository = campRepository;

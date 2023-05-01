@@ -20,6 +20,10 @@ public class ApiPath {
 
     public static final String CAMP_DETAILS_CUSTOMER_CAMP_ID = "/api/camp/detail/customer/{camp-id}";
 
+    public static final String CAMP_DETAILS_OWNER_CAMP_ID = "/api/camp/detail/owner/{camp-id}";
+
+    public static final String CAMP_DETAILS_ADMIN_CAMP_ID = "/api/camp/detail/admin/{camp-id}";
+
     public static final String RESERVATION = "/api/reservation";
     public static final String RESERVATION_ID = "/api/reservation/{reservation-id}";
     public static final String RESERVATION_MEMBER_ID = "/api/reservation/{member-id}";

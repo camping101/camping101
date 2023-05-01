@@ -19,9 +19,9 @@ public interface CampRepository extends JpaRepository<Camp, Long> {
     Page<Camp> findAllByManageStatus(Pageable pageable, ManageStatus manageStatus);
 
     // 자신의 캠핑장 목록 조회(주인)
-    Page<Camp> findAllByMemberAndManageStatus(Pageable pageable, Member member, ManageStatus manageStatus);
+    Page<Camp> findCampByMember(Pageable pageable, Member member);
 
-    @Query("select c.sites from Camp c where c.campId =: campId")
-    List<Site> findSitesByCampId(Long campId);
+//    @Query("select c.sites from Camp c where c.campId =: campId")
+//    List<Site> findSitesByCampId(Long campId);
 
 }

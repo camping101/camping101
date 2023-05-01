@@ -15,11 +15,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @NoArgsConstructor
-public class CampModifyRequest {
+public class ModifyCampRq {
 
     private Long campId;
     private String intro;
-    private ManageStatus manageStatus;
     private Location location;
 
     private String tel;
