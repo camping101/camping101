@@ -82,9 +82,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.DELETE, "/api/camp/**",  "/api/site/**")
             .hasAnyAuthority(MemberType.OWNER.name())
 
-            .antMatchers(HttpMethod.GET,"/api/camp/detail/customer/**", "/api/site/customer/**")
-            .hasAuthority(MemberType.CUSTOMER.name())
-
             .antMatchers("/api/admin/**")
             .hasAuthority(MemberType.ADMIN.name())
 
