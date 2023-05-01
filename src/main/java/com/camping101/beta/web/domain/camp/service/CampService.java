@@ -103,7 +103,7 @@ public class CampService {
         boolean ableRemove = true;
 
         for (Long siteId : siteIds) {
-            boolean isValid = siteService.isReservationValid(siteId);
+            boolean isValid = siteService.isSiteReserved(siteId);
             if (!isValid) {
                 ableRemove = false;
             }

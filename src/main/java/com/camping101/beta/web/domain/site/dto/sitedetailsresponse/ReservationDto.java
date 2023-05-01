@@ -19,7 +19,7 @@ public class ReservationDto {
     private int humanCapacity;
     private ReservationStatus status;
 
-    private int payment;
+    private Long payment;
     private LocalDateTime createdAt;
     private LocalDateTime cancelAt;
 

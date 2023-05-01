@@ -35,8 +35,7 @@ public class CampController {
 
     // 캠핑장 서비스 이용 요청 + 관리자에게 캠핑장 승인 요청
     @PostMapping(ApiPath.CAMP)
-    public ResponseEntity<CreateCampRs> campAdd(
-        @RequestBody CreateCampRq rq) {
+    public ResponseEntity<CreateCampRs> campAdd(@RequestBody CreateCampRq rq) {
 
         CreateCampRs rs = campService.registerCamp(rq);
 

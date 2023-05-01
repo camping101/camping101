@@ -37,15 +37,13 @@ public class ReservationService {
 //    1. 예약 가능 일자를 확인하고, 예약 일자를 선택한 후
 //    2. 예약 버튼을 누르면 이용 정책을 안내
 //    3. 확인 시 결제창으로 이동한다.
-    public CreateReservationRs registerReservation(
-        CreateReservationRq rq) {
+    public CreateReservationRs registerReservation(CreateReservationRq rq) {
 
         Reservation reservation = CreateReservationRq.createReservation(rq);
         reservationRepository.save(reservation);
 
         Site findSite = findSiteService.findSiteOrElseThrow(rq.getSiteId());
 
-        findSite.changeSiteStatus();
         reservation.addPayment(rq.getPayment());
 
         Member findMember = findMemberService.findMemberOrElseThrow(rq.getMemberId());
@@ -121,7 +119,6 @@ public class ReservationService {
 
         if ((findReservation.getStartDate().plusDays(7)).isBefore(LocalDateTime.now())) {
             Reservation.modifyReservationStatus(findReservation);
-            findReservation.getSite().changeSiteStatus();
         } else {
             log.info("예약을 취소할 수 없습니다.");
         }

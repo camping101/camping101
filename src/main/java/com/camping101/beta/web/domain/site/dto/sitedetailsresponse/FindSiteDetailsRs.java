@@ -15,7 +15,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class SiteDetailsResponse {
+public class FindSiteDetailsRs {
 
 //    테이블의 모든 정보
 //   - 예약일정 요청 시, 예약 정보 제공
@@ -41,7 +41,7 @@ public class SiteDetailsResponse {
     private List<ReservationDto> reservationDtoList;
     private List<CampLogDto> campLogDtoList;
 
-    public SiteDetailsResponse(Site site) {
+    public FindSiteDetailsRs(Site site) {
         this.siteId = site.getSiteId();
         this.campId = site.getCamp().getCampId();
         this.name = site.getName();

@@ -1,5 +1,6 @@
 package com.camping101.beta.web.domain.site.dto;
 
+import com.camping101.beta.db.entity.site.Site;
 import com.camping101.beta.db.entity.site.SiteCapacity;
 import com.camping101.beta.db.entity.site.SiteType;
 import com.camping101.beta.db.entity.site.SiteYn;
@@ -11,7 +12,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class SiteModifyResponse {
+public class ModifySiteRs {
 
     private Long siteId;
     private Long campId;
@@ -33,5 +34,28 @@ public class SiteModifyResponse {
     private String policy;
     private int price;
     private LocalDateTime refundableDate;
+
+    public static ModifySiteRs createModifySiteRs(Site site) {
+
+        return ModifySiteRs.builder()
+            .siteId(site.getSiteId())
+            .campId(site.getCamp().getCampId())
+            .name(site.getName())
+            .rpImage(site.getRpImage())
+            .introduction(site.getIntroduction())
+            .type(site.getType())
+            .openYn(site.isOpenYn())
+            .siteYn(site.getSiteYn())
+            .checkIn(site.getCheckIn())
+            .checkOut(site.getCheckOut())
+            .leastScheduling(site.getLeastScheduling())
+            .siteCapacity(site.getSiteCapacity())
+            .mapImage(site.getMapImage())
+            .policy(site.getPolicy())
+            .price(site.getPrice())
+            .refundableDate(site.getRefundableDate())
+            .build();
+
+    }
 
 }

@@ -77,6 +77,7 @@ public class Reservation {
     public static void modifyReservationStatus(Reservation reservation) {
 
         reservation.status = CANCEL;
+        reservation.cancelAt = LocalDateTime.now();
     }
 
 

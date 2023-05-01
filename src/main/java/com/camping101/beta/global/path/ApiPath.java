@@ -30,7 +30,14 @@ public class ApiPath {
 
     public static final String RESERVATION_PAYMENT = "/api/reservation/payment";
 
-
     public static final String RESERVATION_CAMP_ID = "/api/reservation/{camp-id}";
+
+    public static final String SITE = "/api/site";
+
+    public static final String SITE_ID = "/api/site/{site-id}";
+
+    public static final String SITE_CAMP_ID = "/api/site/{camp-id}";
+
+    public static final String SITE_CUSTOMER_SITE_ID_MEMBER_ID = "/api/site/customer/{site-id}/{member-id}";
 
 }

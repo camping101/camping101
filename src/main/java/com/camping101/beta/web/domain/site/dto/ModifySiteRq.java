@@ -15,7 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @NoArgsConstructor
-public class SiteModifyRequest {
+public class ModifySiteRq {
 
     private Long siteId;
 
