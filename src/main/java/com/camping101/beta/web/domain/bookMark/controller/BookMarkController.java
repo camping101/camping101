@@ -30,37 +30,31 @@ public class BookMarkController {
 
     // 북마크 생성
     @PostMapping(ApiPath.BOOKMARK)
-    public ResponseEntity<CreateBookMarkRs> bookMarkAdd(@Validated @RequestBody
+    public CreateBookMarkRs bookMarkAdd(@Validated @RequestBody
     CreateBookMarkRq rq) {
 
-        CreateBookMarkRs rs = bookMarkService.registerBookMark(rq);
+        return bookMarkService.registerBookMark(rq);
 
-        return ResponseEntity.ok(rs);
     }
 
     // 회원의 북마크 목록 조회
     // 북마크는 캠프로그를 북마크하는것이기에 캠프로그의 간단한 정보들도 포함되어 있어야 한다.
     @GetMapping(ApiPath.BOOKMARK_MEMBER_ID)
-    public ResponseEntity<Page<FindBookMarkListRs>> bookMarkList(
+    public Page<FindBookMarkListRs> bookMarkList(
         @PathVariable("member-id") Long memberId,
         @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
 
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        Page<FindBookMarkListRs> rs = findBookMarkService.findBookMarkList(memberId,
-            pageRequest);
-
-        return ResponseEntity.ok(rs);
+        return findBookMarkService.findBookMarkList(memberId, pageRequest);
 
     }
 
     // 북마크 삭제
     @DeleteMapping(ApiPath.BOOKMARK_ID)
-    public ResponseEntity<?> bookMarkDelete(@PathVariable("bookmark-id") Long bookMarkId) {
+    public void bookMarkDelete(@PathVariable("bookmark-id") Long bookMarkId) {
 
         bookMarkService.removeBookMark(bookMarkId);
-
-        return ResponseEntity.ok("북마크가 삭제되었습니다");
 
     }
 

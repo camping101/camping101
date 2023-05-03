@@ -11,12 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +29,7 @@ public class CampAuthController {
     // 관리자페이지 - 캠핑장 목록 조회
     // 관리자가 캠핑장 목록 가져오기
     @PostMapping(ApiPath.ADMIN)
-    public ResponseEntity<Page<FindCampAuthListRs>> campAuthList(
+    public Page<FindCampAuthListRs> campAuthList(
         @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size,
         @RequestParam(defaultValue = "newest") String order) {
 
@@ -44,27 +42,24 @@ public class CampAuthController {
         }
 
         PageRequest pageRequest = PageRequest.of(page, size, sort);
-        Page<FindCampAuthListRs> rs = findCampAuthService.findCampAuthList(pageRequest);
-        return ResponseEntity.ok(rs);
+        return findCampAuthService.findCampAuthList(pageRequest);
+
     }
 
     // 캠핑장 승인하기(캠핑장 상세보기에서 (내부에서) 하나씩 승인)
     @GetMapping(ApiPath.ADMIN_CAMPAUTH_ID)
-    public ResponseEntity<PermitCampAuthRs> campAuthAdd(@PathVariable("campAuth-id") Long campAuthId) {
+    public PermitCampAuthRs campAuthAdd(@PathVariable("campAuth-id") Long campAuthId) {
 
-        PermitCampAuthRs rs = campAuthService.permitCampAuth(campAuthId);
+        return campAuthService.permitCampAuth(campAuthId);
 
-        return ResponseEntity.ok(rs);
     }
 
     // 체크박스를 통해 캠핑장 한번에 승인하기
     @PutMapping(ApiPath.ADMIN)
-    public ResponseEntity<List<PermitCampAuthRs>> campAuthListAdd(
+    public List<PermitCampAuthRs> campAuthListAdd(
         @RequestParam List<Long> campAuthIds) {
 
-        List<PermitCampAuthRs> rs = campAuthService.permitCampAuthList(campAuthIds);
-
-        return ResponseEntity.ok(rs);
+        return campAuthService.permitCampAuthList(campAuthIds);
 
     }
 
