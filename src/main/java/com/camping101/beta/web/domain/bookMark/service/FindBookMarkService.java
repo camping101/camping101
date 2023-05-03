@@ -21,7 +21,8 @@ public class FindBookMarkService {
     private final FindMemberService findMemberService;
 
     public BookMark findBookMarkOrElseThrow(Long bookMarkId) {
-        return bookMarkRepository.findById(bookMarkId).orElseThrow(CannotFindBookMarkException::new);
+        return bookMarkRepository.findById(bookMarkId)
+            .orElseThrow(CannotFindBookMarkException::new);
     }
 
     // 북마크 목록 조회

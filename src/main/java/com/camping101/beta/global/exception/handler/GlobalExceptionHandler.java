@@ -18,10 +18,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleMemberException(MemberException e) {
 
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
-                .status(e.getErrorCode().getHttpStatus().value())
-                .reasonOfError(e.getErrorCode().getHttpStatus().getReasonPhrase())
-                .errorMessage(e.getErrorCode().getMessage())
-                .build();
+            .status(e.getErrorCode().getHttpStatus().value())
+            .reasonOfError(e.getErrorCode().getHttpStatus().getReasonPhrase())
+            .errorMessage(e.getErrorCode().getMessage())
+            .build();
 
         return new ResponseEntity<>(exceptionResponse, e.getErrorCode().getHttpStatus());
     }
@@ -30,10 +30,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleCommentException(CommentException e) {
 
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
-                .status(e.getErrorCode().getHttpStatus().value())
-                .reasonOfError(e.getErrorCode().getHttpStatus().getReasonPhrase())
-                .errorMessage(e.getErrorCode().getMessage())
-                .build();
+            .status(e.getErrorCode().getHttpStatus().value())
+            .reasonOfError(e.getErrorCode().getHttpStatus().getReasonPhrase())
+            .errorMessage(e.getErrorCode().getMessage())
+            .build();
 
         return new ResponseEntity<>(exceptionResponse, e.getErrorCode().getHttpStatus());
     }
@@ -42,10 +42,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleRecTagException(RecTagException e) {
 
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
-                .status(e.getErrorCode().getHttpStatus().value())
-                .reasonOfError(e.getErrorCode().getHttpStatus().getReasonPhrase())
-                .errorMessage(e.getErrorCode().getMessage())
-                .build();
+            .status(e.getErrorCode().getHttpStatus().value())
+            .reasonOfError(e.getErrorCode().getHttpStatus().getReasonPhrase())
+            .errorMessage(e.getErrorCode().getMessage())
+            .build();
 
         return new ResponseEntity<>(exceptionResponse, e.getErrorCode().getHttpStatus());
     }
@@ -54,10 +54,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleCampLogException(CampLogException e) {
 
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
-                .status(e.getErrorCode().getHttpStatus().value())
-                .reasonOfError(e.getErrorCode().getHttpStatus().getReasonPhrase())
-                .errorMessage(e.getErrorCode().getMessage())
-                .build();
+            .status(e.getErrorCode().getHttpStatus().value())
+            .reasonOfError(e.getErrorCode().getHttpStatus().getReasonPhrase())
+            .errorMessage(e.getErrorCode().getMessage())
+            .build();
 
         return new ResponseEntity<>(exceptionResponse, e.getErrorCode().getHttpStatus());
     }
@@ -66,35 +66,36 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleTokenException(TokenException e) {
 
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
-                .status(e.getErrorCode().getHttpStatus().value())
-                .reasonOfError(e.getErrorCode().getHttpStatus().getReasonPhrase())
-                .errorMessage(e.getErrorCode().getMessage())
-                .build();
+            .status(e.getErrorCode().getHttpStatus().value())
+            .reasonOfError(e.getErrorCode().getHttpStatus().getReasonPhrase())
+            .errorMessage(e.getErrorCode().getMessage())
+            .build();
 
         return new ResponseEntity<>(exceptionResponse, e.getErrorCode().getHttpStatus());
     }
 
 
     @ExceptionHandler(value = DataIntegrityViolationException.class)
-    public ResponseEntity<ExceptionResponse> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+    public ResponseEntity<ExceptionResponse> handleDataIntegrityViolationException(
+        DataIntegrityViolationException e) {
 
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
-                .status(500)
-                .reasonOfError("트랜잭션 처리 중 이슈가 발생했습니다.")
-                .errorMessage(e.getMessage())
-                .build();
+            .status(500)
+            .reasonOfError("트랜잭션 처리 중 이슈가 발생했습니다.")
+            .errorMessage(e.getMessage())
+            .build();
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ExceptionResponse> handleNullPointerException(NullPointerException e){
+    public ResponseEntity<ExceptionResponse> handleNullPointerException(NullPointerException e) {
 
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
-                .status(400)
-                .reasonOfError("Null 값은 처리할 수 없습니다.")
-                .errorMessage(e.getMessage())
-                .build();
+            .status(400)
+            .reasonOfError("Null 값은 처리할 수 없습니다.")
+            .errorMessage(e.getMessage())
+            .build();
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }

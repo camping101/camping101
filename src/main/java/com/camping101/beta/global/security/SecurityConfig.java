@@ -1,6 +1,5 @@
 package com.camping101.beta.global.security;
 
-import com.camping101.beta.db.entity.member.type.MemberType;
 import com.camping101.beta.global.security.authentication.UsernamePasswordAuthenticationProvider;
 import com.camping101.beta.global.security.filter.JwtAuthenticationFilter;
 import com.camping101.beta.global.security.filter.JwtAuthorizationFilter;

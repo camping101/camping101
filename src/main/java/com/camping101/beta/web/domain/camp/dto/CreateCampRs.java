@@ -3,7 +3,6 @@ package com.camping101.beta.web.domain.camp.dto;
 import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.camp.FacilityCnt;
 import com.camping101.beta.db.entity.camp.Location;
-
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,7 +40,8 @@ public class CreateCampRs {
             .campId(camp.getCampId())
             .campName(camp.getName())
             .intro(camp.getIntro())
-            .manageStatus(String.valueOf(camp.getManageStatus())) // => 캠핑장 생성이 완료되었습니다. 관리자가 요청을 확인합니다.
+            .manageStatus(
+                String.valueOf(camp.getManageStatus())) // => 캠핑장 생성이 완료되었습니다. 관리자가 요청을 확인합니다.
             .location(camp.getLocation())
             .tel(camp.getTel())
             .oneLineReserveYn(camp.getOneLineReserveYn())

@@ -2,11 +2,10 @@ package com.camping101.beta.db.entity.camp;
 
 import static javax.persistence.EnumType.STRING;
 
-import com.camping101.beta.db.type.CampAuth;
-import com.camping101.beta.web.domain.camp.dto.FindCampDetailsOwnerRs;
-import com.camping101.beta.web.domain.camp.dto.ModifyCampRq;
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.site.Site;
+import com.camping101.beta.db.type.CampAuth;
+import com.camping101.beta.web.domain.camp.dto.ModifyCampRq;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,8 +1,8 @@
 package com.camping101.beta.web.domain.admin.campAuth.controller;
 
 import com.camping101.beta.global.path.ApiPath;
-import com.camping101.beta.web.domain.admin.campAuth.dto.PermitCampAuthRs;
 import com.camping101.beta.web.domain.admin.campAuth.dto.FindCampAuthListRs;
+import com.camping101.beta.web.domain.admin.campAuth.dto.PermitCampAuthRs;
 import com.camping101.beta.web.domain.admin.campAuth.service.CampAuthService;
 import com.camping101.beta.web.domain.admin.campAuth.service.FindCampAuthService;
 import io.swagger.annotations.Api;

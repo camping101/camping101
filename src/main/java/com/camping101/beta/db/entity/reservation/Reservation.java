@@ -3,7 +3,6 @@ package com.camping101.beta.db.entity.reservation;
 import static com.camping101.beta.db.entity.reservation.ReservationStatus.CANCEL;
 
 import com.camping101.beta.db.entity.member.Member;
-import com.camping101.beta.web.domain.reservation.dto.FindReservationDetailsRs;
 import com.camping101.beta.db.entity.site.Site;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -16,7 +15,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -15,7 +15,6 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,10 +66,10 @@ public class CampController {
     // 캠핑장 상세 정보 조회 - 손님
     @GetMapping(ApiPath.CAMP_DETAILS_CUSTOMER_CAMP_ID)
     public FindCampDetailsRs campDetailsCustomer(@PathVariable("camp-id") Long campId,
-                                                                   @RequestParam(defaultValue = "0") int sitePage,
-                                                                   @RequestParam(defaultValue = "5") int siteSize,
-                                                                   @RequestParam(defaultValue = "0") int campLogPage,
-                                                                   @RequestParam(defaultValue = "5") int campLogSize
+        @RequestParam(defaultValue = "0") int sitePage,
+        @RequestParam(defaultValue = "5") int siteSize,
+        @RequestParam(defaultValue = "0") int campLogPage,
+        @RequestParam(defaultValue = "5") int campLogSize
     ) {
 
         PageRequest sitePageRq = PageRequest.of(sitePage, siteSize);

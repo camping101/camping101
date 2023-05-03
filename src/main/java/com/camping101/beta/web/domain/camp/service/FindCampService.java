@@ -55,7 +55,8 @@ public class FindCampService {
     public FindCampDetailsRs findCampDetails(Long campId, Pageable sitePageable,
         Pageable campLogPageable) {
 
-        return findCampQueryService.findCampAndSiteAndCampLog(campId, sitePageable, campLogPageable);
+        return findCampQueryService.findCampAndSiteAndCampLog(campId, sitePageable,
+            campLogPageable);
     }
 
     public FindCampDetailsOwnerRs findCampDetailsOwner(Long campId) {

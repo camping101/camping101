@@ -3,10 +3,8 @@ package com.camping101.beta.db.entity.site;
 import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.campLog.CampLog;
 import com.camping101.beta.db.entity.reservation.Reservation;
-import com.camping101.beta.web.domain.site.dto.CreateSiteRq;
-import com.camping101.beta.web.domain.site.dto.CreateSiteRs;
-import com.camping101.beta.web.domain.site.dto.SiteListResponse;
 import com.camping101.beta.web.domain.site.dto.ModifySiteRq;
+import com.camping101.beta.web.domain.site.dto.SiteListResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +20,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -80,6 +77,7 @@ public class Site {
     public void addReservation(List<Reservation> reservations) {
         this.reservationList = reservations;
     }
+
     public Site updateSite(ModifySiteRq modifySiteRq) {
 
         this.name = modifySiteRq.getName();

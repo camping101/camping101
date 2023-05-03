@@ -23,7 +23,7 @@ public class FindCampAuthService {
             .orElseThrow(CannotFindCampAuthException::new);
     }
 
-//      1. 회원(주인)은 회원가입 후에 캠핑장 관리 서비스 이용 요청을 할 수 있다.
+    //      1. 회원(주인)은 회원가입 후에 캠핑장 관리 서비스 이용 요청을 할 수 있다.
 //      2. 관리자가 승인을 하면 캠핑장 관리 서비스 이용 가능
     public Page<FindCampAuthListRs> findCampAuthList(Pageable pageable) {
 

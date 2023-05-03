@@ -3,7 +3,6 @@ package com.camping101.beta.web.domain.camp.dto;
 import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.camp.FacilityCnt;
 import com.camping101.beta.db.entity.camp.Location;
-
 import com.camping101.beta.db.entity.camp.ManageStatus;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;

@@ -16,7 +16,7 @@ public class PermitCampAuthRs {
     private String campName;
     private String campAuthStatus;
 
-    public static PermitCampAuthRs createPermitAuthRs(CampAuth campAuth , Camp camp) {
+    public static PermitCampAuthRs createPermitAuthRs(CampAuth campAuth, Camp camp) {
 
         return PermitCampAuthRs.builder()
             .campAuthId(campAuth.getCampAuthId())

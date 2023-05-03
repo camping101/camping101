@@ -1,11 +1,8 @@
 package com.camping101.beta.web.domain.reservation.dto;
 
-import static com.camping101.beta.db.entity.reservation.ReservationStatus.CANCEL;
-
 import com.camping101.beta.db.entity.reservation.Reservation;
 import com.camping101.beta.db.entity.reservation.ReservationStatus;
 import java.time.LocalDateTime;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,21 +41,21 @@ public class FindReservationDetailsRs {
 
     public static FindReservationDetailsRs createFindReservationDetailsRs(Reservation reservation) {
 
-            return FindReservationDetailsRs.builder()
-                .memberId(reservation.getMember().getMemberId())
-                .nickname(reservation.getMember().getNickname())
-                .reservationId(reservation.getReservationId())
-                .siteId(reservation.getSite().getSiteId())
-                .siteName(reservation.getSite().getName())
-                .startDate(reservation.getStartDate())
-                .endDate(reservation.getEndDate())
-                .humanCapacity(reservation.getHumanCapacity())
-                .status(reservation.getStatus())
-                .payment(reservation.getPayment())
-                .cancelAt(reservation.getCancelAt())
-                .campLogYn(reservation.isCampLogYn())
-                .campLogWritableYn(reservation.isCampLogWritableYn())
-                .build();
+        return FindReservationDetailsRs.builder()
+            .memberId(reservation.getMember().getMemberId())
+            .nickname(reservation.getMember().getNickname())
+            .reservationId(reservation.getReservationId())
+            .siteId(reservation.getSite().getSiteId())
+            .siteName(reservation.getSite().getName())
+            .startDate(reservation.getStartDate())
+            .endDate(reservation.getEndDate())
+            .humanCapacity(reservation.getHumanCapacity())
+            .status(reservation.getStatus())
+            .payment(reservation.getPayment())
+            .cancelAt(reservation.getCancelAt())
+            .campLogYn(reservation.isCampLogYn())
+            .campLogWritableYn(reservation.isCampLogWritableYn())
+            .build();
 
     }
 }

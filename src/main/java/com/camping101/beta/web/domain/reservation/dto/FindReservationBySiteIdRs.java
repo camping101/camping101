@@ -1,10 +1,7 @@
 package com.camping101.beta.web.domain.reservation.dto;
 
 import com.camping101.beta.db.entity.reservation.Reservation;
-import com.camping101.beta.db.entity.site.Site;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +10,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class FindReservationBySiteIdRs {
+
     private String siteName;
 
 //    private List<ReservedSiteInfo> reservedSiteInfoList = new ArrayList<>();
@@ -29,7 +27,6 @@ public class FindReservationBySiteIdRs {
     private Long payment;
     private LocalDateTime createdAt; // 예약일
     private LocalDateTime cancelAt; // 취소일
-
 
 //    public FindReservationBySiteIdRs(Site site) {
 //

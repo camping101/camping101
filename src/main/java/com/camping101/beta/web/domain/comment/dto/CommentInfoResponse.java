@@ -1,9 +1,12 @@
 package com.camping101.beta.web.domain.comment.dto;
 
 import com.camping101.beta.db.entity.comment.Comment;
-import lombok.*;
-
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -23,17 +26,17 @@ public class CommentInfoResponse {
 
     private LocalDateTime createdAt;
 
-    public static CommentInfoResponse fromEntity(Comment comment){
+    public static CommentInfoResponse fromEntity(Comment comment) {
         return CommentInfoResponse.builder()
-                .commentId(comment.getCommentId())
-                .writerEmail(comment.getMember().getEmail())
-                .writerNickName(comment.getMember().getNickname())
-                .profileImagePath(comment.getMember().getProfileImagePath())
-                .reCommentYn(comment.isReCommentYn())
-                .parentId(comment.getParentId())
-                .content(comment.getContent())
-                .createdAt(comment.getCreatedAt())
-                .build();
+            .commentId(comment.getCommentId())
+            .writerEmail(comment.getMember().getEmail())
+            .writerNickName(comment.getMember().getNickname())
+            .profileImagePath(comment.getMember().getProfileImagePath())
+            .reCommentYn(comment.isReCommentYn())
+            .parentId(comment.getParentId())
+            .content(comment.getContent())
+            .createdAt(comment.getCreatedAt())
+            .build();
     }
 
 }

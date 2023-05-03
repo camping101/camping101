@@ -13,5 +13,4 @@ public class CreateReservationPaymentRq {
     LocalDateTime endDate;
 
 
-
 }

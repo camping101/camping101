@@ -3,13 +3,9 @@ package com.camping101.beta.web.domain.camp.repository;
 import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.camp.ManageStatus;
 import com.camping101.beta.db.entity.member.Member;
-import com.camping101.beta.db.entity.site.Site;
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository

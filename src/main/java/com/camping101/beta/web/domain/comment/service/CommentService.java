@@ -1,14 +1,22 @@
 package com.camping101.beta.web.domain.comment.service;
 
 import com.camping101.beta.db.entity.campLog.CampLog;
-import com.camping101.beta.web.domain.campLog.repository.CampLogRepository;
-import com.camping101.beta.web.domain.comment.dto.*;
 import com.camping101.beta.db.entity.comment.Comment;
+import com.camping101.beta.db.entity.member.Member;
+import com.camping101.beta.web.domain.campLog.repository.CampLogRepository;
+import com.camping101.beta.web.domain.comment.dto.CommentCreateRequest;
+import com.camping101.beta.web.domain.comment.dto.CommentInfoResponse;
+import com.camping101.beta.web.domain.comment.dto.CommentListRequest;
+import com.camping101.beta.web.domain.comment.dto.CommentListResponse;
+import com.camping101.beta.web.domain.comment.dto.CommentUpdateRequest;
 import com.camping101.beta.web.domain.comment.exception.CommentException;
 import com.camping101.beta.web.domain.comment.exception.ErrorCode;
 import com.camping101.beta.web.domain.comment.repository.CommentRepository;
-import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.web.domain.member.repository.MemberRepository;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,10 +25,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,15 +38,16 @@ public class CommentService {
     public CommentInfoResponse createComment(CommentCreateRequest request) {
 
         Member member = memberRepository.findByEmail(request.getWriterEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
+            .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
 
         CampLog campLog = campLogRepository.findById(request.getCampLogId())
-                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND));
+            .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND));
 
         long commentCntOfCampLog = commentRepository.countAllByCampLog(campLog);
         validateIfCommentsCntOfCampLogAlreadyReachedFive(commentCntOfCampLog);
 
-        List<Comment> commentsOfCampLogByMember = commentRepository.findAllByMemberAndCampLog(member, campLog);
+        List<Comment> commentsOfCampLogByMember = commentRepository.findAllByMemberAndCampLog(
+            member, campLog);
         validateIfCommentAlreadyWrittenByMember(request, commentsOfCampLogByMember);
 
         Comment newComment = commentRepository.save(Comment.from(request));
@@ -60,8 +65,8 @@ public class CommentService {
     }
 
     private static void validateIfCommentAlreadyWrittenByMember(CommentCreateRequest request,
-                                                                List<Comment> commentsOfCampLogByMember) {
-        if (!CollectionUtils.isEmpty(commentsOfCampLogByMember)){
+        List<Comment> commentsOfCampLogByMember) {
+        if (!CollectionUtils.isEmpty(commentsOfCampLogByMember)) {
             int mainCommentCnt = 0;
 
             // 현재 캠프 로그에서 본인이 작성한 댓글들 중에서
@@ -69,7 +74,9 @@ public class CommentService {
                 // 깊이가 0인 댓글의 갯수 확인
                 if (commentByMember.isReCommentYn() == false) {
                     mainCommentCnt++;
-                    if (mainCommentCnt >= 1) break;
+                    if (mainCommentCnt >= 1) {
+                        break;
+                    }
                 }
                 // 깊이가 1인 댓글(=대댓글) 확인
                 else {
@@ -82,8 +89,8 @@ public class CommentService {
 
             // 깊이가 0인 댓글이 1개 이상일 때, 깊이 0인 댓글 더 이상 작성 불가
             if ((Objects.isNull(request.getParentId())
-                    && request.isReCommentYn() == false
-                    && mainCommentCnt >= 1) && request.getParentId() == -1){
+                && request.isReCommentYn() == false
+                && mainCommentCnt >= 1) && request.getParentId() == -1) {
                 throw new CommentException(ErrorCode.COMMENT_MAX_LIMIT_REACHED);
             }
         }
@@ -92,10 +99,10 @@ public class CommentService {
     public CommentListResponse getCommentListOfCampLog(CommentListRequest request) {
 
         CampLog campLog = campLogRepository.findById(request.getCampLogId())
-                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND));
+            .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND));
 
         Pageable page = PageRequest.of(request.getPageNumber(), request.getRecordSize(),
-                Sort.Direction.DESC, "createdAt");
+            Sort.Direction.DESC, "createdAt");
 
         Page<Comment> commentList = commentRepository.findAllByCampLog(campLog, page);
 
@@ -111,15 +118,15 @@ public class CommentService {
         }
 
         return commentList.stream()
-                .map(CommentInfoResponse::fromEntity)
-                .collect(Collectors.toList());
+            .map(CommentInfoResponse::fromEntity)
+            .collect(Collectors.toList());
     }
 
     @Transactional
     public CommentInfoResponse updateComment(CommentUpdateRequest request) {
 
         Comment comment = commentRepository.findById(request.getCommentId())
-                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND));
+            .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND));
 
         if (!comment.getMember().getEmail().equals(request.getRequesterEmail())) {
             throw new CommentException(ErrorCode.COMMENT_WRITER_MISMATCH);
@@ -134,7 +141,7 @@ public class CommentService {
     public void deleteComment(Long commentId, String requesterEmail) {
 
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND));
+            .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND));
 
         if (!comment.getMember().getEmail().equals(requesterEmail)) {
             throw new CommentException(ErrorCode.COMMENT_WRITER_MISMATCH);

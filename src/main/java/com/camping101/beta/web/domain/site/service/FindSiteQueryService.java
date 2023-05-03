@@ -1,17 +1,16 @@
 package com.camping101.beta.web.domain.site.service;
 
+import static com.camping101.beta.db.entity.campLog.QCampLog.campLog;
+import static com.camping101.beta.db.entity.site.QSite.site;
+
+import com.camping101.beta.db.entity.site.Site;
 import com.camping101.beta.web.domain.camp.repository.CampRepository;
 import com.camping101.beta.web.domain.reservation.repository.ReservationRepository;
 import com.camping101.beta.web.domain.site.dto.sitedetailsresponse.FindSiteDetailsRs;
-import com.camping101.beta.db.entity.site.Site;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
 import javax.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.camping101.beta.db.entity.campLog.QCampLog.campLog;
-import static com.camping101.beta.db.entity.site.QSite.site;
 
 @Service
 @Transactional(readOnly = true)
@@ -69,8 +68,6 @@ public class FindSiteQueryService {
 
         return new FindSiteDetailsRs(findSite);
     }
-
-
 
 
 }

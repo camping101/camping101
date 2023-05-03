@@ -4,14 +4,13 @@ import com.p6spy.engine.common.ConnectionInformation;
 import com.p6spy.engine.event.JdbcEventListener;
 import com.p6spy.engine.spy.P6SpyOptions;
 import com.p6spy.engine.spy.appender.MessageFormattingStrategy;
-import org.hibernate.engine.jdbc.internal.FormatStyle;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
-
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import org.hibernate.engine.jdbc.internal.FormatStyle;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 @Configuration
 public class P6SpyConfig extends JdbcEventListener implements MessageFormattingStrategy {
@@ -26,7 +25,8 @@ public class P6SpyConfig extends JdbcEventListener implements MessageFormattingS
     }
 
     @Override
-    public String formatMessage(int connectionId, String now, long elapsed, String category, String prepared, String sql, String url) {
+    public String formatMessage(int connectionId, String now, long elapsed, String category,
+        String prepared, String sql, String url) {
         StringBuilder message = basicInfo(now, elapsed, category, connectionId, url, prepared);
         return formatSql(message, sql);
     }
@@ -53,7 +53,8 @@ public class P6SpyConfig extends JdbcEventListener implements MessageFormattingS
         return sql.startsWith("create") || sql.startsWith("alter") || sql.startsWith("comment");
     }
 
-    private StringBuilder basicInfo(String now, long elapsed, String category, int connectionId, String url, String prepared) {
+    private StringBuilder basicInfo(String now, long elapsed, String category, int connectionId,
+        String url, String prepared) {
         return new StringBuilder()
             .append(milliSecondToDateTime(now))
             .append(SEPARATOR)

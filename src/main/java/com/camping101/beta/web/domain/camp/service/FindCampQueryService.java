@@ -1,12 +1,16 @@
 package com.camping101.beta.web.domain.camp.service;
 
-import com.camping101.beta.web.domain.camp.dto.campdetaildto.FindCampDetailsRs;
+import static com.camping101.beta.db.entity.campLog.QCampLog.campLog;
+import static com.camping101.beta.db.entity.member.QMember.member;
+import static com.camping101.beta.db.entity.site.QSite.site;
+
+import com.camping101.beta.db.entity.camp.Camp;
+import com.camping101.beta.db.entity.site.Site;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.CampLogInCamp;
+import com.camping101.beta.web.domain.camp.dto.campdetaildto.FindCampDetailsRs;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.QCampLogInCamp;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.SiteInCamp;
-import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.web.domain.camp.repository.CampRepository;
-import com.camping101.beta.db.entity.site.Site;
 import com.camping101.beta.web.domain.site.repository.SiteRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.ArrayList;
@@ -15,13 +19,11 @@ import javax.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import static com.camping101.beta.db.entity.campLog.QCampLog.campLog;
-import static com.camping101.beta.db.entity.member.QMember.member;
-import static com.camping101.beta.db.entity.site.QSite.site;
 
 @Service
 @Transactional(readOnly = true)
 public class FindCampQueryService {
+
     private final EntityManager em;
     private final CampRepository campRepository;
     private final SiteRepository siteRepository;
@@ -50,7 +52,7 @@ public class FindCampQueryService {
 
         List<Long> siteIds = findSiteIds(campId);
         for (Long siteId : siteIds) {
-            List<CampLogInCamp> campLogs = findCampLog(siteId,campLogPageable);
+            List<CampLogInCamp> campLogs = findCampLog(siteId, campLogPageable);
             rs.addCampLogInCamp(campLogs);
         }
 
