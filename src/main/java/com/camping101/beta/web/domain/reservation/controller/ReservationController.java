@@ -35,32 +35,29 @@ public class ReservationController {
 //    2. 예약 버튼을 누르면 이용 정책을 안내
 //    3. 확인 시 결제창으로 이동한다.
     @PostMapping(ApiPath.RESERVATION)
-    public ResponseEntity<CreateReservationRs> reservationAdd(@RequestBody
+    public CreateReservationRs reservationAdd(@RequestBody
     CreateReservationRq rq) {
 
-        CreateReservationRs rs = reservationService.registerReservation(rq);
+        return reservationService.registerReservation(rq);
 
-        return ResponseEntity.ok(rs);
     }
 
     @PostMapping(ApiPath.RESERVATION_PAYMENT)
-    public ResponseEntity<?> paymentReservationPrice(@RequestBody CreateReservationPaymentRq rq) {
+    public void paymentReservationPrice(@RequestBody CreateReservationPaymentRq rq) {
         reservationService.payment(rq);
 
-        return ResponseEntity.ok("결제가 완료됐습니다!");
     }
 
 
     // 사이트 예약 목록 조회(회원이 자신의 예약 내역 조회)
     // 필터 기능이 존재하는 회원의 예약 목록 조회
     @GetMapping(ApiPath.RESERVATION_MEMBER_ID)
-    public ResponseEntity<List<FindReservationListRs>> reservationFilterList(
+    public List<FindReservationListRs> reservationFilterList(
         @PathVariable("member-id") Long memberId, @RequestParam int month) {
 
-        List<FindReservationListRs> rs = reservationService.findReservationFilterList(
+        return reservationService.findReservationFilterList(
             memberId, month);
 
-        return ResponseEntity.ok(rs);
     }
 
     @GetMapping(ApiPath.RESERVATION_CAMP_ID)
@@ -79,22 +76,20 @@ public class ReservationController {
 
     // 사이트 예약 상세 조회
     @GetMapping(ApiPath.RESERVATION_DETAILS_RESERVATION_ID)
-    public ResponseEntity<FindReservationDetailsRs> reservationDetails(
+    public FindReservationDetailsRs reservationDetails(
         @PathVariable("reservation-id") Long reservationId) {
 
-        FindReservationDetailsRs rs = findReservationService.findReservationDetails(
+        return findReservationService.findReservationDetails(
             reservationId);
 
-        return ResponseEntity.ok(rs);
     }
 
     // 사이트 예약 취소
     @DeleteMapping(ApiPath.RESERVATION_ID)
-    public ResponseEntity<?> reservationRemove(@PathVariable("reservation-id") Long reservationId) {
+    public void reservationRemove(@PathVariable("reservation-id") Long reservationId) {
 
         reservationService.deleteReservation(reservationId);
 
-        return ResponseEntity.ok("예약이 취소됐습니다");
 
     }
 }

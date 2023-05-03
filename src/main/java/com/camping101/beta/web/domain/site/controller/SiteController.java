@@ -30,11 +30,11 @@ public class SiteController {
 
     // 사이트 생성 => 최초 생성시 웹사이트에 공개하지 않음
     @PostMapping(ApiPath.SITE)
-    public ResponseEntity<CreateSiteRs> siteAdd(
+    public CreateSiteRs siteAdd(
         @RequestBody CreateSiteRq createSiteRq) {
 
-        CreateSiteRs rs = siteService.registerSite(createSiteRq);
-        return ResponseEntity.ok(rs);
+        return siteService.registerSite(createSiteRq);
+
 
     }
 
@@ -64,21 +64,19 @@ public class SiteController {
 
     // 사이트 수정
     @PutMapping(ApiPath.SITE)
-    public ResponseEntity<ModifySiteRs> siteModify(
+    public ModifySiteRs siteModify(
         @RequestBody ModifySiteRq modifySiteRq) {
 
-        ModifySiteRs rs = siteService.modifySite(modifySiteRq);
-        return ResponseEntity.ok(rs);
+        return siteService.modifySite(modifySiteRq);
 
     }
 
     // 사이트 삭제
     @DeleteMapping(ApiPath.SITE_ID)
-    public ResponseEntity<?> siteRemove(@PathVariable("site-id") Long siteId) {
+    public void siteRemove(@PathVariable("site-id") Long siteId) {
 
         siteService.removeSite(siteId);
 
-        return ResponseEntity.ok("사이트 삭제 완료");
     }
 
 
