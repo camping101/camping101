@@ -20,6 +20,7 @@ public class FindCampListRs {
     private String openSeason;
     private String animalCapable;
     private String firstImage;
+    private Long campLogCnt;
 
     public static FindCampListRs createCampListRs(Camp camp) {
 
@@ -32,6 +33,7 @@ public class FindCampListRs {
             .openSeason(camp.getOpenSeason())
             .animalCapable(camp.getAnimalCapable())
             .firstImage(camp.getFirstImage())
+            .campLogCnt(camp.getCampLogCnt())
             .build();
     }
 

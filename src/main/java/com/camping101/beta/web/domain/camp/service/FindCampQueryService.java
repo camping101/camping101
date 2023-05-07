@@ -1,10 +1,12 @@
 package com.camping101.beta.web.domain.camp.service;
 
+import static com.camping101.beta.db.entity.camp.QCamp.camp;
 import static com.camping101.beta.db.entity.campLog.QCampLog.campLog;
 import static com.camping101.beta.db.entity.member.QMember.member;
 import static com.camping101.beta.db.entity.site.QSite.site;
 
 import com.camping101.beta.db.entity.camp.Camp;
+import com.camping101.beta.db.entity.camp.QCamp;
 import com.camping101.beta.db.entity.site.Site;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.CampLogInCamp;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.FindCampDetailsRs;
@@ -148,6 +150,7 @@ public class FindCampQueryService {
             .limit(campLogPageable.getPageSize())
             .fetch();
     }
+
 
 
 }

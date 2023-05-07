@@ -31,7 +31,6 @@ public class SiteController {
 
         return siteService.registerSite(createSiteRq);
 
-
     }
 
     // 사이트 목록 조회

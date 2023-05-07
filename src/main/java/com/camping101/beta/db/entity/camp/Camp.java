@@ -72,6 +72,7 @@ public class Camp {
     private String firstImage;
     private String homepage;
     private String businessNo;
+    private Long campLogCnt;
 
     @CreatedDate
     @Column(updatable = false, insertable = true)
@@ -114,4 +115,11 @@ public class Camp {
 
     }
 
+    public void plusCampLogCnt() {
+        this.campLogCnt++;
+    }
+
+    public void minusCampLogCnt() {
+        this.campLogCnt--;
+    }
 }

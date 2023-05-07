@@ -11,6 +11,8 @@ import com.camping101.beta.web.domain.camp.dto.FindCampListRs;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.FindCampDetailsRs;
 import com.camping101.beta.web.domain.camp.repository.CampRepository;
 import com.camping101.beta.web.domain.member.service.FindMemberService;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,6 +48,8 @@ public class FindCampService {
     public Page<FindCampListRs> findCampList(Pageable pageable) {
 
         Page<Camp> camps = campRepository.findAllByManageStatus(pageable, AUTHORIZED);
+        List<Long> campLogCntList = camps.getContent().stream().map(Camp::getCampLogCnt)
+            .collect(Collectors.toList());
         return camps.map(FindCampListRs::createCampListRs);
     }
 

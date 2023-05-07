@@ -1,11 +1,13 @@
 package com.camping101.beta.web.domain.campLog.service;
 
+import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.campLog.CampLog;
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.regtag.RecTag;
 import com.camping101.beta.db.entity.site.Site;
 import com.camping101.beta.util.RedisClient;
 import com.camping101.beta.util.S3FileUploader;
+import com.camping101.beta.web.domain.camp.service.FindCampService;
 import com.camping101.beta.web.domain.campLog.dto.CampLogCreateRequest;
 import com.camping101.beta.web.domain.campLog.dto.CampLogInfoResponse;
 import com.camping101.beta.web.domain.campLog.dto.CampLogLikeKey;
@@ -56,6 +58,9 @@ public class CampLogService {
             .orElseThrow(() -> new RuntimeException("Site Not Found")); // TODO 사이트 예외로 변경 필요
 
         CampLog newCampLog = campLogRepository.save(CampLog.from(request));
+
+        Camp camp = site.getCamp();
+        camp.plusCampLogCnt();
 
         try {
             List<String> imagePaths = saveImagesToS3AndGetPaths(request);
@@ -190,6 +195,9 @@ public class CampLogService {
         }
 
         campLogRepository.delete(campLog);
+
+        Camp camp = campLog.getSite().getCamp();
+        camp.minusCampLogCnt();
 
     }
 
