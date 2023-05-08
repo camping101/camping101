@@ -3,6 +3,8 @@ package com.camping101.beta.web.domain.camp.service;
 import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.site.Site;
+import com.camping101.beta.db.type.CampAuth;
+import com.camping101.beta.web.domain.admin.campAuth.repository.CampAuthRepository;
 import com.camping101.beta.web.domain.admin.campAuth.service.CampAuthService;
 import com.camping101.beta.web.domain.camp.dto.CreateCampRq;
 import com.camping101.beta.web.domain.camp.dto.CreateCampRs;
@@ -29,6 +31,7 @@ public class CampService {
     private final CampAuthService campAuthService;
     private final SiteService siteService;
     private final FindCampService findCampService;
+    private final CampAuthRepository campAuthRepository;
 
     // 캠핑장 서비스 이용 요청
     public CreateCampRs registerCamp(CreateCampRq rq) {
@@ -40,12 +43,19 @@ public class CampService {
 
         camp.addMember(findMember);
 
-        campAuthService.requestCampAuth(camp);
+        requestCampAuth(camp);
 
         log.info("{} 캠핑장이 생성되었습니다. 관리자 승인이 완료되어야 캠핑장 서비스를 이용할 수 있습니다."
             , camp.getName());
 
         return CreateCampRs.createCampRs(camp);
+    }
+
+    // 관리자에게 캠핑장 생성 요청하기
+    public void requestCampAuth(Camp camp) {
+
+        CampAuth campAuth = CampAuth.createCampAuth(camp);
+        campAuthRepository.save(campAuth);
     }
 
     // 사장의 마이페이지 -> 캠핑장 목록 조회 -> 캠핑장 상세 정보 보기 -> 캠핑장 상세 정보 수정 버튼 누름

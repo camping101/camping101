@@ -46,10 +46,5 @@ public class CampAuthService {
 
     }
 
-    // 관리자에게 캠핑장 생성 요청하기
-    public void requestCampAuth(Camp camp) {
 
-        CampAuth campAuth = CampAuth.createCampAuth(camp);
-        campAuthRepository.save(campAuth);
-    }
 }
