@@ -66,17 +66,13 @@ public class CampController {
     // 캠핑장 상세 정보 조회 - 손님
     @GetMapping(ApiPath.CAMP_DETAILS_CUSTOMER_CAMP_ID)
     public FindCampDetailsRs campDetailsCustomer(@PathVariable("camp-id") Long campId,
-        @RequestParam(defaultValue = "0") int sitePage,
-        @RequestParam(defaultValue = "5") int siteSize,
         @RequestParam(defaultValue = "0") int campLogPage,
         @RequestParam(defaultValue = "5") int campLogSize
     ) {
 
-        PageRequest sitePageRq = PageRequest.of(sitePage, siteSize);
         PageRequest campLogPageRq = PageRequest.of(campLogPage, campLogSize);
 
-        return findCampService.findCampDetails(campId, sitePageRq,
-            campLogPageRq);
+        return findCampService.findCampDetails(campId, campLogPageRq);
 
     }
 

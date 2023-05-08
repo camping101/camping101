@@ -56,11 +56,9 @@ public class FindCampService {
     // 캠핑장 상세 정보 조회 -> 회원(손님)
     // 해당 캠핑장의 사이트 목록을 같이 가져온다.
     // 해당 사이트의 모든 캠프로그들도 같이 가져온다.
-    public FindCampDetailsRs findCampDetails(Long campId, Pageable sitePageable,
-        Pageable campLogPageable) {
+    public FindCampDetailsRs findCampDetails(Long campId, Pageable campLogPageable) {
 
-        return findCampQueryService.findCampAndSiteAndCampLog(campId, sitePageable,
-            campLogPageable);
+        return findCampQueryService.findCampAndSiteAndCampLog(campId, campLogPageable);
     }
 
     public FindCampDetailsOwnerRs findCampDetailsOwner(Long campId) {

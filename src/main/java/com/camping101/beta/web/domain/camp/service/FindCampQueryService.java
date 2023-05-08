@@ -3,18 +3,30 @@ package com.camping101.beta.web.domain.camp.service;
 import static com.camping101.beta.db.entity.camp.QCamp.camp;
 import static com.camping101.beta.db.entity.campLog.QCampLog.campLog;
 import static com.camping101.beta.db.entity.member.QMember.member;
+import static com.camping101.beta.db.entity.reservation.QReservation.reservation;
 import static com.camping101.beta.db.entity.site.QSite.site;
 
 import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.camp.QCamp;
+import com.camping101.beta.db.entity.reservation.QReservation;
 import com.camping101.beta.db.entity.site.Site;
+import com.camping101.beta.db.entity.site.SiteCapacity;
+import com.camping101.beta.db.entity.site.SiteType;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.CampLogInCamp;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.FindCampDetailsRs;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.QCampLogInCamp;
+import com.camping101.beta.web.domain.camp.dto.campdetaildto.QSiteInCamp;
+import com.camping101.beta.web.domain.camp.dto.campdetaildto.ReservationInSite;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.SiteInCamp;
 import com.camping101.beta.web.domain.camp.repository.CampRepository;
 import com.camping101.beta.web.domain.site.repository.SiteRepository;
+import com.querydsl.core.annotations.QueryProjection;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -25,12 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class FindCampQueryService {
-
     private final EntityManager em;
     private final CampRepository campRepository;
     private final SiteRepository siteRepository;
     private final JPAQueryFactory queryFactory;
-
 
     public FindCampQueryService(EntityManager em, CampRepository campRepository,
         SiteRepository siteRepository) {
@@ -40,11 +50,14 @@ public class FindCampQueryService {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public FindCampDetailsRs findCampAndSiteAndCampLog(Long campId, Pageable sitePageable,
+    public FindCampDetailsRs findCampAndSiteAndCampLog(Long campId,
         Pageable campLogPageable) {
 
         FindCampDetailsRs rs = findCampDetails(campId);
-        List<SiteInCamp> sites = findSite(campId, sitePageable);
+
+        List<SiteInCamp> sites = findSiteAndReservation(campId);
+
+        List<Long> siteIds = findSiteIds(campId);
 
         // 트러블슈팅 : 해당 캠프에 해당하는 모든 캠프로그들을 가져와야함.
         // 이때 캠프로그는 사이트에 속해있음.
@@ -52,7 +65,6 @@ public class FindCampQueryService {
         // 캠프로그 아이디를 모두 찾아두고 fetch 조인을 한 후에 for문 2번 돌리면서 구하기
         // vs 캠프로그 아이디를 매개변수로 querydsl에 넣어서 쿼리 N 번(사이트 갯수만큼) 날리기.
 
-        List<Long> siteIds = findSiteIds(campId);
         for (Long siteId : siteIds) {
             List<CampLogInCamp> campLogs = findCampLog(siteId, campLogPageable);
             rs.addCampLogInCamp(campLogs);
@@ -89,29 +101,18 @@ public class FindCampQueryService {
             .getSingleResult();
     }
 
-    // 사이트의 아이디들을 모두 가져옴.
-    // V4
-    private List<SiteInCamp> findSite(Long campId, Pageable sitePageable) {
+    private List<SiteInCamp> findSiteAndReservation(Long campId) {
 
-        return em.createQuery(
-                "select new com.camping101.beta.web.domain.camp.dto.campdetaildto.SiteInCamp("
-                    + "s.siteId,"
-                    + "s.name,"
-                    + "s.rpImage,"
-                    + "s.introduction,"
-                    + "s.type,"
-                    + "s.openYn,"
-                    + "s.checkIn,"
-                    + "s.checkOut,"
-                    + "s.leastScheduling,"
-                    + "s.siteCapacity,"
-                    + "s.price)"
-                    + " from Site s inner join s.camp c "
-                    + "where c.campId =: campId", SiteInCamp.class)
-            .setParameter("campId", campId)
-            .setFirstResult((int) sitePageable.getOffset())
-            .setMaxResults(sitePageable.getPageSize())
-            .getResultList();
+        LocalDateTime fromDate = LocalDate.now().minusMonths(1).atStartOfDay();
+        LocalDateTime toDate = LocalDate.now().plusMonths(2).atStartOfDay();
+
+        Predicate predicate = camp.campId.eq(campId)
+            .and(camp.sites.any().reservationList.any().startDate.between(fromDate, toDate))
+            .and(camp.sites.any().reservationList.any().endDate.between(fromDate, toDate));
+
+
+        return queryFactory.select(new QSiteInCamp(site)).from(camp).where(predicate).fetch();
+
     }
 
     private List<Long> findSiteIds(Long campId) {
