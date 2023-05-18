@@ -28,7 +28,6 @@ public class CampService {
 
     private final CampRepository campRepository;
     private final FindMemberService findMemberService;
-    private final CampAuthService campAuthService;
     private final SiteService siteService;
     private final FindCampService findCampService;
     private final CampAuthRepository campAuthRepository;

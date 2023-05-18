@@ -28,7 +28,6 @@ public class SiteInCamp {
     private SiteCapacity siteCapacity;
     private int price;
     private List<ReservationInSite> reservationInSiteList = new ArrayList<>();
-
     @QueryProjection
     public SiteInCamp(Site site) {
         this.siteId = site.getSiteId();

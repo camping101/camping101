@@ -1,6 +1,7 @@
 package com.camping101.beta.web.domain.reservation.dto;
 
 import com.camping101.beta.db.entity.reservation.Reservation;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,8 +20,8 @@ public class FindReservationBySiteIdRs {
     private String nickname;
     private Long reservationId;
 
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     private int humanCapacity;
     private String reservationsStatus;

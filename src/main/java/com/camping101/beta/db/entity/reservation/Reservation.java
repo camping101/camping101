@@ -4,6 +4,7 @@ import static com.camping101.beta.db.entity.reservation.ReservationStatus.CANCEL
 
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.site.Site;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,8 +44,8 @@ public class Reservation {
     @JoinColumn(name = "site_id")
     private Site site;
 
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     private int humanCapacity;
 

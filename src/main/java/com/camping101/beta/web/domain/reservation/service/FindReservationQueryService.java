@@ -7,6 +7,7 @@ import com.camping101.beta.db.entity.reservation.Reservation;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -51,7 +52,7 @@ public class FindReservationQueryService {
     public List<Reservation> findReservationBySite(Long siteId) {
 
         return queryFactory.select(reservation).from(reservation)
-            .where(reservation.endDate.lt(LocalDateTime.now()))
+            .where(reservation.endDate.lt(LocalDate.now()))
             .fetch();
     }
 

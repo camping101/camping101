@@ -95,8 +95,8 @@ public class FindCampQueryService {
 
     private List<SiteInCamp> findSiteAndReservation(List<Long> siteIds) {
 
-        LocalDateTime fromDate = LocalDate.now().minusMonths(1).atStartOfDay();
-        LocalDateTime toDate = LocalDate.now().plusMonths(2).atStartOfDay();
+        LocalDate fromDate = LocalDate.from(LocalDate.now().atStartOfDay());
+        LocalDate toDate = LocalDate.from(LocalDate.now().plusMonths(2).atStartOfDay());
 
         Predicate predicate = (site.reservationList.any().startDate.between(fromDate, toDate))
             .and(site.reservationList.any().endDate.between(fromDate, toDate));

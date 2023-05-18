@@ -3,6 +3,7 @@ package com.camping101.beta.web.domain.reservation.dto;
 import static com.camping101.beta.db.entity.reservation.ReservationStatus.COMP;
 
 import com.camping101.beta.db.entity.reservation.Reservation;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,9 +22,9 @@ public class CreateReservationRq {
 
     private Long siteId;
 
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     private int humanCapacity;
 

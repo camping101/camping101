@@ -11,6 +11,7 @@ import com.camping101.beta.web.domain.reservation.dto.CreateReservationRs;
 import com.camping101.beta.web.domain.reservation.dto.FindReservationListRs;
 import com.camping101.beta.web.domain.reservation.repository.ReservationRepository;
 import com.camping101.beta.web.domain.site.service.FindSiteService;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -98,7 +99,7 @@ public class ReservationService {
         for (Reservation reservation : reservationList) {
 
             // 해당 예약이 endDate를 지났을 경우
-            if (reservation.getEndDate().isBefore(LocalDateTime.now())) {
+            if (reservation.getEndDate().isBefore(LocalDate.now())) {
                 // 이미 캠프로그를 작성한적 있거나 예약이 취소된적 있으면 캠프로그를 더이상 작성할 수 없다.
                 if (!reservation.isCampLogYn()
                     && reservation.getStatus() == ReservationStatus.COMP) {
@@ -117,7 +118,7 @@ public class ReservationService {
         Reservation findReservation = findReservationService.findByReservationOrElseThrow(
             reservationId);
 
-        if ((findReservation.getStartDate().plusDays(7)).isBefore(LocalDateTime.now())) {
+        if ((findReservation.getStartDate().plusDays(7)).isBefore(LocalDate.now())) {
             Reservation.modifyReservationStatus(findReservation);
         } else {
             log.info("예약을 취소할 수 없습니다.");

@@ -37,7 +37,6 @@ public class CampController {
     public CreateCampRs campAdd(@RequestBody CreateCampRq rq) {
 
         return campService.registerCamp(rq);
-
     }
 
     // 자신의 캠핑장 목록 조회(주인)

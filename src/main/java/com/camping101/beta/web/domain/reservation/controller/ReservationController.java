@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 @Api(tags = "캠핑 101 - 예약 API")
 public class ReservationController {
-
     private final ReservationService reservationService;
     private final FindReservationService findReservationService;
 
@@ -38,7 +37,6 @@ public class ReservationController {
     CreateReservationRq rq) {
 
         return reservationService.registerReservation(rq);
-
     }
 
     @PostMapping(ApiPath.RESERVATION_PAYMENT)
@@ -46,7 +44,6 @@ public class ReservationController {
         reservationService.payment(rq);
 
     }
-
 
     // 사이트 예약 목록 조회(회원이 자신의 예약 내역 조회)
     // 필터 기능이 존재하는 회원의 예약 목록 조회
