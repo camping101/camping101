@@ -1,10 +1,7 @@
 package com.camping101.beta.web.domain.comment.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
 
 @Getter
 @Setter
@@ -13,6 +10,7 @@ import lombok.Setter;
 @Builder
 public class CommentCreateRequest {
 
+    @ApiModelProperty(hidden = true)
     private String writerEmail;
     private Long campLogId;
     private long parentId = -1;

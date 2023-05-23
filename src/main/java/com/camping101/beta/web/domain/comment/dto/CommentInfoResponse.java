@@ -1,12 +1,10 @@
 package com.camping101.beta.web.domain.comment.dto;
 
 import com.camping101.beta.db.entity.comment.Comment;
+import lombok.*;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -19,24 +17,22 @@ public class CommentInfoResponse {
     private String writerEmail;
     private String writerNickName;
     private String profileImagePath;
-    private long parentId;
-    private boolean reCommentYn;
     private String content;
-    private long like;
-
+    private List<ReCommentInfoResponse> reComments;
     private LocalDateTime createdAt;
 
-    public static CommentInfoResponse fromEntity(Comment comment) {
+    public static CommentInfoResponse fromEntity(Comment comment){
         return CommentInfoResponse.builder()
-            .commentId(comment.getCommentId())
-            .writerEmail(comment.getMember().getEmail())
-            .writerNickName(comment.getMember().getNickname())
-            .profileImagePath(comment.getMember().getProfileImagePath())
-            .reCommentYn(comment.isReCommentYn())
-            .parentId(comment.getParentId())
-            .content(comment.getContent())
-            .createdAt(comment.getCreatedAt())
-            .build();
+                .commentId(comment.getCommentId())
+                .writerEmail(comment.getMember().getEmail())
+                .writerNickName(comment.getMember().getNickname())
+                .profileImagePath(comment.getMember().getProfileImagePath())
+                .content(comment.getContent())
+                .reComments(comment.getReComments().stream()
+                        .map(ReCommentInfoResponse::fromEntity)
+                        .collect(Collectors.toList()))
+                .createdAt(comment.getCreatedAt())
+                .build();
     }
 
 }
