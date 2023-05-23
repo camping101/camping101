@@ -1,5 +1,8 @@
 package com.camping101.beta.web.domain.member.service.signin;
 
+import static com.camping101.beta.web.domain.member.exception.ErrorCode.INVALID_REFRESH_TOKEN;
+import static com.camping101.beta.web.domain.member.exception.ErrorCode.MEMBER_SIGN_IN_ERROR;
+
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.member.RefreshToken;
 import com.camping101.beta.db.entity.member.type.SignUpType;
@@ -18,17 +21,13 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.lang.Strings;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-
-import static com.camping101.beta.web.domain.member.exception.ErrorCode.INVALID_REFRESH_TOKEN;
-import static com.camping101.beta.web.domain.member.exception.ErrorCode.MEMBER_SIGN_IN_ERROR;
 
 @Service
 @RequiredArgsConstructor
@@ -45,15 +44,15 @@ public class MemberSignInServiceImpl implements MemberSignInService {
     public TokenInfo signInByEmail(SignInByEmailRequest request) {
 
         Member member = memberRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
+            .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
 
         validateIfMemberSignedUpByEmail(member);
 
-        if(!isPasswordMatching(request, member)){
+        if (!isPasswordMatching(request, member)) {
 
-           log.info("MemberSignInServiceImpl,signInByEmail : 비밀번호 불일치");
+            log.info("MemberSignInServiceImpl,signInByEmail : 비밀번호 불일치");
 
-           throw new BadCredentialsException("비밀번호 불일치");
+            throw new BadCredentialsException("비밀번호 불일치");
 
         }
 
@@ -65,8 +64,10 @@ public class MemberSignInServiceImpl implements MemberSignInService {
 
     private boolean isPasswordMatching(SignInByEmailRequest request, Member member) {
 
-        if (temporalPasswordService.isTemporalPasswordMatching(request.getPassword(), member.getMemberId())) {
-            log.info("MemberSignInServiceImpl.isPasswordMatching : 임시 비밀번호 {}가 일치합니다.", request.getPassword());
+        if (temporalPasswordService.isTemporalPasswordMatching(request.getPassword(),
+            member.getMemberId())) {
+            log.info("MemberSignInServiceImpl.isPasswordMatching : 임시 비밀번호 {}가 일치합니다.",
+                request.getPassword());
             return true;
         }
 
@@ -88,7 +89,7 @@ public class MemberSignInServiceImpl implements MemberSignInService {
     public MemberDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
+            .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
 
         return new MemberDetails(member);
     }
@@ -96,7 +97,8 @@ public class MemberSignInServiceImpl implements MemberSignInService {
     @Override
     public boolean isPasswordMatching(MemberDetails memberDetails, String rawPassword) {
 
-        if (temporalPasswordService.isTemporalPasswordMatching(rawPassword, memberDetails.getMemberId())) {
+        if (temporalPasswordService.isTemporalPasswordMatching(rawPassword,
+            memberDetails.getMemberId())) {
             log.info("MemberSignInServiceImpl.isPasswordMatching : 임시 비밀번호가 일치합니다.");
             return true;
         }
@@ -112,13 +114,14 @@ public class MemberSignInServiceImpl implements MemberSignInService {
             validateRefreshTokenFormat(refreshToken);
 
             RefreshToken redisRefreshToken = tokenService.findRefreshTokenById(refreshToken)
-                    .orElseThrow(() -> new TokenException(INVALID_REFRESH_TOKEN));
+                .orElseThrow(() -> new TokenException(INVALID_REFRESH_TOKEN));
 
             validateIfRefreshTokenExpired(redisRefreshToken);
 
             String newAccessToken = isRefreshTokenCreatedByGoogleOAuth(redisRefreshToken) ?
-                    googleOAuthService.reissueAccessTokenByRefreshToken(redisRefreshToken.getGoogleRefreshToken()) :
-                    tokenService.createAccessTokenByRefreshToken(refreshToken);
+                googleOAuthService.reissueAccessTokenByRefreshToken(
+                    redisRefreshToken.getGoogleRefreshToken()) :
+                tokenService.createAccessTokenByRefreshToken(refreshToken);
 
             return new ReissueRefreshTokenResponse(newAccessToken);
 

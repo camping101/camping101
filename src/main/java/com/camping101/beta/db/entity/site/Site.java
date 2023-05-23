@@ -3,11 +3,8 @@ package com.camping101.beta.db.entity.site;
 import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.campLog.CampLog;
 import com.camping101.beta.db.entity.reservation.Reservation;
-import com.camping101.beta.web.domain.site.dto.SiteCreateRequest;
-import com.camping101.beta.web.domain.site.dto.SiteCreateResponse;
+import com.camping101.beta.web.domain.site.dto.ModifySiteRq;
 import com.camping101.beta.web.domain.site.dto.SiteListResponse;
-import com.camping101.beta.web.domain.site.dto.SiteModifyRequest;
-import com.camping101.beta.web.domain.site.dto.SiteModifyResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +20,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -72,7 +68,6 @@ public class Site {
     private String policy;
     private int price;
     private LocalDateTime refundableDate;
-    private boolean isReserved;
 
     public void addCamp(Camp camp) {
 
@@ -83,110 +78,43 @@ public class Site {
         this.reservationList = reservations;
     }
 
-    public static Site toEntity(SiteCreateRequest siteCreateRequest) {
+    public Site updateSite(ModifySiteRq modifySiteRq) {
 
-        return Site.builder()
-            .name(siteCreateRequest.getName())
-            .rpImage(siteCreateRequest.getRpImage())
-            .introduction(siteCreateRequest.getIntroduction())
-            .type(siteCreateRequest.getType())
-            .openYn(false)
-            .siteYn(siteCreateRequest.getSiteYn())
-            .checkIn(siteCreateRequest.getCheckIn())
-            .checkOut(siteCreateRequest.getCheckOut())
-            .leastScheduling(siteCreateRequest.getLeastScheduling())
-            .siteCapacity(siteCreateRequest.getSiteCapacity())
-            .mapImage(siteCreateRequest.getMapImage())
-            .policy(siteCreateRequest.getPolicy())
-            .price(siteCreateRequest.getPrice())
-            .refundableDate(siteCreateRequest.getRefundableDate())
-            .build();
-
-    }
-
-    public static SiteCreateResponse toSiteCreateResponse(Site site) {
-
-        return SiteCreateResponse.builder()
-            .siteId(site.getSiteId())
-            .campId(site.getCamp().getCampId())
-            .name(site.getName())
-            .rpImage(site.getRpImage())
-            .introduction(site.getIntroduction())
-            .type(site.getType())
-            .openYn(site.isOpenYn())
-            .siteYn(site.getSiteYn())
-            .checkIn(site.getCheckIn())
-            .checkOut(site.getCheckOut())
-            .leastScheduling(site.getLeastScheduling())
-            .siteCapacity(site.getSiteCapacity())
-            .mapImage(site.getMapImage())
-            .policy(site.getPolicy())
-            .price(site.getPrice())
-            .refundableDate(site.getRefundableDate())
-            .build();
-
-    }
-
-    public Site updateSite(SiteModifyRequest siteModifyRequest) {
-
-        this.name = siteModifyRequest.getName();
-        this.rpImage = siteModifyRequest.getRpImage(); //대표 이미지
-        this.introduction = siteModifyRequest.getIntroduction();
-        this.type = siteModifyRequest.getType();
-        this.openYn = siteModifyRequest.isOpenYn();
-        this.siteYn = siteModifyRequest.getSiteYn();
-        this.checkIn = siteModifyRequest.getCheckIn();
-        this.checkOut = siteModifyRequest.getCheckOut();
-        this.leastScheduling = siteModifyRequest.getLeastScheduling();
-        this.siteCapacity = siteModifyRequest.getSiteCapacity();
-        this.mapImage = siteModifyRequest.getMapImage();
-        this.policy = siteModifyRequest.getPolicy();
-        this.price = siteModifyRequest.getPrice();
-        this.refundableDate = siteModifyRequest.getRefundableDate();
+        this.name = modifySiteRq.getName();
+        this.rpImage = modifySiteRq.getRpImage(); //대표 이미지
+        this.introduction = modifySiteRq.getIntroduction();
+        this.type = modifySiteRq.getType();
+        this.openYn = modifySiteRq.isOpenYn();
+        this.siteYn = modifySiteRq.getSiteYn();
+        this.checkIn = modifySiteRq.getCheckIn();
+        this.checkOut = modifySiteRq.getCheckOut();
+        this.leastScheduling = modifySiteRq.getLeastScheduling();
+        this.siteCapacity = modifySiteRq.getSiteCapacity();
+        this.mapImage = modifySiteRq.getMapImage();
+        this.policy = modifySiteRq.getPolicy();
+        this.price = modifySiteRq.getPrice();
+        this.refundableDate = modifySiteRq.getRefundableDate();
 
         return this;
     }
 
-    public static Site toEntity(SiteModifyRequest siteModifyRequest) {
+    public static Site toEntity(ModifySiteRq modifySiteRq) {
 
         return Site.builder()
-            .siteId(siteModifyRequest.getSiteId())
-            .name(siteModifyRequest.getName())
-            .rpImage(siteModifyRequest.getRpImage())
-            .introduction(siteModifyRequest.getIntroduction())
-            .type(siteModifyRequest.getType())
-            .siteYn(siteModifyRequest.getSiteYn())
-            .checkIn(siteModifyRequest.getCheckIn())
-            .checkOut(siteModifyRequest.getCheckOut())
-            .leastScheduling(siteModifyRequest.getLeastScheduling())
-            .siteCapacity(siteModifyRequest.getSiteCapacity())
-            .mapImage(siteModifyRequest.getMapImage())
-            .policy(siteModifyRequest.getPolicy())
-            .price(siteModifyRequest.getPrice())
-            .refundableDate(siteModifyRequest.getRefundableDate())
-            .build();
-
-    }
-
-    public static SiteModifyResponse toSiteModifyResponse(Site site) {
-
-        return SiteModifyResponse.builder()
-            .siteId(site.getSiteId())
-            .campId(site.getCamp().getCampId())
-            .name(site.getName())
-            .rpImage(site.getRpImage())
-            .introduction(site.getIntroduction())
-            .type(site.getType())
-            .openYn(site.isOpenYn())
-            .siteYn(site.getSiteYn())
-            .checkIn(site.getCheckIn())
-            .checkOut(site.getCheckOut())
-            .leastScheduling(site.getLeastScheduling())
-            .siteCapacity(site.getSiteCapacity())
-            .mapImage(site.getMapImage())
-            .policy(site.getPolicy())
-            .price(site.getPrice())
-            .refundableDate(site.getRefundableDate())
+            .siteId(modifySiteRq.getSiteId())
+            .name(modifySiteRq.getName())
+            .rpImage(modifySiteRq.getRpImage())
+            .introduction(modifySiteRq.getIntroduction())
+            .type(modifySiteRq.getType())
+            .siteYn(modifySiteRq.getSiteYn())
+            .checkIn(modifySiteRq.getCheckIn())
+            .checkOut(modifySiteRq.getCheckOut())
+            .leastScheduling(modifySiteRq.getLeastScheduling())
+            .siteCapacity(modifySiteRq.getSiteCapacity())
+            .mapImage(modifySiteRq.getMapImage())
+            .policy(modifySiteRq.getPolicy())
+            .price(modifySiteRq.getPrice())
+            .refundableDate(modifySiteRq.getRefundableDate())
             .build();
 
     }
@@ -209,6 +137,4 @@ public class Site {
     public void changeOpenYn(Site site) {
         site.openYn = true;
     }
-
-
 }

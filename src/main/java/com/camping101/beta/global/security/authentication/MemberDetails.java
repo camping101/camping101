@@ -4,32 +4,31 @@ import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.member.status.MemberStatus;
 import com.camping101.beta.db.entity.member.type.MemberType;
 import com.camping101.beta.db.entity.member.type.SignUpType;
-import lombok.AllArgsConstructor;
+import java.util.Collection;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 public class MemberDetails implements UserDetails {
 
     private final Member member;
 
-    public Long getMemberId(){
+    public Long getMemberId() {
         return member.getMemberId();
     }
 
-    public String getEmail() { return getUsername(); }
+    public String getEmail() {
+        return getUsername();
+    }
 
     public MemberType getMemberType() {
         return getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority).map(MemberType::valueOf).findFirst().get();
+            .map(GrantedAuthority::getAuthority).map(MemberType::valueOf).findFirst().get();
     }
 
-    public SignUpType getSignUpType(){
+    public SignUpType getSignUpType() {
         return member.getSignUpType();
     }
 

@@ -1,7 +1,5 @@
 package com.camping101.beta.db.entity.bookMark;
 
-import com.camping101.beta.web.domain.bookMark.dto.BookMarkCreateResponse;
-import com.camping101.beta.web.domain.bookMark.dto.BookMarkListResponse;
 import com.camping101.beta.db.entity.campLog.CampLog;
 import com.camping101.beta.db.entity.member.Member;
 import javax.persistence.Column;
@@ -49,31 +47,6 @@ public class BookMark {
 
     public void changeMember(Member member) {
         this.member = member;
-    }
-
-    public static BookMarkCreateResponse toBookMarkCreateResponse(BookMark bookMark) {
-
-        return BookMarkCreateResponse.builder()
-            .bookMarkId(bookMark.getBookMarkId())
-            .memberId(bookMark.getMember().getMemberId())
-            .campLogId(bookMark.getCampLog().getCampLogId())
-            .title(bookMark.getCampLog().getTitle())
-            .build();
-
-    }
-
-    public static BookMarkListResponse toBookMarkListResponse(BookMark bookMark) {
-
-        return BookMarkListResponse.builder()
-            .bookMarkId(bookMark.getBookMarkId())
-            .memberId(bookMark.getMember().getMemberId())
-            .nickName(bookMark.getMember().getNickname())
-            .campLogId(bookMark.getCampLog().getCampLogId())
-            .title(bookMark.getCampLog().getTitle())
-            .description(bookMark.getCampLog().getDescription())
-            .image(bookMark.getCampLog().getImage())
-            .build();
-
     }
 
 
