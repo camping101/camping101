@@ -9,7 +9,6 @@ import lombok.*;
 @Builder
 public class CommentUpdateRequest {
 
-    private Long commentId;
     private String requesterEmail;
     private Long campLogId;
     private String content;

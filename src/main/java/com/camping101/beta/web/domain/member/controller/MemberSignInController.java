@@ -47,8 +47,8 @@ public class MemberSignInController {
 
         TokenInfo tokenInfo = memberSignInService.signInByEmail(request);
 
-        response.setHeader("access_token", tokenInfo.getAccessToken());
-        response.setHeader("refresh_token", tokenInfo.getRefreshToken());
+        response.setHeader("access-token", tokenInfo.getAccessToken());
+        response.setHeader("refresh-token", tokenInfo.getRefreshToken());
 
         return ResponseEntity.ok().build();
     }
@@ -83,8 +83,8 @@ public class MemberSignInController {
     private void addAccessTokenAndRefreshTokenToResponseHeader(HttpServletResponse response, TokenInfo tokenInfo) {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
-        response.setHeader("ACCESS_TOKEN", tokenInfo.getAccessToken());
-        response.setHeader("REFRESH_TOKEN", tokenInfo.getRefreshToken());
+        response.setHeader("access-token", tokenInfo.getAccessToken());
+        response.setHeader("refresh-token", tokenInfo.getRefreshToken());
     }
 
     @PostMapping("/refresh")
