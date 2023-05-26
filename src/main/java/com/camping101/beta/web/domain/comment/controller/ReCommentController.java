@@ -1,8 +1,8 @@
 package com.camping101.beta.web.domain.comment.controller;
 
-import com.camping101.beta.web.domain.comment.dto.CommentCreateRequest;
-import com.camping101.beta.web.domain.comment.dto.CommentUpdateRequest;
+import com.camping101.beta.web.domain.comment.dto.ReCommentCreateRequest;
 import com.camping101.beta.web.domain.comment.dto.ReCommentInfoResponse;
+import com.camping101.beta.web.domain.comment.dto.ReCommentUpdateRequest;
 import com.camping101.beta.web.domain.comment.service.ReCommentService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class ReCommentController {
     private final ReCommentService reCommentService;
 
     @PostMapping
-    public ResponseEntity<ReCommentInfoResponse> createComment(@RequestBody CommentCreateRequest request,
+    public ResponseEntity<ReCommentInfoResponse> createComment(@RequestBody ReCommentCreateRequest request,
                                                                @ApiIgnore Principal principal){
 
         request.setWriterEmail(principal.getName());
@@ -32,7 +32,7 @@ public class ReCommentController {
 
     @PutMapping("/{reCommentId}")
     public ResponseEntity<ReCommentInfoResponse> updateComment(@PathVariable Long reCommentId,
-                                                               @RequestBody CommentUpdateRequest request,
+                                                               @RequestBody ReCommentUpdateRequest request,
                                                                @ApiIgnore Principal principal){
 
         request.setRequesterEmail(principal.getName());

@@ -4,6 +4,7 @@ import com.camping101.beta.db.entity.campLog.CampLog;
 import com.camping101.beta.db.entity.member.Member;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
@@ -36,8 +37,8 @@ public class Comment {
     @JoinColumn(name = "camp_log_id")
     CampLog campLog;
 
-    @OneToMany(mappedBy = "parentComment")
-    List<ReComment> reComments;
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.REMOVE)
+    List<ReComment> reComments = new ArrayList<>();
 
     private String content;
 
@@ -51,6 +52,7 @@ public class Comment {
                 .campLog(campLog)
                 .member(commentWriter)
                 .content(content)
+                .reComments(new ArrayList<>())
                 .build();
     }
 
