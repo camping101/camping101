@@ -3,9 +3,9 @@ package com.camping101.beta.web.domain.comment.service;
 import com.camping101.beta.db.entity.comment.Comment;
 import com.camping101.beta.db.entity.comment.ReComment;
 import com.camping101.beta.db.entity.member.Member;
-import com.camping101.beta.web.domain.comment.dto.CommentCreateRequest;
-import com.camping101.beta.web.domain.comment.dto.CommentUpdateRequest;
+import com.camping101.beta.web.domain.comment.dto.ReCommentCreateRequest;
 import com.camping101.beta.web.domain.comment.dto.ReCommentInfoResponse;
+import com.camping101.beta.web.domain.comment.dto.ReCommentUpdateRequest;
 import com.camping101.beta.web.domain.comment.exception.CommentException;
 import com.camping101.beta.web.domain.comment.exception.ErrorCode;
 import com.camping101.beta.web.domain.comment.repository.CommentRepository;
@@ -29,7 +29,7 @@ public class ReCommentService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public ReCommentInfoResponse createReComment(CommentCreateRequest request) {
+    public ReCommentInfoResponse createReComment(ReCommentCreateRequest request) {
 
         Comment parentComment = commentRepository.findById(request.getParentId())
                 .orElseThrow(() -> new CommentException(COMMENT_NOT_FOUND));
@@ -42,14 +42,14 @@ public class ReCommentService {
             throw new CommentException(CAMPLOG_WRITER_MISMATCH);
         }
 
-        ReComment newReComment = ReComment.from(parentComment, reCommentWriter, request.getContent());
+        ReComment newReComment = reCommentRepository.save(ReComment.from(parentComment, reCommentWriter, request.getContent()));
 
         return ReCommentInfoResponse.fromEntity(newReComment);
 
     }
 
     @Transactional
-    public ReCommentInfoResponse updateReComment(Long reCommentId, CommentUpdateRequest request) {
+    public ReCommentInfoResponse updateReComment(Long reCommentId, ReCommentUpdateRequest request) {
 
         ReComment reComment = reCommentRepository.findById(reCommentId)
                 .orElseThrow(() -> new CommentException(COMMENT_NOT_FOUND));

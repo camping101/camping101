@@ -8,11 +8,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class CommentCreateRequest {
+public class ReCommentCreateRequest {
 
     @ApiModelProperty(hidden = true)
     private String writerEmail;
     private Long campLogId;
+    private long parentId;
     private String content;
 
 }
