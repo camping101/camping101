@@ -85,8 +85,8 @@ public class TokenService {
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
-        response.setHeader("access_token", accessToken);
-        response.setHeader("refresh_token", refreshToken);
+        response.setHeader("access-token", accessToken);
+        response.setHeader("refresh-token", refreshToken);
     }
 
     public String createAccessToken(MemberDetails memberDetails) {
