@@ -33,7 +33,6 @@ public class ReservationService {
     private final FindReservationQueryService findReservationQueryService;
     private final FindReservationService findReservationService;
 
-
     // 사이트 예약 생성
 //    1. 예약 가능 일자를 확인하고, 예약 일자를 선택한 후
 //    2. 예약 버튼을 누르면 이용 정책을 안내
@@ -41,7 +40,6 @@ public class ReservationService {
     public CreateReservationRs registerReservation(CreateReservationRq rq) {
 
         Reservation reservation = CreateReservationRq.createReservation(rq);
-        reservationRepository.save(reservation);
 
         Site findSite = findSiteService.findSiteOrElseThrow(rq.getSiteId());
 
@@ -49,12 +47,12 @@ public class ReservationService {
 
         Member findMember = findMemberService.findMemberOrElseThrow(rq.getMemberId());
 
-        // 변경 감지
         reservation.addMember(findMember);
         reservation.addSite(findSite);
 
-        return CreateReservationRs.createReservationRs(reservation);
+        reservationRepository.save(reservation);
 
+        return CreateReservationRs.createReservationRs(reservation);
     }
 
     // 결제하기

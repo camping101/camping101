@@ -30,7 +30,6 @@ public class CreateReservationRq {
 
     private Long payment;
 
-
     public static Reservation createReservation(CreateReservationRq createReservationRq) {
 
         return Reservation.builder()
