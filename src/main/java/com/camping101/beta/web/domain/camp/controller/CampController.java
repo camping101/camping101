@@ -47,9 +47,7 @@ public class CampController {
         @RequestParam(defaultValue = "5") int size) {
 
         PageRequest pageRequest = PageRequest.of(page, size);
-
         return findCampService.findOwnerCampList(pageRequest, memberId);
-
     }
 
     // 캠핑장 목록 조회(회원, 비회원, 관리자)
@@ -95,7 +93,6 @@ public class CampController {
     public ModifyCampRs campModify(@RequestBody ModifyCampRq modifyCampRq) {
 
         return campService.modifyCamp(modifyCampRq);
-
     }
 
     // 캠핑장 서비스 탈퇴 요청

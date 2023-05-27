@@ -17,7 +17,6 @@ public class FindMemberService {
     public Member findMemberOrElseThrow(Long memberId) {
 
         return memberRepository.findById(memberId).orElseThrow(CannotFindMemberException::new);
-
     }
 
 }

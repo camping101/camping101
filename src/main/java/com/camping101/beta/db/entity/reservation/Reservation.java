@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.lang.Nullable;
 
 @Entity
 @Getter
@@ -86,7 +87,7 @@ public class Reservation {
 
     }
 
-    public void addPayment(long payment) {
+    public void addPayment(Long payment) {
         this.payment = payment;
     }
 }

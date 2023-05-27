@@ -54,7 +54,9 @@ public class CampService {
     public void requestCampAuth(Camp camp) {
 
         CampAuth campAuth = CampAuth.createCampAuth(camp);
+
         campAuthRepository.save(campAuth);
+
     }
 
     // 사장의 마이페이지 -> 캠핑장 목록 조회 -> 캠핑장 상세 정보 보기 -> 캠핑장 상세 정보 수정 버튼 누름

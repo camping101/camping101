@@ -33,16 +33,13 @@ public class ReservationController {
 //    2. 예약 버튼을 누르면 이용 정책을 안내
 //    3. 확인 시 결제창으로 이동한다.
     @PostMapping(ApiPath.RESERVATION)
-    public CreateReservationRs reservationAdd(@RequestBody
-    CreateReservationRq rq) {
-
+    public CreateReservationRs reservationAdd(@RequestBody CreateReservationRq rq) {
         return reservationService.registerReservation(rq);
     }
 
     @PostMapping(ApiPath.RESERVATION_PAYMENT)
     public void paymentReservationPrice(@RequestBody CreateReservationPaymentRq rq) {
         reservationService.payment(rq);
-
     }
 
     // 사이트 예약 목록 조회(회원이 자신의 예약 내역 조회)
@@ -53,7 +50,6 @@ public class ReservationController {
 
         return reservationService.findReservationFilterList(
             memberId, month);
-
     }
 
     @GetMapping(ApiPath.RESERVATION_CAMP_ID)
@@ -77,7 +73,6 @@ public class ReservationController {
 
         return findReservationService.findReservationDetails(
             reservationId);
-
     }
 
     // 사이트 예약 취소
@@ -85,6 +80,7 @@ public class ReservationController {
     public void reservationRemove(@PathVariable("reservation-id") Long reservationId) {
 
         reservationService.deleteReservation(reservationId);
+        System.out.println("aa");
 
 
     }

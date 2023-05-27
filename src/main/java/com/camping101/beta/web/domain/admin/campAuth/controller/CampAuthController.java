@@ -47,21 +47,18 @@ public class CampAuthController {
     }
 
     // 캠핑장 승인하기(캠핑장 상세보기에서 (내부에서) 하나씩 승인)
-    @GetMapping(ApiPath.ADMIN_CAMPAUTH_ID)
+    @PutMapping(ApiPath.ADMIN_CAMPAUTH_ID)
     public PermitCampAuthRs campAuthAdd(@PathVariable("campAuth-id") Long campAuthId) {
 
         return campAuthService.permitCampAuth(campAuthId);
 
     }
 
-    // 체크박스를 통해 캠핑장 한번에 승인하기
-    @PutMapping(ApiPath.ADMIN)
-    public List<PermitCampAuthRs> campAuthListAdd(
-        @RequestParam List<Long> campAuthIds) {
-
-        return campAuthService.permitCampAuthList(campAuthIds);
-
-    }
-
-
+//    // 체크박스를 통해 캠핑장 한번에 승인하기
+//    @PutMapping(ApiPath.ADMIN)
+//    public List<PermitCampAuthRs> campAuthListAdd(
+//        @RequestParam List<Long> campAuthIds) {
+//
+//        return campAuthService.permitCampAuthList(campAuthIds);
+//    }
 }

@@ -24,6 +24,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         FilterResponseHandler.sendFilterExceptionResponse(response, getExceptionMessage(exception),
             SC_UNAUTHORIZED);
 
+        if (exception instanceof Exception) {
+            response.sendRedirect("/error");
+        }
+
     }
 
     private String getExceptionMessage(AuthenticationException exception) {

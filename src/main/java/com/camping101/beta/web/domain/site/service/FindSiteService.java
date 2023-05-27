@@ -22,7 +22,6 @@ public class FindSiteService {
 
         return siteRepository.findById(siteId).orElseThrow(CannotFindSiteException::new);
 
-
     }
 
     // 사이트 목록 조회(캠핑장 내의 사이트 조회) + 페이징 처리 하기 => 이거 회원은 필요없고, 주인만 있으면 된다.

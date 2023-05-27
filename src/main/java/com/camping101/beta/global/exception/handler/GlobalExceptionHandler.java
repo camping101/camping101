@@ -100,4 +100,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> Exception(Exception e) {
+
+        ExceptionResponse exceptionResponse = ExceptionResponse.builder()
+            .status(500)
+            .reasonOfError("?")
+            .errorMessage(e.getMessage())
+            .build();
+
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
 }
