@@ -101,7 +101,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ExceptionResponse> Exception(Exception e) {
+    public ResponseEntity<ExceptionResponse> Exception(RuntimeException e) {
 
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
             .status(500)
