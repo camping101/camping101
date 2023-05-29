@@ -4,6 +4,7 @@ import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.reservation.Reservation;
 import com.camping101.beta.db.entity.reservation.ReservationStatus;
 import com.camping101.beta.db.entity.site.Site;
+import com.camping101.beta.global.exception.CannotDeleteCampException;
 import com.camping101.beta.web.domain.camp.service.FindCampService;
 import com.camping101.beta.web.domain.site.dto.CreateSiteRq;
 import com.camping101.beta.web.domain.site.dto.CreateSiteRs;
@@ -88,7 +89,7 @@ public class SiteService {
         for (Reservation reservation : reservationList) {
 
             if (reservation.getStatus() == ReservationStatus.COMP &&
-                !reservation.getEndDate().isAfter(LocalDate.now())) {
+                !reservation.getEndDate().isAfter(LocalDateTime.now())) {
                 // 이부분 어떻게 처리할지 고민하기.(우선 log 를 찍어서 임시방편으로 남겨둠)
                 log.info("{} 사이트에 예약이 존재합니다.", findSite.getName());
                 return true;
@@ -105,7 +106,7 @@ public class SiteService {
         if (!isValid) {
             siteRepository.deleteById(siteId);
         } else {
-            log.info("siteId : {} 사이트에 예약이 존재합니다.", siteId);
+            throw new CannotDeleteCampException();
         }
 
     }
