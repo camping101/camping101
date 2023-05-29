@@ -21,9 +21,9 @@ public class FindReservationDetailsRs {
     private Long siteId;
     private String siteName;
 
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
-    private LocalDate endDate;
+    private LocalDateTime endDate;
 
     private int humanCapacity;
 
@@ -53,6 +53,7 @@ public class FindReservationDetailsRs {
             .humanCapacity(reservation.getHumanCapacity())
             .status(reservation.getStatus())
             .payment(reservation.getPayment())
+            .createdAt(reservation.getCreatedAt())
             .cancelAt(reservation.getCancelAt())
             .campLogYn(reservation.isCampLogYn())
             .campLogWritableYn(reservation.isCampLogWritableYn())

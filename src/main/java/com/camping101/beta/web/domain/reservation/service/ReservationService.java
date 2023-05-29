@@ -4,6 +4,8 @@ import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.reservation.Reservation;
 import com.camping101.beta.db.entity.reservation.ReservationStatus;
 import com.camping101.beta.db.entity.site.Site;
+import com.camping101.beta.global.exception.CannotDeleteReservationException;
+import com.camping101.beta.global.exception.CannotFindReservationException;
 import com.camping101.beta.web.domain.member.service.FindMemberService;
 import com.camping101.beta.web.domain.reservation.dto.CreateReservationPaymentRq;
 import com.camping101.beta.web.domain.reservation.dto.CreateReservationRq;
@@ -43,6 +45,8 @@ public class ReservationService {
 
         Site findSite = findSiteService.findSiteOrElseThrow(rq.getSiteId());
 
+        reservationRepository.save(reservation);
+
         reservation.addPayment(rq.getPayment());
 
         Member findMember = findMemberService.findMemberOrElseThrow(rq.getMemberId());
@@ -50,7 +54,6 @@ public class ReservationService {
         reservation.addMember(findMember);
         reservation.addSite(findSite);
 
-        reservationRepository.save(reservation);
 
         return CreateReservationRs.createReservationRs(reservation);
     }
@@ -79,7 +82,7 @@ public class ReservationService {
             memberId);
 
         if (reservationList.size() == 0) {
-            log.info("아직 예약을 하지 않았네요~ 예약을 해주세요.");
+            throw new CannotFindReservationException();
         }
 
         // 2. 아직 해당 예약에 대한 캠프로그를 작성하지 않았을 때 캠프로그 버튼 활성화
@@ -97,7 +100,7 @@ public class ReservationService {
         for (Reservation reservation : reservationList) {
 
             // 해당 예약이 endDate를 지났을 경우
-            if (reservation.getEndDate().isBefore(LocalDate.now())) {
+            if (reservation.getEndDate().isBefore(LocalDateTime.now())) {
                 // 이미 캠프로그를 작성한적 있거나 예약이 취소된적 있으면 캠프로그를 더이상 작성할 수 없다.
                 if (!reservation.isCampLogYn()
                     && reservation.getStatus() == ReservationStatus.COMP) {
@@ -116,12 +119,10 @@ public class ReservationService {
         Reservation findReservation = findReservationService.findByReservationOrElseThrow(
             reservationId);
 
-        if ((findReservation.getStartDate().plusDays(7)).isBefore(LocalDate.now())) {
+        if ((findReservation.getStartDate().plusDays(7)).isBefore(LocalDateTime.now())) {
             Reservation.modifyReservationStatus(findReservation);
         } else {
-            log.info("예약을 취소할 수 없습니다.");
+            throw new CannotDeleteReservationException();
         }
     }
-
-
 }

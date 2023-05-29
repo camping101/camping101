@@ -21,9 +21,9 @@ public class CreateReservationRs {
 
     private String siteName;
 
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
-    private LocalDate endDate;
+    private LocalDateTime endDate;
 
     private int humanCapacity;
 

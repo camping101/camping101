@@ -20,8 +20,8 @@ public class FindReservationBySiteIdRs {
     private String nickname;
     private Long reservationId;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 
     private int humanCapacity;
     private String reservationsStatus;

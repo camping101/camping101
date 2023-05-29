@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -23,12 +24,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.Nullable;
 
 @Entity
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 @Builder
 public class Reservation {
 
@@ -45,8 +48,8 @@ public class Reservation {
     @JoinColumn(name = "site_id")
     private Site site;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 
     private int humanCapacity;
 
@@ -56,11 +59,9 @@ public class Reservation {
     private Long payment;
 
     @CreatedDate
-    @Column(updatable = false, insertable = true)
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
-    @Column(updatable = false, insertable = true)
     private LocalDateTime cancelAt;
 
     private boolean campLogYn; // 캠프로그 여부

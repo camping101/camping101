@@ -9,8 +9,8 @@ import lombok.Getter;
 public class ReservationInSite {
 
     private Long ReservationId;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 
     public static ReservationInSite createReservationInSite(Reservation reservation) {
         ReservationInSite reservationInSite = new ReservationInSite();
