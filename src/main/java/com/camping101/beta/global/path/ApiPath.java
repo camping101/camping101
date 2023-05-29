@@ -26,15 +26,15 @@ public class ApiPath {
 
     public static final String RESERVATION = "/api/reservation";
     public static final String RESERVATION_ID = "/api/reservation/{reservation-id}";
-    public static final String RESERVATION_MEMBER_ID = "/api/reservation/{member-id}";
+    public static final String RESERVATION_MEMBER_ID_MONTH = "/api/reservation/{member-id}/{month}";
 
     public static final String RESERVATION_SITE_ID = "/api/reservation/{site-id}";
 
-    public static final String RESERVATION_DETAILS_RESERVATION_ID = "/api/reservation/detail/{reservation-id}";
+    public static final String RESERVATION_DETAILS_RESERVATION_ID = "/api/reservation/details/{reservation-id}";
 
     public static final String RESERVATION_PAYMENT = "/api/reservation/payment";
 
-    public static final String RESERVATION_CAMP_ID = "/api/reservation/{camp-id}";
+    public static final String RESERVATION_CAMP_CAMP_ID = "/api/reservation/camp/{camp-id}";
 
     public static final String SITE = "/api/site";
 
