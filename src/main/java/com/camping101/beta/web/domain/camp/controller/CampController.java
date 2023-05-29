@@ -102,6 +102,4 @@ public class CampController {
         campService.removeCamp(campId);
 
     }
-
-
 }

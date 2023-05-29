@@ -4,6 +4,7 @@ import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.site.Site;
 import com.camping101.beta.db.type.CampAuth;
+import com.camping101.beta.global.exception.CannotDeleteCampException;
 import com.camping101.beta.web.domain.admin.campAuth.repository.CampAuthRepository;
 import com.camping101.beta.web.domain.admin.campAuth.service.CampAuthService;
 import com.camping101.beta.web.domain.camp.dto.CreateCampRq;
@@ -91,7 +92,7 @@ public class CampService {
         if (ableRemove) {
             campRepository.delete(findCamp);
         } else {
-            log.info("캠핑장에 예약이 존재하여 삭제할 수 없습니다.");
+            throw new CannotDeleteCampException();
         }
     }
 
