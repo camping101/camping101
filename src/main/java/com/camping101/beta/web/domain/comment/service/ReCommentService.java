@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-import static com.camping101.beta.web.domain.comment.exception.ErrorCode.CAMPLOG_WRITER_MISMATCH;
 import static com.camping101.beta.web.domain.comment.exception.ErrorCode.COMMENT_NOT_FOUND;
 
 @Service
@@ -36,11 +35,6 @@ public class ReCommentService {
 
         Member reCommentWriter = memberRepository.findByEmail(request.getWriterEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
-
-        // 대댓글은 캠프로그 작성자만 달 수 있다.
-        if (reCommentWriter.getMemberId() != parentComment.getCampLog().getMember().getMemberId()) {
-            throw new CommentException(CAMPLOG_WRITER_MISMATCH);
-        }
 
         ReComment newReComment = reCommentRepository.save(ReComment.from(parentComment, reCommentWriter, request.getContent()));
 
