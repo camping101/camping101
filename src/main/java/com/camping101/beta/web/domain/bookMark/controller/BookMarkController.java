@@ -46,7 +46,6 @@ public class BookMarkController {
         PageRequest pageRequest = PageRequest.of(page, size);
 
         return findBookMarkService.findBookMarkList(memberId, pageRequest);
-
     }
 
     // 북마크 삭제
