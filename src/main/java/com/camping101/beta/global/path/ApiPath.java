@@ -26,8 +26,8 @@ public class ApiPath {
 
     public static final String RESERVATION = "/api/reservation";
     public static final String RESERVATION_ID = "/api/reservation/{reservation-id}";
-    public static final String RESERVATION_MEMBER_ID_MONTH = "/api/reservation/{member-id}/{month}";
-
+    public static final String RESERVATION_CUSTOMER_MEMBER_ID_MONTH = "/api/reservation/customer/{member-id}/{month}";
+    public static final String RESERVATION_CUSTOMER_MEMBER_ID = "/api/reservation/customer/{member-id}";
     public static final String RESERVATION_SITE_ID = "/api/reservation/{site-id}";
 
     public static final String RESERVATION_DETAILS_RESERVATION_ID = "/api/reservation/details/{reservation-id}";
@@ -43,5 +43,6 @@ public class ApiPath {
     public static final String SITE_CAMP_ID = "/api/site/{camp-id}";
 
     public static final String SITE_CUSTOMER_SITE_ID_MEMBER_ID = "/api/site/customer/{site-id}/{member-id}";
-
 }
+
+
