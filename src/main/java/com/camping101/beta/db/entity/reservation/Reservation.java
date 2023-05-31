@@ -48,8 +48,8 @@ public class Reservation {
     @JoinColumn(name = "site_id")
     private Site site;
 
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     private int humanCapacity;
 

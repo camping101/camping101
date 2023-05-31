@@ -12,7 +12,6 @@ import com.camping101.beta.web.domain.site.dto.ModifySiteRq;
 import com.camping101.beta.web.domain.site.dto.ModifySiteRs;
 import com.camping101.beta.web.domain.site.repository.SiteRepository;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -89,7 +88,7 @@ public class SiteService {
         for (Reservation reservation : reservationList) {
 
             if (reservation.getStatus() == ReservationStatus.COMP &&
-                !reservation.getEndDate().isAfter(LocalDateTime.now())) {
+                !reservation.getEndDate().isAfter(LocalDate.now())) {
                 // 이부분 어떻게 처리할지 고민하기.(우선 log 를 찍어서 임시방편으로 남겨둠)
                 log.info("{} 사이트에 예약이 존재합니다.", findSite.getName());
                 return true;

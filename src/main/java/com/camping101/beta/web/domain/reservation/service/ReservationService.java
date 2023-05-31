@@ -6,6 +6,7 @@ import com.camping101.beta.db.entity.reservation.ReservationStatus;
 import com.camping101.beta.db.entity.site.Site;
 import com.camping101.beta.global.exception.CannotDeleteReservationException;
 import com.camping101.beta.global.exception.CannotFindReservationException;
+import com.camping101.beta.global.exception.DoubleBookingException;
 import com.camping101.beta.web.domain.member.service.FindMemberService;
 import com.camping101.beta.web.domain.reservation.dto.CreateReservationPaymentRq;
 import com.camping101.beta.web.domain.reservation.dto.CreateReservationRq;
@@ -14,12 +15,14 @@ import com.camping101.beta.web.domain.reservation.dto.FindReservationListRs;
 import com.camping101.beta.web.domain.reservation.repository.ReservationRepository;
 import com.camping101.beta.web.domain.site.service.FindSiteService;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,9 +44,16 @@ public class ReservationService {
 //    3. 확인 시 결제창으로 이동한다.
     public CreateReservationRs registerReservation(CreateReservationRq rq) {
 
-        Reservation reservation = CreateReservationRq.createReservation(rq);
-
         Site findSite = findSiteService.findSiteOrElseThrow(rq.getSiteId());
+
+        Optional<Reservation> doubleBooking = reservationRepository.findBySiteAndStartDate(
+            findSite, rq.getStartDate());
+
+        if (doubleBooking.isPresent()) {
+            throw new DoubleBookingException();
+        }
+
+        Reservation reservation = CreateReservationRq.createReservation(rq);
 
         reservationRepository.save(reservation);
 
@@ -53,7 +63,6 @@ public class ReservationService {
 
         reservation.addMember(findMember);
         reservation.addSite(findSite);
-
 
         return CreateReservationRs.createReservationRs(reservation);
     }
@@ -74,12 +83,12 @@ public class ReservationService {
 //    - [캠프 로그] 버튼 선택 시, 캠프 로그 등록 페이지로 이동
 //    - 예약 목록 조회시 캠프 로그를 쓸수있는지 없는지가 나타남
     // -> 예약 목록 조회시 취소된 예약은 캠프로그를 작성할 수 없게 해야한다.
-    public List<FindReservationListRs> findReservationFilterList(Long memberId, int month) {
+    public List<FindReservationListRs> findReservationFilterList(Long memberId,
+        Optional<Integer> month, Pageable pageable) {
 
-        Member findMember = findMemberService.findMemberOrElseThrow(memberId);
-        // 예약된 사이트의 퇴실일이 지난 경우의 예약 목록들만 가져오기.
-        List<Reservation> reservationList = findReservationQueryService.findReservationList(month,
-            memberId);
+        List<Reservation> reservationList = findReservationQueryService.findReservationList(
+            month,
+            memberId, pageable);
 
         if (reservationList.size() == 0) {
             throw new CannotFindReservationException();
@@ -100,7 +109,7 @@ public class ReservationService {
         for (Reservation reservation : reservationList) {
 
             // 해당 예약이 endDate를 지났을 경우
-            if (reservation.getEndDate().isBefore(LocalDateTime.now())) {
+            if (reservation.getEndDate().isBefore(LocalDate.now())) {
                 // 이미 캠프로그를 작성한적 있거나 예약이 취소된적 있으면 캠프로그를 더이상 작성할 수 없다.
                 if (!reservation.isCampLogYn()
                     && reservation.getStatus() == ReservationStatus.COMP) {
@@ -119,7 +128,7 @@ public class ReservationService {
         Reservation findReservation = findReservationService.findByReservationOrElseThrow(
             reservationId);
 
-        if ((findReservation.getStartDate().plusDays(7)).isBefore(LocalDateTime.now())) {
+        if ((findReservation.getStartDate().plusDays(7)).isBefore(LocalDate.now())) {
             Reservation.modifyReservationStatus(findReservation);
         } else {
             throw new CannotDeleteReservationException();

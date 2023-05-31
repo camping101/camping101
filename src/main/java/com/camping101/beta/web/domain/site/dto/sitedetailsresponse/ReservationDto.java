@@ -13,8 +13,8 @@ public class ReservationDto {
     private Long memberId;
     private Long siteId;
 
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     private int humanCapacity;
     private ReservationStatus status;

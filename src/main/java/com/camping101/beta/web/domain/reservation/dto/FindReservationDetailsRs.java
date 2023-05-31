@@ -21,9 +21,9 @@ public class FindReservationDetailsRs {
     private Long siteId;
     private String siteName;
 
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     private int humanCapacity;
 

@@ -1,20 +1,16 @@
 package com.camping101.beta.web.domain.reservation.service;
 
 import static com.camping101.beta.db.entity.reservation.QReservation.reservation;
-import static com.camping101.beta.db.entity.site.QSite.site;
 import static java.time.LocalDateTime.now;
 
 import com.camping101.beta.db.entity.reservation.Reservation;
-import com.camping101.beta.web.domain.camp.dto.campdetaildto.QSiteInCamp;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.DateTemplate;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +28,17 @@ public class FindReservationQueryService {
     }
 
     // 해당 기간에 해당하는 모든 회원의 예약 내역 가져오기
-    public List<Reservation> findReservationList(int month, Long memberId) {
+    public List<Reservation> findReservationList(Optional<Integer> month, Long memberId,
+        Pageable pageable) {
+
+        if (month.isEmpty()) {
+            return queryFactory.select(reservation)
+                .from(reservation)
+                .where(reservation.member.memberId.eq(memberId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        }
 
 //        LocalDateTime fromDate = LocalDateTime.from(LocalDate.now().atStartOfDay());
 //        LocalDateTime toDate = LocalDateTime.from(LocalDate.now().plusMonths(2).atStartOfDay());
@@ -46,18 +52,21 @@ public class FindReservationQueryService {
 //        DateTemplate<LocalDateTime> dateFormat = Expressions.dateTemplate(
 //            LocalDateTime.class, "DATE_SUB({0},{1})",
 //            now(), "INTERVAL -" + month + " MONTH");
+        Integer monthFilter = month.get();
         int year = now().getYear();
-        LocalDateTime localDateTime = LocalDateTime.of(year, month, 1, 0, 0);
+        LocalDate localDate = LocalDate.of(year, monthFilter, 1);
 
         return queryFactory.select(reservation)
             .from(reservation)
             .where(
                 // 해당 기간 내의 예약들(기간 필터를 사용)
-                reservation.startDate.goe(localDateTime)
-                    .and(reservation.startDate.loe(localDateTime.plusMonths(1)))
+                reservation.startDate.goe(localDate)
+                    .and(reservation.startDate.loe(localDate.plusMonths(1)))
                     // 해당 회원이 한 예약들
                     .and(reservation.member.memberId.eq(memberId))
             )
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
             .fetch();
     }
 
@@ -66,7 +75,7 @@ public class FindReservationQueryService {
     public List<Reservation> findReservationBySite(Long siteId) {
 
         return queryFactory.select(reservation).from(reservation)
-            .where(reservation.endDate.lt(LocalDateTime.now()))
+            .where(reservation.endDate.lt(LocalDate.now()))
             .fetch();
     }
 

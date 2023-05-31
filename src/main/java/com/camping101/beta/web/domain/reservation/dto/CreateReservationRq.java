@@ -22,9 +22,9 @@ public class CreateReservationRq {
 
     private Long siteId;
 
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     private int humanCapacity;
 
