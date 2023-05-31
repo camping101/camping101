@@ -2,6 +2,7 @@ package com.camping101.beta.web.domain.camp.dto;
 
 import com.camping101.beta.db.entity.camp.FacilityCnt;
 import com.camping101.beta.db.entity.camp.Location;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +23,7 @@ public class ModifyCampRq {
     private String tel;
     private String oneLineReserveYn;
     private String openSeason;
-    private LocalDateTime openDateOfWeek;
+    private LocalDate openDateOfWeek;
     private FacilityCnt facilityCnt;
     private String facility;
     private String leisure;

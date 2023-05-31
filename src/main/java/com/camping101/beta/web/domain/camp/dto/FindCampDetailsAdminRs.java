@@ -4,6 +4,7 @@ import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.camp.FacilityCnt;
 import com.camping101.beta.db.entity.camp.Location;
 import com.camping101.beta.db.entity.camp.ManageStatus;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,7 @@ public class FindCampDetailsAdminRs {
     private String oneLineReserveYn;
 
     private String openSeason;
-    private LocalDateTime openDateOfWeek;
+    private LocalDate openDateOfWeek;
     private FacilityCnt facilityCnt;
 
     private String facility;

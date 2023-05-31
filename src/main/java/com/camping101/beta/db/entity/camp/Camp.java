@@ -6,6 +6,7 @@ import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.site.Site;
 import com.camping101.beta.db.type.CampAuth;
 import com.camping101.beta.web.domain.camp.dto.ModifyCampRq;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,7 @@ public class Camp {
     private String oneLineReserveYn; // 데이터 확인하기 (불리언으로 데이터를 줄것같지 않다.)
 
     private String openSeason;
-    private LocalDateTime openDateOfWeek;
+    private LocalDate openDateOfWeek;
 
     @Embedded
     private FacilityCnt facilityCnt;

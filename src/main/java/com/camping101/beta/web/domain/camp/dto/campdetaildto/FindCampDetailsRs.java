@@ -3,6 +3,7 @@ package com.camping101.beta.web.domain.camp.dto.campdetaildto;
 import com.camping101.beta.db.entity.camp.FacilityCnt;
 import com.camping101.beta.db.entity.camp.Location;
 import com.camping101.beta.db.entity.camp.ManageStatus;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class FindCampDetailsRs {
     private String tel;
     private String oneLineReserveYn;
     private String openSeason;
-    private LocalDateTime openDateOfWeek;
+    private LocalDate openDateOfWeek;
     private FacilityCnt facilityCnt;
     private String facility;
     private String leisure;
@@ -34,7 +35,7 @@ public class FindCampDetailsRs {
 
     public FindCampDetailsRs(Long campId, String name, String intro, ManageStatus manageStatus,
         Location location, String tel, String oneLineReserveYn, String openSeason,
-        LocalDateTime openDateOfWeek, FacilityCnt facilityCnt, String facility, String leisure,
+        LocalDate openDateOfWeek, FacilityCnt facilityCnt, String facility, String leisure,
         String animalCapable, String equipmentTools, String firstImage, String homepage,
         String businessNo) {
         this.campId = campId;
