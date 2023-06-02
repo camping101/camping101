@@ -27,7 +27,7 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
 
         MemberDetails memberDetails = memberSignInService.loadUserByUsername(email);
 
-        if (!memberSignInService.isPasswordMatching(memberDetails, password)) {
+        if (!memberSignInService.isPasswordMatching(memberDetails.getMemberId(), password, memberDetails.getPassword())) {
             log.info("UsernamePasswordAuthenticationProvider.authenticate : 비밀번호가 일치하지 않습니다.");
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }

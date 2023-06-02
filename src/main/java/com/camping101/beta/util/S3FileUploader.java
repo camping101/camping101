@@ -30,7 +30,7 @@ public class S3FileUploader {
             String extension = getExtension(originalFileName);
             String contentType = getContentType(extension);
             String changedFilename =
-                UUID.randomUUID().toString().replace("-", "") + "." + extension;
+                UUID.randomUUID().toString().replace("-", "").replace("_","") + "." + extension;
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(contentType);
@@ -45,9 +45,13 @@ public class S3FileUploader {
 
             log.info("이미지 저장 실패 : 연결 이상");
 
+            e.printStackTrace();
+
         } catch (Exception e) {
 
             log.info("이미지 저장 실패 : (이미지가 없을 가능성이 높습니다.)" + e.getMessage());
+
+            e.printStackTrace();
         }
 
         return "";
@@ -64,6 +68,9 @@ public class S3FileUploader {
         String contentType = "";
 
         switch (extension) {
+            case "jpg":
+                contentType = "image/jpg";
+                break;
             case "jpeg":
                 contentType = "image/jpeg";
                 break;

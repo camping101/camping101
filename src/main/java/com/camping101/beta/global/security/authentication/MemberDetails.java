@@ -42,6 +42,38 @@ public class MemberDetails implements UserDetails {
         return member.getPassword();
     }
 
+    public String getProfileImagePath(){
+        return member.getProfileImagePath();
+    }
+
+    public String getNickname(){
+        return member.getNickname();
+    }
+
+    public String getPhoneNumber(){
+        return member.getPhoneNumber();
+    }
+
+    public Member getMember(){
+        return member;
+    }
+
+    public void setPassword(String encodedPassword){
+        this.member.setPassword(encodedPassword);
+    }
+
+    public void setNickname(String nickName) {
+        this.member.setNickname(nickName);
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.member.setPhoneNumber(phoneNumber);
+    }
+
+    public void setProfileImagePath(String profileImagePath) {
+        this.member.setProfileImagePath(profileImagePath);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(() -> member.getMemberType().name());

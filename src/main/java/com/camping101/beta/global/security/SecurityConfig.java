@@ -1,5 +1,6 @@
 package com.camping101.beta.global.security;
 
+import com.camping101.beta.db.entity.member.type.MemberType;
 import com.camping101.beta.global.security.authentication.UsernamePasswordAuthenticationProvider;
 import com.camping101.beta.global.security.filter.JwtAuthenticationFilter;
 import com.camping101.beta.global.security.filter.JwtAuthorizationFilter;
@@ -63,11 +64,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .authorizeRequests()
             .antMatchers("/h2-console/**", "/swagger-ui", "/swagger-ui/**", "/v2/api-docs")
-            .permitAll();
+            .permitAll()
 
-//            .antMatchers("/api/member", "/api/member/**", "/api/signout")
-//            .hasAnyAuthority(MemberType.CUSTOMER.name(), MemberType.ADMIN.name(),
-//                MemberType.OWNER.name())
+            .antMatchers("/api/member", "/api/member/**", "/api/signout")
+            .hasAnyAuthority(MemberType.CUSTOMER.name(), MemberType.ADMIN.name(), MemberType.OWNER.name())
 
 //            .antMatchers(HttpMethod.GET, "/api/camp/owner/**", "/api/camp/detail/owner/**", "/api/site/owner/**")
 //            .hasAnyAuthority(MemberType.OWNER.name())
@@ -81,8 +81,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //            .antMatchers(HttpMethod.DELETE, "/api/camp/**",  "/api/site/**")
 //            .hasAnyAuthority(MemberType.OWNER.name())
 
-//            .antMatchers("/api/admin/**")
-//            .hasAuthority(MemberType.ADMIN.name())
+            .antMatchers("/api/admin/rectag", "/api/admin/member")
+            .hasAuthority(MemberType.ADMIN.name());
 //
 //            .antMatchers(ignoreAllPathsStartWith.split(","))
 //            .permitAll()

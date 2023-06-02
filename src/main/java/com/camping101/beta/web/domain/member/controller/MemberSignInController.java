@@ -5,6 +5,7 @@ import static com.camping101.beta.global.config.GoogleOAuthConfig.googleClientId
 import static com.camping101.beta.global.config.GoogleOAuthConfig.googleRedirectUri;
 import static com.camping101.beta.global.config.GoogleOAuthConfig.googleScope;
 
+import com.camping101.beta.db.entity.member.type.MemberType;
 import com.camping101.beta.web.domain.member.dto.mypage.TemporalPasswordSendRequest;
 import com.camping101.beta.web.domain.member.dto.signin.SignInByEmailRequest;
 import com.camping101.beta.web.domain.member.dto.token.ReissueRefreshTokenRequest;
@@ -52,7 +53,9 @@ public class MemberSignInController {
 
     @PostMapping("/mail")
     public ResponseEntity<Void> emailSignIn(@RequestBody SignInByEmailRequest request,
-        @ApiIgnore HttpServletResponse response) {
+                                            @ApiIgnore HttpServletResponse response) {
+
+        request.setMemberType(MemberType.CUSTOMER);
 
         TokenInfo tokenInfo = memberSignInService.signInByEmail(request);
 
