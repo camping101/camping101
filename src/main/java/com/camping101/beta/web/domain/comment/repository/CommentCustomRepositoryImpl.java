@@ -16,9 +16,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -48,12 +52,12 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository{
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        comments.stream().forEach(x -> x.getReComments().stream().sorted(new Comparator<ReComment>() {
-            @Override
-            public int compare(ReComment r1, ReComment r2) {
-                return r1.getCreatedAt().compareTo(r2.getCreatedAt()) * -1;
-            }
-        }));
+        comments.stream().forEach(x -> x.changeReComments(x.getReComments().stream().sorted(new Comparator<ReComment>() {
+                    @Override
+                    public int compare(ReComment r1, ReComment r2) {
+                        return r1.getCreatedAt().compareTo(r2.getCreatedAt()) * -1;
+                    }
+                }).collect(Collectors.toList())));
 
         long total = jpaQueryFactory
                 .select(campLog.comments.size())

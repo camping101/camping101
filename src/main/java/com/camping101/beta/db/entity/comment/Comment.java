@@ -5,6 +5,7 @@ import com.camping101.beta.db.entity.member.Member;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import javax.persistence.*;
 
@@ -65,6 +66,10 @@ public class Comment {
 
     public void changeContent(String content) {
         this.content = content;
+    }
+
+    public void changeReComments(List<ReComment> reComments) {
+        this.reComments = reComments;
     }
 
 }
