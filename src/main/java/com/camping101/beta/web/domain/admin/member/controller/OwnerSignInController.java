@@ -18,10 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/admin/signin")
-@Api(tags = {"관리자사이트 - 로그인 API"})
+@RequestMapping("/api/owner/signin")
+@Api(tags = {"주인사이트 - 로그인 API"})
 @Slf4j
-public class AdminMemberSignInController {
+public class OwnerSignInController {
 
     private final MemberSignInService memberSignInService;
 
@@ -29,7 +29,7 @@ public class AdminMemberSignInController {
     public ResponseEntity<Void> emailSignIn(@RequestBody SignInByEmailRequest request,
                                             @ApiIgnore HttpServletResponse response) {
 
-        request.setMemberType(MemberType.ADMIN);
+        request.setMemberType(MemberType.OWNER);
 
         TokenInfo tokenInfo = memberSignInService.signInByEmail(request);
 
