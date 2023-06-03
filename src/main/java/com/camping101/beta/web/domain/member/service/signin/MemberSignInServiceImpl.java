@@ -1,8 +1,5 @@
 package com.camping101.beta.web.domain.member.service.signin;
 
-import static com.camping101.beta.web.domain.member.exception.ErrorCode.INVALID_REFRESH_TOKEN;
-import static com.camping101.beta.web.domain.member.exception.ErrorCode.MEMBER_SIGN_IN_ERROR;
-
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.member.RefreshToken;
 import com.camping101.beta.db.entity.member.type.MemberType;
@@ -30,6 +27,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static com.camping101.beta.web.domain.member.exception.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -47,7 +46,7 @@ public class MemberSignInServiceImpl implements MemberSignInService {
         Member member = memberRepository.findByEmail(request.getEmail())
             .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
 
-        validateIfMemberNotCustomer(member);
+        validateIfMemberTypeNotMatching(member, request.getMemberType());
         validateIfMemberSignedUpByEmail(member);
         validateIfPasswordMatching(request, member);
 
@@ -57,9 +56,9 @@ public class MemberSignInServiceImpl implements MemberSignInService {
         return new TokenInfo(accessToken, refreshToken);
     }
 
-    private static void validateIfMemberNotCustomer(Member member) {
-        if (!MemberType.CUSTOMER.equals(member.getMemberType())) {
-            throw new MemberException(MEMBER_SIGN_IN_ERROR);
+    private static void validateIfMemberTypeNotMatching(Member member, MemberType memberType) {
+        if (!memberType.equals(member.getMemberType())) {
+            throw new MemberException(MEMBER_TYPE_NOT_MATCHING);
         }
     }
 
