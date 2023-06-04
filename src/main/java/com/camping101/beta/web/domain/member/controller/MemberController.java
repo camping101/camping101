@@ -7,16 +7,13 @@ import com.camping101.beta.web.domain.member.dto.mypage.MemberUpdateRequest;
 import com.camping101.beta.web.domain.member.service.mypage.MemberService;
 import com.camping101.beta.web.domain.member.service.token.TokenService;
 import io.swagger.annotations.Api;
-import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
-
 import javax.validation.Valid;
 
 @RestController

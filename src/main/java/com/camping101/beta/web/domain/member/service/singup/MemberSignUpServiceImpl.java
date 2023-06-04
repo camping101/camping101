@@ -9,6 +9,8 @@ import com.camping101.beta.web.domain.member.exception.ErrorCode;
 import com.camping101.beta.web.domain.member.exception.MemberException;
 import com.camping101.beta.web.domain.member.repository.MailAuthRepository;
 import com.camping101.beta.web.domain.member.repository.MemberRepository;
+
+import java.util.Objects;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +52,12 @@ public class MemberSignUpServiceImpl implements MemberSignUpService {
 
     private Member createNewMember(SignUpByEmailRequest request) {
 
-        String s3ProfileImagePath = s3FileUploader.uploadFileAndGetURL(request.getProfileImage());
+        String s3ProfileImagePath = "";
+
+        if (Objects.nonNull(request.getProfileImage())) {
+            s3ProfileImagePath = s3FileUploader.uploadFileAndGetURL(request.getProfileImage());
+        }
+
         String encPassword = passwordEncoder.encode(request.getPassword());
 
         Member newMember = request.toNotActivatedMember(s3ProfileImagePath, encPassword);
