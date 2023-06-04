@@ -7,17 +7,14 @@ import com.camping101.beta.web.domain.member.dto.mypage.MemberUpdateRequest;
 import com.camping101.beta.web.domain.member.service.mypage.MemberService;
 import com.camping101.beta.web.domain.member.service.token.TokenService;
 import io.swagger.annotations.Api;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,10 +35,13 @@ public class MemberController {
         return ResponseEntity.ok(memberInfoResponse);
     }
 
-    @PutMapping(consumes = "multipart/form-data")
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MemberInfoResponse> memberUpdate(
-        @ApiIgnore @AuthenticationPrincipal MemberDetails memberDetails,
-        MemberUpdateRequest request) {
+            @ApiIgnore @AuthenticationPrincipal MemberDetails memberDetails,
+            @ModelAttribute @RequestParam(name = "profileImage", required = false) MultipartFile image,
+            MemberUpdateRequest request) {
+
+        request.setProfileImage(image);
 
         MemberInfoResponse memberUpdateResponse
             = memberService.updateMember(memberDetails.getEmail(), memberDetails.getMemberId(),

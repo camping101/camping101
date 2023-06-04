@@ -64,7 +64,6 @@ public class MemberServiceImpl implements MemberService {
             .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
 
         validateIfMemberIdMatchingWithPathMemberId(member.getMemberId(), memberId);
-        validateIfMemberSignedUpByEmail(member);
 
         String newPassword = getNewPassword(member.getPassword(), request);
         String newProfileImagePath = getNewProfileImagePath(member.getProfileImagePath(), request);
@@ -86,7 +85,7 @@ public class MemberServiceImpl implements MemberService {
 
     private String getNewProfileImagePath(String originalProfileImage,
         MemberUpdateRequest request) {
-        return StringUtils.isNullOrEmpty(originalProfileImage) ?
+        return Objects.isNull(request.getProfileImage()) || StringUtils.isNullOrEmpty(request.getProfileImage().getName()) ?
             originalProfileImage : s3FileUploader.uploadFileAndGetURL(request.getProfileImage());
     }
 
@@ -98,12 +97,6 @@ public class MemberServiceImpl implements MemberService {
     private String getNewPhoneNumber(String originalPhoneNumber, MemberUpdateRequest request) {
         return StringUtils.isNullOrEmpty(originalPhoneNumber) ?
             originalPhoneNumber : request.getPhoneNumber();
-    }
-
-    private void validateIfMemberSignedUpByEmail(Member member) {
-        if (SignUpType.EMAIL.equals(member.getSignUpType())) {
-            throw new MemberException(ErrorCode.MEMBER_UPDATE_ERROR);
-        }
     }
 
     @Override

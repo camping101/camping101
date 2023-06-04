@@ -1,10 +1,8 @@
 package com.camping101.beta.web.domain.member.service.signin;
 
-import static com.camping101.beta.web.domain.member.exception.ErrorCode.INVALID_REFRESH_TOKEN;
-import static com.camping101.beta.web.domain.member.exception.ErrorCode.MEMBER_SIGN_IN_ERROR;
-
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.member.RefreshToken;
+import com.camping101.beta.db.entity.member.type.MemberType;
 import com.camping101.beta.db.entity.member.type.SignUpType;
 import com.camping101.beta.global.security.authentication.MemberDetails;
 import com.camping101.beta.web.domain.member.dto.signin.SignInByEmailRequest;
@@ -29,6 +27,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static com.camping101.beta.web.domain.member.exception.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -46,15 +46,9 @@ public class MemberSignInServiceImpl implements MemberSignInService {
         Member member = memberRepository.findByEmail(request.getEmail())
             .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
 
+        validateIfMemberTypeNotMatching(member, request.getMemberType());
         validateIfMemberSignedUpByEmail(member);
-
-        if (!isPasswordMatching(request, member)) {
-
-            log.info("MemberSignInServiceImpl,signInByEmail : 비밀번호 불일치");
-
-            throw new BadCredentialsException("비밀번호 불일치");
-
-        }
+        validateIfPasswordMatching(request, member);
 
         String accessToken = tokenService.createAccessToken(member);
         String refreshToken = tokenService.createRefreshToken(member);
@@ -62,16 +56,10 @@ public class MemberSignInServiceImpl implements MemberSignInService {
         return new TokenInfo(accessToken, refreshToken);
     }
 
-    private boolean isPasswordMatching(SignInByEmailRequest request, Member member) {
-
-        if (temporalPasswordService.isTemporalPasswordMatching(request.getPassword(),
-            member.getMemberId())) {
-            log.info("MemberSignInServiceImpl.isPasswordMatching : 임시 비밀번호 {}가 일치합니다.",
-                request.getPassword());
-            return true;
+    private static void validateIfMemberTypeNotMatching(Member member, MemberType memberType) {
+        if (!memberType.equals(member.getMemberType())) {
+            throw new MemberException(MEMBER_TYPE_NOT_MATCHING);
         }
-
-        return passwordEncoder.matches(request.getPassword(), member.getPassword());
     }
 
     private void validateIfMemberSignedUpByEmail(Member member) {
@@ -85,6 +73,13 @@ public class MemberSignInServiceImpl implements MemberSignInService {
 
     }
 
+    private void validateIfPasswordMatching(SignInByEmailRequest request, Member member) {
+        if (!isPasswordMatching(member.getMemberId(), request.getPassword(), member.getPassword())) {
+            log.info("MemberSignInServiceImpl,signInByEmail : 비밀번호 불일치");
+            throw new BadCredentialsException("비밀번호 불일치");
+        }
+    }
+
     @Override
     public MemberDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
@@ -95,15 +90,14 @@ public class MemberSignInServiceImpl implements MemberSignInService {
     }
 
     @Override
-    public boolean isPasswordMatching(MemberDetails memberDetails, String rawPassword) {
+    public boolean isPasswordMatching(Long memberId, String rawPassword, String encodedPassword) {
 
-        if (temporalPasswordService.isTemporalPasswordMatching(rawPassword,
-            memberDetails.getMemberId())) {
+        if (temporalPasswordService.isTemporalPasswordMatching(rawPassword, memberId)) {
             log.info("MemberSignInServiceImpl.isPasswordMatching : 임시 비밀번호가 일치합니다.");
             return true;
         }
 
-        return passwordEncoder.matches(rawPassword, memberDetails.getPassword());
+        return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
     @Override
