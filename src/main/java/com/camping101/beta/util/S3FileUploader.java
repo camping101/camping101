@@ -7,6 +7,8 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import java.io.IOException;
 import java.util.UUID;
+
+import com.querydsl.core.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +25,10 @@ public class S3FileUploader {
     private final AmazonS3 amazonS3;
 
     public String uploadFileAndGetURL(MultipartFile multipartFile) {
+
+        if (multipartFile.isEmpty() || StringUtils.isNullOrEmpty(multipartFile.getOriginalFilename())) {
+            return "";
+        }
 
         try {
 
