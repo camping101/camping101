@@ -128,7 +128,10 @@ public class ReservationService {
         Reservation findReservation = findReservationService.findByReservationOrElseThrow(
             reservationId);
 
-        if ((findReservation.getStartDate().plusDays(7)).isBefore(LocalDate.now())) {
+        LocalDate localDate = findReservation.getStartDate().plusDays(7);
+        LocalDate now = LocalDate.now();
+        boolean before = localDate.isAfter(now);
+        if (before) {
             Reservation.modifyReservationStatus(findReservation);
         } else {
             throw new CannotDeleteReservationException();

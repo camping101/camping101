@@ -37,6 +37,7 @@ public class ReservationController {
     @PostMapping(ApiPath.RESERVATION)
     public CreateReservationRs reservationAdd(@RequestBody CreateReservationRq rq) {
         return reservationService.registerReservation(rq);
+
     }
 
     @PostMapping(ApiPath.RESERVATION_PAYMENT)

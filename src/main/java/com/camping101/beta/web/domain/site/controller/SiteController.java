@@ -28,9 +28,7 @@ public class SiteController {
     @PostMapping(ApiPath.SITE)
     public CreateSiteRs siteAdd(
         @RequestBody CreateSiteRq createSiteRq) {
-
         return siteService.registerSite(createSiteRq);
-
     }
 
     // 사이트 목록 조회
@@ -63,7 +61,6 @@ public class SiteController {
         @RequestBody ModifySiteRq modifySiteRq) {
 
         return siteService.modifySite(modifySiteRq);
-
     }
 
     // 사이트 삭제
@@ -71,8 +68,5 @@ public class SiteController {
     public void siteRemove(@PathVariable("site-id") Long siteId) {
 
         siteService.removeSite(siteId);
-
     }
-
-
 }
