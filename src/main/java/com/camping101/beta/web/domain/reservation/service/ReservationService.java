@@ -4,6 +4,7 @@ import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.reservation.Reservation;
 import com.camping101.beta.db.entity.reservation.ReservationStatus;
 import com.camping101.beta.db.entity.site.Site;
+import com.camping101.beta.global.exception.AlreadyBeenDeletedReservation;
 import com.camping101.beta.global.exception.CannotDeleteReservationException;
 import com.camping101.beta.global.exception.CannotFindReservationException;
 import com.camping101.beta.global.exception.DoubleBookingException;
@@ -16,7 +17,6 @@ import com.camping101.beta.web.domain.reservation.repository.ReservationReposito
 import com.camping101.beta.web.domain.site.service.FindSiteService;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -128,10 +128,14 @@ public class ReservationService {
         Reservation findReservation = findReservationService.findByReservationOrElseThrow(
             reservationId);
 
+        if (findReservation.getCancelAt() != null) {
+            throw new AlreadyBeenDeletedReservation();
+        }
+
         LocalDate localDate = findReservation.getStartDate().plusDays(7);
         LocalDate now = LocalDate.now();
-        boolean before = localDate.isAfter(now);
-        if (before) {
+
+        if (localDate.isAfter(now)) {
             Reservation.modifyReservationStatus(findReservation);
         } else {
             throw new CannotDeleteReservationException();
