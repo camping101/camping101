@@ -16,11 +16,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class FindSiteDetailsRs {
 
-//    테이블의 모든 정보
-//   - 예약일정 요청 시, 예약 정보 제공
-//   - 캠프로그
-//   - 댓글/대댓글
-
     private Long siteId;
     private Long campId;
     private String name;
@@ -37,30 +32,30 @@ public class FindSiteDetailsRs {
     private String policy;
     private int price;
     private LocalDateTime refundableDate;
-    private List<ReservationDto> reservationDtoList;
-    private List<CampLogDto> campLogDtoList;
+//    private List<ReservationDto> reservationDtoList;
+//    private List<CampLogDto> campLogDtoList;
 
-    public FindSiteDetailsRs(Site site) {
-        this.siteId = site.getSiteId();
-        this.campId = site.getCamp().getCampId();
-        this.name = site.getName();
-        this.rpImage = site.getRpImage();
-        this.introduction = site.getIntroduction();
-        this.type = site.getType();
-        this.openYn = site.isOpenYn();
-        this.siteYn = site.getSiteYn();
-        this.checkIn = site.getCheckIn();
-        this.checkOut = site.getCheckOut();
-        this.leastScheduling = site.getLeastScheduling();
-        this.siteCapacity = site.getSiteCapacity();
-        this.mapImage = site.getMapImage();
-        this.policy = site.getPolicy();
-        this.price = site.getPrice();
-        this.refundableDate = site.getRefundableDate();
-        this.reservationDtoList = site.getReservationList()
-            .stream().map(ReservationDto::new).collect(Collectors.toList());
-        this.campLogDtoList = site.getCampLogList()
-            .stream().map(CampLogDto::new).collect(Collectors.toList());
+    public static FindSiteDetailsRs createFindSiteDetailsRs(Site site) {
+        return FindSiteDetailsRs
+            .builder()
+            .siteId(site.getSiteId())
+            .campId(site.getCamp().getCampId())
+            .name(site.getName())
+            .rpImage(site.getRpImage())
+            .introduction(site.getIntroduction())
+            .type(site.getType())
+            .openYn(site.isOpenYn())
+            .siteYn(site.getSiteYn())
+            .checkIn(site.getCheckIn())
+            .checkOut(site.getCheckOut())
+            .leastScheduling(site.getLeastScheduling())
+            .siteCapacity(site.getSiteCapacity())
+            .mapImage(site.getMapImage())
+            .policy(site.getPolicy())
+            .price(site.getPrice())
+            .refundableDate(site.getRefundableDate())
+            .build();
+
     }
 
 }

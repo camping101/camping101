@@ -25,8 +25,6 @@ public class CreateSiteRq {
     private String introduction;
     private SiteType type;
     private SiteYn siteYn;
-
-
     private LocalDateTime checkIn; // 체크 인 시간
     private LocalDateTime checkOut;// 체크 아웃 시간
     private Integer leastScheduling; // 최소 일정

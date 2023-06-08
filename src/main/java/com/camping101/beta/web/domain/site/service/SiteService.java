@@ -41,7 +41,6 @@ public class SiteService {
         site.addCamp(camp); // 변경감지로 넣기
 
         return CreateSiteRs.createSiteRs(site);
-
     }
 
 

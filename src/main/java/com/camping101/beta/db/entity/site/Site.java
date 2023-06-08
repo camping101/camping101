@@ -4,7 +4,7 @@ import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.campLog.CampLog;
 import com.camping101.beta.db.entity.reservation.Reservation;
 import com.camping101.beta.web.domain.site.dto.ModifySiteRq;
-import com.camping101.beta.web.domain.site.dto.SiteListResponse;
+import com.camping101.beta.web.domain.site.dto.FindSiteListByCampIdRs;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -122,9 +122,9 @@ public class Site {
 
     }
 
-    public static SiteListResponse toSiteListResponse(Site site) {
+    public static FindSiteListByCampIdRs toSiteListResponse(Site site) {
 
-        return SiteListResponse.builder()
+        return FindSiteListByCampIdRs.builder()
             .siteId(site.getSiteId())
             .campId(site.getCamp().getCampId())
             .name(site.getName())

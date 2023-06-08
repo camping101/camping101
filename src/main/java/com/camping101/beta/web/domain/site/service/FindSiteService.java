@@ -1,10 +1,14 @@
 package com.camping101.beta.web.domain.site.service;
 
+import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.site.Site;
 import com.camping101.beta.global.exception.CannotFindSiteException;
 import com.camping101.beta.web.domain.camp.service.FindCampService;
+import com.camping101.beta.web.domain.site.dto.FindSiteListByCampIdRs;
 import com.camping101.beta.web.domain.site.dto.sitedetailsresponse.FindSiteDetailsRs;
 import com.camping101.beta.web.domain.site.repository.SiteRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +20,6 @@ public class FindSiteService {
 
     private final SiteRepository siteRepository;
     private final FindCampService findCampService;
-    private final FindSiteQueryService findSiteQueryService;
 
     public Site findSiteOrElseThrow(Long siteId) {
 
@@ -41,7 +44,17 @@ public class FindSiteService {
 //     1. 주인(캠핑장 사장)은 사이트 상세 정보를 확인할 수 있다.
     public FindSiteDetailsRs findSiteDetails(Long siteId) {
 
-        return findSiteQueryService.findSiteDetails(siteId);
+        Site findSite = findSiteOrElseThrow(siteId);
+        return FindSiteDetailsRs.createFindSiteDetailsRs(findSite);
+
     }
 
+    public List<FindSiteListByCampIdRs> findSiteList(Long campId) {
+
+        Camp findCamp = findCampService.findCampOrElseThrow(campId);
+
+        List<Site> siteList = siteRepository.findByCamp(findCamp);
+        return siteList.stream().map(FindSiteListByCampIdRs::createSiteListRs).collect(Collectors.toList());
+
+    }
 }
