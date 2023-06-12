@@ -5,6 +5,7 @@ import com.camping101.beta.web.domain.camp.dto.CreateCampRq;
 import com.camping101.beta.web.domain.camp.dto.CreateCampRs;
 import com.camping101.beta.web.domain.camp.dto.FindCampDetailsAdminRs;
 import com.camping101.beta.web.domain.camp.dto.FindCampDetailsOwnerRs;
+import com.camping101.beta.web.domain.camp.dto.FindCampIdAndNameRs;
 import com.camping101.beta.web.domain.camp.dto.FindCampListRs;
 import com.camping101.beta.web.domain.camp.dto.ModifyCampRq;
 import com.camping101.beta.web.domain.camp.dto.ModifyCampRs;
@@ -12,9 +13,11 @@ import com.camping101.beta.web.domain.camp.dto.campdetaildto.FindCampDetailsRs;
 import com.camping101.beta.web.domain.camp.service.CampService;
 import com.camping101.beta.web.domain.camp.service.FindCampService;
 import io.swagger.annotations.Api;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -101,5 +104,12 @@ public class CampController {
 
         campService.removeCamp(campId);
 
+    }
+
+    // 캠핑장 id랑 이름들 모두 가져오기
+    @GetMapping(ApiPath.CAMP_MEMBER_ID)
+    public List<FindCampIdAndNameRs> findCampList(@PathVariable("member-id") Long memberId) {
+
+        return campService.findCampIdAndName(memberId);
     }
 }

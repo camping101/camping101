@@ -6,9 +6,9 @@ import com.camping101.beta.db.entity.site.Site;
 import com.camping101.beta.db.type.CampAuth;
 import com.camping101.beta.global.exception.CannotDeleteCampException;
 import com.camping101.beta.web.domain.admin.campAuth.repository.CampAuthRepository;
-import com.camping101.beta.web.domain.admin.campAuth.service.CampAuthService;
 import com.camping101.beta.web.domain.camp.dto.CreateCampRq;
 import com.camping101.beta.web.domain.camp.dto.CreateCampRs;
+import com.camping101.beta.web.domain.camp.dto.FindCampIdAndNameRs;
 import com.camping101.beta.web.domain.camp.dto.ModifyCampRq;
 import com.camping101.beta.web.domain.camp.dto.ModifyCampRs;
 import com.camping101.beta.web.domain.camp.repository.CampRepository;
@@ -96,4 +96,11 @@ public class CampService {
         }
     }
 
+    public List<FindCampIdAndNameRs> findCampIdAndName(Long memberId) {
+
+        Member findMember = findMemberService.findMemberOrElseThrow(memberId);
+        return campRepository.findAllByMember(findMember).stream()
+            .map(FindCampIdAndNameRs::createFindCampIdAndNameRs).collect(
+                Collectors.toList());
+    }
 }

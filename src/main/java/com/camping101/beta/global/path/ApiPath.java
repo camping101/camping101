@@ -14,6 +14,8 @@ public class ApiPath {
 
     public static final String CAMP = "/api/camp";
 
+    public static final String CAMP_MEMBER_ID = "/api/camp/{member-id}";
+
     public static final String CAMP_ID = "/api/camp/{camp-id}";
 
     public static final String CAMP_OWNER_MEMBER_ID = "/api/camp/owner/{member-id}";

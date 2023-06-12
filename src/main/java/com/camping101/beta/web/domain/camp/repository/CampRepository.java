@@ -3,6 +3,7 @@ package com.camping101.beta.web.domain.camp.repository;
 import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.camp.ManageStatus;
 import com.camping101.beta.db.entity.member.Member;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,5 +20,7 @@ public interface CampRepository extends JpaRepository<Camp, Long> {
 
 //    @Query("select c.sites from Camp c where c.campId =: campId")
 //    List<Site> findSitesByCampId(Long campId);
+
+    List<Camp> findAllByMember(Member member);
 
 }
