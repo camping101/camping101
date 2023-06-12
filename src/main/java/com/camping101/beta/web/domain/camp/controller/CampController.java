@@ -107,7 +107,7 @@ public class CampController {
     }
 
     // 캠핑장 id랑 이름들 모두 가져오기
-    @GetMapping(ApiPath.CAMP_MEMBER_ID)
+    @GetMapping(ApiPath.CAMP_OWNER_SIMPLE_MEMBER_ID)
     public List<FindCampIdAndNameRs> findCampList(@PathVariable("member-id") Long memberId) {
 
         return campService.findCampIdAndName(memberId);

@@ -28,6 +28,7 @@ public class FindSiteListByCampIdRs {
             .builder()
             .campId(site.getCamp().getCampId())
             .siteId(site.getSiteId())
+            .name(site.getName())
             .rpImage(site.getRpImage())
             .checkIn(site.getCheckIn())
             .checkOut(site.getCheckOut())

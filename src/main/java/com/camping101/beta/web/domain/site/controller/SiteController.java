@@ -35,11 +35,8 @@ public class SiteController {
         return siteService.registerSite(createSiteRq);
     }
 
-//     사이트 목록 조회
-//     대표이미지/ 사이트명 /가격/기본일정/체크인
-//     회원은 사이트 공개여부를 체크할 수 있다.
-//     단,현재일로 부터 예약된 날짜가 하나라도 있는 경우에 공개 여부를 Y/N으로 바꿀 수 없다.
-    @GetMapping(ApiPath.SITE_CAMP_ID)
+
+    @GetMapping(ApiPath.SITE_OWNER_CAMP_ID)
     public List<FindSiteListByCampIdRs> siteList(@PathVariable("camp-id") Long campId) {
 
 //        PageRequest pageRequest = PageRequest.of(page, size);
@@ -48,14 +45,12 @@ public class SiteController {
 
     }
 
-    // 사이트 상세 조회 (캠핑장 주인 기능)
+    // 사이트 상세 조회
     @GetMapping(ApiPath.SITE_ID)
     public FindSiteDetailsRs siteDetailsOwner(@PathVariable("site-id") Long siteId) {
 
         return findSiteService.findSiteDetails(siteId);
     }
-
-    //////////////// 사이트 open상태 true로 한번에 바꾸는 컨트롤러 추가 필요////////////////////
 
     // 사이트 수정
     @PutMapping(ApiPath.SITE)

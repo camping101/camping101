@@ -14,8 +14,7 @@ public class ApiPath {
 
     public static final String CAMP = "/api/camp";
 
-    public static final String CAMP_MEMBER_ID = "/api/camp/{member-id}";
-
+    public static final String CAMP_OWNER_SIMPLE_MEMBER_ID = "/api/camp/owner/simple/{member-id}";
     public static final String CAMP_ID = "/api/camp/{camp-id}";
 
     public static final String CAMP_OWNER_MEMBER_ID = "/api/camp/owner/{member-id}";
@@ -42,7 +41,7 @@ public class ApiPath {
 
     public static final String SITE_ID = "/api/site/{site-id}";
 
-    public static final String SITE_CAMP_ID = "/api/site/{camp-id}";
+    public static final String SITE_OWNER_CAMP_ID = "/api/site/owner/{camp-id}";
 
     public static final String SITE_CUSTOMER_SITE_ID_MEMBER_ID = "/api/site/customer/{site-id}/{member-id}";
 }
