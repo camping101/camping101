@@ -35,6 +35,7 @@ public class FindSiteDetailsRs {
 //    private List<ReservationDto> reservationDtoList;
 //    private List<CampLogDto> campLogDtoList;
 
+
     public static FindSiteDetailsRs createFindSiteDetailsRs(Site site) {
         return FindSiteDetailsRs
             .builder()
