@@ -101,42 +101,6 @@ public class Site {
         return this;
     }
 
-    public static Site toEntity(ModifySiteRq modifySiteRq) {
-
-        return Site.builder()
-            .siteId(modifySiteRq.getSiteId())
-            .name(modifySiteRq.getName())
-            .rpImage(modifySiteRq.getRpImage())
-            .introduction(modifySiteRq.getIntroduction())
-            .type(modifySiteRq.getType())
-            .siteYn(modifySiteRq.getSiteYn())
-            .checkIn(modifySiteRq.getCheckIn())
-            .checkOut(modifySiteRq.getCheckOut())
-            .leastScheduling(modifySiteRq.getLeastScheduling())
-            .siteCapacity(modifySiteRq.getSiteCapacity())
-            .mapImage(modifySiteRq.getMapImage())
-            .policy(modifySiteRq.getPolicy())
-            .price(modifySiteRq.getPrice())
-            .refundableDate(modifySiteRq.getRefundableDate())
-            .build();
-
-    }
-
-    public static FindSiteListByCampIdRs toSiteListResponse(Site site) {
-
-        return FindSiteListByCampIdRs.builder()
-            .siteId(site.getSiteId())
-            .campId(site.getCamp().getCampId())
-            .name(site.getName())
-            .rpImage(site.getRpImage())
-            .checkIn(site.getCheckIn())
-            .checkOut(site.getCheckOut())
-            .leastScheduling(site.getLeastScheduling())
-            .price(site.getPrice())
-            .build();
-
-    }
-
     public void changeOpenYn(Site site) {
         site.openYn = true;
     }

@@ -1,6 +1,9 @@
 package com.camping101.beta.web.domain.site.dto;
 
 import com.camping101.beta.db.entity.site.Site;
+import com.camping101.beta.db.entity.site.SiteCapacity;
+import com.camping101.beta.db.entity.site.SiteType;
+import com.camping101.beta.db.entity.site.SiteYn;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,31 +14,41 @@ import lombok.Getter;
 @AllArgsConstructor
 public class FindSiteListByCampIdRs {
 
-    // 대표이미지 / 사이트명 / 가격 / 기본일정 / 체크인 / 별점
-    private Long campId;
-
     private Long siteId;
-    private String name; // 사이트 명
+    private String name;
     private String rpImage; //대표 이미지
+    private String introduction;
+    private SiteType type;
+    private boolean openYn;
+    private SiteYn siteYn;
     private LocalDateTime checkIn; // 체크 인 시간
     private LocalDateTime checkOut;// 체크 아웃 시간
     private int leastScheduling; // 최소 일정
-    private int price; // 가격
+    private SiteCapacity siteCapacity;
+    private String mapImage;
+    private String policy;
+    private int price;
+    private LocalDateTime refundableDate;
 
     public static FindSiteListByCampIdRs createSiteListRs(Site site) {
 
         return FindSiteListByCampIdRs
             .builder()
-            .campId(site.getCamp().getCampId())
             .siteId(site.getSiteId())
             .name(site.getName())
             .rpImage(site.getRpImage())
+            .introduction(site.getIntroduction())
+            .type(site.getType())
+            .openYn(site.isOpenYn())
+            .siteYn(site.getSiteYn())
             .checkIn(site.getCheckIn())
             .checkOut(site.getCheckOut())
             .leastScheduling(site.getLeastScheduling())
+            .siteCapacity(site.getSiteCapacity())
+            .mapImage(site.getMapImage())
+            .policy(site.getPolicy())
             .price(site.getPrice())
+            .refundableDate(site.getRefundableDate())
             .build();
-
     }
-
 }

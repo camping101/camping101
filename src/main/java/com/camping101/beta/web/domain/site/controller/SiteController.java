@@ -40,9 +40,7 @@ public class SiteController {
     public List<FindSiteListByCampIdRs> siteList(@PathVariable("camp-id") Long campId) {
 
 //        PageRequest pageRequest = PageRequest.of(page, size);
-
         return findSiteService.findSiteList(campId);
-
     }
 
     // 사이트 상세 조회
