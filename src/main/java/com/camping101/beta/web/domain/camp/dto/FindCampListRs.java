@@ -3,6 +3,7 @@ package com.camping101.beta.web.domain.camp.dto;
 import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.camp.Location;
 import com.camping101.beta.db.entity.camp.ManageStatus;
+import java.util.Collection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,4 +38,7 @@ public class FindCampListRs {
             .build();
     }
 
+    public Collection<Object> getSites() {
+        return null;
+    }
 }

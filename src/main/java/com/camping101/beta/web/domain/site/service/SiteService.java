@@ -66,9 +66,9 @@ public class SiteService {
 
         Site findSite = findSiteService.findSiteOrElseThrow(rq.getSiteId());
 
-        boolean isValid = isSiteReserved(findSite.getSiteId());
+        boolean isReserved = isSiteReserved(findSite.getSiteId());
 
-        if (isValid) {
+        if (!isReserved) {
             Site modifiedSite = findSite.updateSite(rq); // 변경 감지
             return ModifySiteRs.createModifySiteRs(modifiedSite);
         } else {
@@ -108,6 +108,4 @@ public class SiteService {
         }
 
     }
-
-
 }

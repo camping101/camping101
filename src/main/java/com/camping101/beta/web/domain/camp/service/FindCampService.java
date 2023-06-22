@@ -13,9 +13,12 @@ import com.camping101.beta.web.domain.camp.repository.CampRepository;
 import com.camping101.beta.web.domain.member.service.FindMemberService;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,12 +49,16 @@ public class FindCampService {
 
     // 캠핑장 목록 조회(페이징 처리 하기) (손님 + 비회원)
     public Page<FindCampListRs> findCampList(Pageable pageable) {
-
         Page<Camp> camps = campRepository.findAllByManageStatus(pageable, AUTHORIZED);
-        List<Long> campLogCntList = camps.getContent().stream().map(Camp::getCampLogCnt)
+
+        List<FindCampListRs> filteredCamps = camps.getContent().stream()
+            .filter(camp -> camp.getSites().size() != 0)
+            .map(FindCampListRs::createCampListRs)
             .collect(Collectors.toList());
-        return camps.map(FindCampListRs::createCampListRs);
+
+        return new PageImpl<>(filteredCamps, pageable, camps.getTotalElements());
     }
+
 
     // 캠핑장 상세 정보 조회 -> 회원(손님)
     // 해당 캠핑장의 사이트 목록을 같이 가져온다.
