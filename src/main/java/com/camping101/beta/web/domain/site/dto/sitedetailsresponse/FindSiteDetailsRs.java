@@ -4,6 +4,7 @@ import com.camping101.beta.db.entity.site.Site;
 import com.camping101.beta.db.entity.site.SiteCapacity;
 import com.camping101.beta.db.entity.site.SiteType;
 import com.camping101.beta.db.entity.site.SiteYn;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,14 +25,14 @@ public class FindSiteDetailsRs {
     private SiteType type;
     private boolean openYn; // 이거를 활성화, 비활성화 , 탈퇴상태로 바꿀까?
     private SiteYn siteYn;
-    private LocalDateTime checkIn;
-    private LocalDateTime checkOut;
+    private LocalDate checkIn;
+    private LocalDate checkOut;
     private int leastScheduling;
     private SiteCapacity siteCapacity;
     private String mapImage;
     private String policy;
     private int price;
-    private LocalDateTime refundableDate;
+    private LocalDate refundableDate;
 //    private List<ReservationDto> reservationDtoList;
 //    private List<CampLogDto> campLogDtoList;
 

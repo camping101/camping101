@@ -31,9 +31,9 @@ public class FindReservationDetailsRs {
 
     private Long payment;
 
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
-    private LocalDateTime cancelAt;
+    private LocalDate cancelAt;
 
     private boolean campLogYn; // 예약페이지에서 캠프로그를 작성할지 말지도 결정할 수 있기에 일단 캠프로그 썻는지와
 

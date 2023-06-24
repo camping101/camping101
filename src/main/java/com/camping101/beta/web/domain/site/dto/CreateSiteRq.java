@@ -4,6 +4,7 @@ import com.camping101.beta.db.entity.site.Site;
 import com.camping101.beta.db.entity.site.SiteCapacity;
 import com.camping101.beta.db.entity.site.SiteType;
 import com.camping101.beta.db.entity.site.SiteYn;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,15 +26,15 @@ public class CreateSiteRq {
     private String introduction;
     private SiteType type;
     private SiteYn siteYn;
-    private LocalDateTime checkIn; // 체크 인 시간
-    private LocalDateTime checkOut;// 체크 아웃 시간
+    private LocalDate checkIn; // 체크 인 시간
+    private LocalDate checkOut;// 체크 아웃 시간
     private Integer leastScheduling; // 최소 일정
 
     private SiteCapacity siteCapacity;
     private String mapImage;
     private String policy;
     private Integer price;
-    private LocalDateTime refundableDate;
+    private LocalDate refundableDate;
 
     public static Site createSite(CreateSiteRq rq) {
 

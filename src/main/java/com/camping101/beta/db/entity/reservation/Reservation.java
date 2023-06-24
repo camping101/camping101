@@ -60,9 +60,9 @@ public class Reservation {
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
-    private LocalDateTime cancelAt;
+    private LocalDate cancelAt;
 
     private boolean campLogYn; // 캠프로그 여부
     private boolean campLogWritableYn; // 캠프로그 쓰기 권한
@@ -78,7 +78,7 @@ public class Reservation {
     public static void modifyReservationStatus(Reservation reservation) {
 
         reservation.status = CANCEL;
-        reservation.cancelAt = LocalDateTime.now();
+        reservation.cancelAt = LocalDate.now();
     }
 
 

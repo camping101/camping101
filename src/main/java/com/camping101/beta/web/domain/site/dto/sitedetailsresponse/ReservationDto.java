@@ -20,8 +20,8 @@ public class ReservationDto {
     private ReservationStatus status;
 
     private Long payment;
-    private LocalDateTime createdAt;
-    private LocalDateTime cancelAt;
+    private LocalDate createdAt;
+    private LocalDate cancelAt;
 
     private boolean campLogYn;
     private boolean campLogWritableYn;

@@ -5,6 +5,7 @@ import com.camping101.beta.db.entity.site.SiteCapacity;
 import com.camping101.beta.db.entity.site.SiteType;
 import com.camping101.beta.web.domain.site.dto.sitedetailsresponse.ReservationDto;
 import com.querydsl.core.annotations.QueryProjection;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +23,8 @@ public class SiteInCamp {
     private String introduction;
     private SiteType type; // 사이트 타입( 글램핑 등...)
     private boolean openYn; // 노출 상태, 비노출 상태
-    private LocalDateTime checkIn;
-    private LocalDateTime checkOut;
+    private LocalDate checkIn;
+    private LocalDate checkOut;
     private int leastScheduling;
     private SiteCapacity siteCapacity;
     private int price;

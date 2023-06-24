@@ -31,7 +31,7 @@ public class CreateReservationRs {
 
     private Long payment;
 
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     private boolean campLogYn;
 

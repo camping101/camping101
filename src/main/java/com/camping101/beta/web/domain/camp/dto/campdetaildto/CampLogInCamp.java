@@ -1,6 +1,7 @@
 package com.camping101.beta.web.domain.camp.dto.campdetaildto;
 
 import com.querydsl.core.annotations.QueryProjection;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Getter;
 

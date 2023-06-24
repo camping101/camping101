@@ -1,5 +1,6 @@
 package com.camping101.beta.web.domain.reservation.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +10,8 @@ import lombok.Getter;
 public class CreateReservationPaymentRq {
 
     int price;
-    LocalDateTime startDate;
-    LocalDateTime endDate;
+    LocalDate startDate;
+    LocalDate endDate;
 
 
 }

@@ -21,15 +21,15 @@ public class FindReservationListRs {
     private int humanCapacity;
     private ReservationStatus status;
     private Long payment;
-    private LocalDateTime createdAt;
-    private LocalDateTime cancelAt;
+    private LocalDate createdAt;
+    private LocalDate cancelAt;
     private boolean campLogYn;
     private boolean campLogWritableYn;
 
     @QueryProjection
     public FindReservationListRs(Long memberId, Long reservationId, Long siteId, String siteName,
         LocalDate startDate, LocalDate endDate, int humanCapacity, ReservationStatus status,
-        Long payment, LocalDateTime createdAt, LocalDateTime cancelAt, boolean campLogYn, boolean campLogWritableYn) {
+        Long payment, LocalDate createdAt, LocalDate cancelAt, boolean campLogYn, boolean campLogWritableYn) {
         this.memberId = memberId;
         this.reservationId = reservationId;
         this.siteId = siteId;

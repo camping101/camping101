@@ -5,6 +5,7 @@ import com.camping101.beta.db.entity.campLog.CampLog;
 import com.camping101.beta.db.entity.reservation.Reservation;
 import com.camping101.beta.web.domain.site.dto.ModifySiteRq;
 import com.camping101.beta.web.domain.site.dto.FindSiteListByCampIdRs;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,8 +61,8 @@ public class Site {
 
     @Embedded
     private SiteYn siteYn;
-    private LocalDateTime checkIn;
-    private LocalDateTime checkOut;
+    private LocalDate checkIn;
+    private LocalDate checkOut;
     private int leastScheduling;
 
     @Embedded
@@ -70,7 +71,7 @@ public class Site {
     private String mapImage;
     private String policy;
     private int price;
-    private LocalDateTime refundableDate;
+    private LocalDate refundableDate;
 
     public void addCamp(Camp camp) {
 

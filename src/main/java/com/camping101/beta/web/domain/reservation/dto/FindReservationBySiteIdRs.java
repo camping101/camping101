@@ -26,8 +26,8 @@ public class FindReservationBySiteIdRs {
     private int humanCapacity;
     private String reservationsStatus;
     private Long payment;
-    private LocalDateTime createdAt; // 예약일
-    private LocalDateTime cancelAt; // 취소일
+    private LocalDate createdAt; // 예약일
+    private LocalDate cancelAt; // 취소일
 
 //    public FindReservationBySiteIdRs(Site site) {
 //

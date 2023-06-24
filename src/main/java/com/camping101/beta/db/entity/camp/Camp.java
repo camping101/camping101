@@ -77,7 +77,7 @@ public class Camp {
 
     @CreatedDate
     @Column(updatable = false, insertable = true)
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @OneToMany(mappedBy = "camp", cascade = CascadeType.REMOVE)
     private List<Site> sites = new ArrayList<>();
