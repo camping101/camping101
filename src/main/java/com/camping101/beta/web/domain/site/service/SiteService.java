@@ -50,11 +50,15 @@ public class SiteService {
     public void changeOpenYnTrue(List<Long> siteIds) {
 
         for (Long siteId : siteIds) {
+            Site findSite = findSiteService.findSiteOrElseThrow(siteId);
+            if (!findSite.isOpenYn()) {
+                findSite.changeOpenYn();
+            }
+
             boolean isReservedSiteExist = isSiteReserved(siteId);
 
             if (!isReservedSiteExist) {
-                Site findSite = findSiteService.findSiteOrElseThrow(siteId);
-                findSite.changeOpenYn(findSite);
+                findSite.changeOpenYn();
             }
         }
     }

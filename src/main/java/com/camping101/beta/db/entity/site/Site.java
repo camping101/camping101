@@ -20,7 +20,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -73,7 +72,7 @@ public class Site {
 
     public void addCamp(Camp camp) {
         this.camp = camp;
-        if(camp.getSites().contains(this)) {
+        if (!camp.getSites().contains(this)) {
             camp.addSite(this);
         }
     }
@@ -102,7 +101,7 @@ public class Site {
         return this;
     }
 
-    public void changeOpenYn(Site site) {
-        site.openYn = true;
+    public void changeOpenYn() {
+        this.openYn = !this.openYn;
     }
 }
