@@ -24,5 +24,4 @@ public class SignInByEmailRequest implements Serializable {
     private MemberType memberType;
 
 
-
 }

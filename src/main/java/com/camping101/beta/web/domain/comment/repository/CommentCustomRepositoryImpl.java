@@ -23,7 +23,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class CommentCustomRepositoryImpl implements CommentCustomRepository{
+public class CommentCustomRepositoryImpl implements CommentCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -36,31 +36,32 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository{
         QMember member = QMember.member;
 
         List<Comment> comments = jpaQueryFactory
-                .selectFrom(comment)
-                .join(comment.campLog, campLog)
-                .fetchJoin()
-                .join(comment.member, member)
-                .fetchJoin()
-                .leftJoin(comment.reComments, reComment)
-                .fetchJoin()
-                .where(comment.campLog.campLogId.eq(campLogId))
-                .orderBy(getOrderSpecifier(pageable.getSort()).stream().toArray(OrderSpecifier[]::new))
-                .offset(pageable.getPageNumber() - 1)
-                .limit(pageable.getPageSize())
-                .fetch();
+            .selectFrom(comment)
+            .join(comment.campLog, campLog)
+            .fetchJoin()
+            .join(comment.member, member)
+            .fetchJoin()
+            .leftJoin(comment.reComments, reComment)
+            .fetchJoin()
+            .where(comment.campLog.campLogId.eq(campLogId))
+            .orderBy(getOrderSpecifier(pageable.getSort()).stream().toArray(OrderSpecifier[]::new))
+            .offset(pageable.getPageNumber() - 1)
+            .limit(pageable.getPageSize())
+            .fetch();
 
-        comments.stream().forEach(x -> x.changeReComments(x.getReComments().stream().sorted(new Comparator<ReComment>() {
-                    @Override
-                    public int compare(ReComment r1, ReComment r2) {
-                        return r1.getCreatedAt().compareTo(r2.getCreatedAt()) * -1;
-                    }
-                }).collect(Collectors.toList())));
+        comments.stream().forEach(
+            x -> x.changeReComments(x.getReComments().stream().sorted(new Comparator<ReComment>() {
+                @Override
+                public int compare(ReComment r1, ReComment r2) {
+                    return r1.getCreatedAt().compareTo(r2.getCreatedAt()) * -1;
+                }
+            }).collect(Collectors.toList())));
 
         long total = jpaQueryFactory
-                .select(campLog.comments.size())
-                .from(campLog)
-                .where(campLog.campLogId.eq(campLogId))
-                .fetchOne();
+            .select(campLog.comments.size())
+            .from(campLog)
+            .where(campLog.campLogId.eq(campLogId))
+            .fetchOne();
 
         return new PageImpl<>(comments, pageable, total);
     }

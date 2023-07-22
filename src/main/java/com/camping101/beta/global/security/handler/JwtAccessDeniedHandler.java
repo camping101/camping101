@@ -20,7 +20,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
         FilterResponseHandler.sendFilterExceptionResponse(response, "권한이 없습니다.", SC_FORBIDDEN);
 
-        if(accessDeniedException instanceof Exception) {
+        if (accessDeniedException instanceof Exception) {
             response.sendRedirect("/error");
         }
 

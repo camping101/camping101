@@ -26,8 +26,9 @@ public class ReCommentController {
     private final ReCommentService reCommentService;
 
     @PostMapping
-    public ResponseEntity<ReCommentInfoResponse> createComment(@RequestBody ReCommentCreateRequest request,
-                                                               @ApiIgnore Principal principal){
+    public ResponseEntity<ReCommentInfoResponse> createComment(
+        @RequestBody ReCommentCreateRequest request,
+        @ApiIgnore Principal principal) {
 
         request.setWriterEmail(principal.getName());
         ReCommentInfoResponse createdComment = reCommentService.createReComment(request);
@@ -37,18 +38,19 @@ public class ReCommentController {
 
     @PutMapping("/{reCommentId}")
     public ResponseEntity<ReCommentInfoResponse> updateComment(@PathVariable Long reCommentId,
-                                                               @RequestBody ReCommentUpdateRequest request,
-                                                               @ApiIgnore Principal principal){
+        @RequestBody ReCommentUpdateRequest request,
+        @ApiIgnore Principal principal) {
 
         request.setRequesterEmail(principal.getName());
-        ReCommentInfoResponse updatedComment = reCommentService.updateReComment(reCommentId, request);
+        ReCommentInfoResponse updatedComment = reCommentService.updateReComment(reCommentId,
+            request);
 
         return ResponseEntity.ok(updatedComment);
     }
 
     @DeleteMapping("/{reCommentId}")
     public ResponseEntity deleteComment(@PathVariable Long reCommentId,
-                                        @ApiIgnore Principal principal){
+        @ApiIgnore Principal principal) {
 
         reCommentService.deleteReComment(reCommentId, principal.getName());
 

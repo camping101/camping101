@@ -48,7 +48,8 @@ public class ReservationController {
     // 사이트 예약 목록 조회(회원이 자신의 예약 내역 조회)
     // 해당 월의 예약 목록 가져오기
     // 필터 기능이 존재하는 회원의 예약 목록 조회
-    @GetMapping(value = {ApiPath.RESERVATION_CUSTOMER_MEMBER_ID_MONTH, ApiPath.RESERVATION_CUSTOMER_MEMBER_ID})
+    @GetMapping(value = {ApiPath.RESERVATION_CUSTOMER_MEMBER_ID_MONTH,
+        ApiPath.RESERVATION_CUSTOMER_MEMBER_ID})
     public List<FindReservationListRs> reservationFilterList(
         @PathVariable("member-id") Long memberId,
         @PathVariable(value = "month", required = false) Optional<Integer> month,

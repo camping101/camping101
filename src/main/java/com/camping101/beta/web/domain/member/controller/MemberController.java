@@ -44,9 +44,9 @@ public class MemberController {
 
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MemberInfoResponse> memberUpdate(
-            @ApiIgnore @AuthenticationPrincipal MemberDetails memberDetails,
-            @ModelAttribute @RequestParam(name = "profileImage", required = false) MultipartFile image,
-            MemberUpdateRequest request) {
+        @ApiIgnore @AuthenticationPrincipal MemberDetails memberDetails,
+        @ModelAttribute @RequestParam(name = "profileImage", required = false) MultipartFile image,
+        MemberUpdateRequest request) {
 
         request.setProfileImage(image);
 

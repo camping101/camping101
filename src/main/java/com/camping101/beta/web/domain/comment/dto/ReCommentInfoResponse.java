@@ -15,7 +15,7 @@ import lombok.Setter;
 @Builder
 public class ReCommentInfoResponse {
 
-   private Long reCommentId;
+    private Long reCommentId;
     private String writerEmail;
     private String writerNickName;
     private String profileImagePath;
@@ -23,15 +23,15 @@ public class ReCommentInfoResponse {
     private long like;
     private LocalDateTime createdAt;
 
-    public static ReCommentInfoResponse fromEntity(ReComment reComment){
+    public static ReCommentInfoResponse fromEntity(ReComment reComment) {
         return ReCommentInfoResponse.builder()
-                .reCommentId(reComment.getReCommentId())
-                .writerEmail(reComment.getMember().getEmail())
-                .writerNickName(reComment.getMember().getNickname())
-                .profileImagePath(reComment.getMember().getProfileImagePath())
-                .content(reComment.getContent())
-                .createdAt(reComment.getCreatedAt())
-                .build();
+            .reCommentId(reComment.getReCommentId())
+            .writerEmail(reComment.getMember().getEmail())
+            .writerNickName(reComment.getMember().getNickname())
+            .profileImagePath(reComment.getMember().getProfileImagePath())
+            .content(reComment.getContent())
+            .createdAt(reComment.getCreatedAt())
+            .build();
     }
 
 }

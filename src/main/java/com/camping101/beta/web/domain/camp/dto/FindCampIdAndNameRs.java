@@ -1,4 +1,3 @@
-
 package com.camping101.beta.web.domain.camp.dto;
 
 import com.camping101.beta.db.entity.camp.Camp;

@@ -42,23 +42,23 @@ public class MemberDetails implements UserDetails {
         return member.getPassword();
     }
 
-    public String getProfileImagePath(){
+    public String getProfileImagePath() {
         return member.getProfileImagePath();
     }
 
-    public String getNickname(){
+    public String getNickname() {
         return member.getNickname();
     }
 
-    public String getPhoneNumber(){
+    public String getPhoneNumber() {
         return member.getPhoneNumber();
     }
 
-    public Member getMember(){
+    public Member getMember() {
         return member;
     }
 
-    public void setPassword(String encodedPassword){
+    public void setPassword(String encodedPassword) {
         this.member.setPassword(encodedPassword);
     }
 

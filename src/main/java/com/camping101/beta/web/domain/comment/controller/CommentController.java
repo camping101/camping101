@@ -29,8 +29,9 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<CommentInfoResponse> createComment(@RequestBody CommentCreateRequest request,
-                                                             @ApiIgnore Principal principal){
+    public ResponseEntity<CommentInfoResponse> createComment(
+        @RequestBody CommentCreateRequest request,
+        @ApiIgnore Principal principal) {
 
         request.setWriterEmail(principal.getName());
         CommentInfoResponse createdComment = commentService.createComment(request);
@@ -39,7 +40,7 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<CommentListResponse> getCommentListOfCampLog(CommentListRequest request){
+    public ResponseEntity<CommentListResponse> getCommentListOfCampLog(CommentListRequest request) {
 
         CommentListResponse commentList = commentService.getCommentListOfCampLog(request);
 
@@ -48,8 +49,8 @@ public class CommentController {
 
     @PutMapping("/{commentId}")
     public ResponseEntity<CommentInfoResponse> updateComment(@PathVariable Long commentId,
-                                                             @RequestBody CommentUpdateRequest request,
-                                                             @ApiIgnore Principal principal){
+        @RequestBody CommentUpdateRequest request,
+        @ApiIgnore Principal principal) {
 
         request.setRequesterEmail(principal.getName());
         CommentInfoResponse updatedComment = commentService.updateComment(commentId, request);
@@ -59,7 +60,7 @@ public class CommentController {
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity deleteComment(@PathVariable Long commentId,
-                                        @ApiIgnore Principal principal){
+        @ApiIgnore Principal principal) {
 
         commentService.deleteComment(commentId, principal.getName());
 

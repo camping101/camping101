@@ -57,11 +57,11 @@ public class Comment {
 
     public static Comment from(CampLog campLog, Member commentWriter, String content) {
         return Comment.builder()
-                .campLog(campLog)
-                .member(commentWriter)
-                .content(content)
-                .reComments(new ArrayList<>())
-                .build();
+            .campLog(campLog)
+            .member(commentWriter)
+            .content(content)
+            .reComments(new ArrayList<>())
+            .build();
     }
 
     public void changeCampLog(CampLog campLog) {

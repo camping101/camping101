@@ -26,7 +26,7 @@ public class OwnerSignInController {
 
     @PostMapping("/mail")
     public ResponseEntity<Void> emailSignIn(@RequestBody SignInByEmailRequest request,
-                                            @ApiIgnore HttpServletResponse response) {
+        @ApiIgnore HttpServletResponse response) {
 
         request.setMemberType(MemberType.OWNER);
 

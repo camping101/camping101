@@ -25,18 +25,18 @@ public class CommentInfoResponse {
     private List<ReCommentInfoResponse> reComments;
     private LocalDateTime createdAt;
 
-    public static CommentInfoResponse fromEntity(Comment comment){
+    public static CommentInfoResponse fromEntity(Comment comment) {
         return CommentInfoResponse.builder()
-                .commentId(comment.getCommentId())
-                .writerEmail(comment.getMember().getEmail())
-                .writerNickName(comment.getMember().getNickname())
-                .profileImagePath(comment.getMember().getProfileImagePath())
-                .content(comment.getContent())
-                .reComments(comment.getReComments().stream()
-                        .map(ReCommentInfoResponse::fromEntity)
-                        .collect(Collectors.toList()))
-                .createdAt(comment.getCreatedAt())
-                .build();
+            .commentId(comment.getCommentId())
+            .writerEmail(comment.getMember().getEmail())
+            .writerNickName(comment.getMember().getNickname())
+            .profileImagePath(comment.getMember().getProfileImagePath())
+            .content(comment.getContent())
+            .reComments(comment.getReComments().stream()
+                .map(ReCommentInfoResponse::fromEntity)
+                .collect(Collectors.toList()))
+            .createdAt(comment.getCreatedAt())
+            .build();
     }
 
 }

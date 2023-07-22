@@ -84,7 +84,8 @@ public class MemberServiceImpl implements MemberService {
 
     private String getNewProfileImagePath(String originalProfileImage,
         MemberUpdateRequest request) {
-        return Objects.isNull(request.getProfileImage()) || StringUtils.isNullOrEmpty(request.getProfileImage().getName()) ?
+        return Objects.isNull(request.getProfileImage()) || StringUtils.isNullOrEmpty(
+            request.getProfileImage().getName()) ?
             originalProfileImage : s3FileUploader.uploadFileAndGetURL(request.getProfileImage());
     }
 

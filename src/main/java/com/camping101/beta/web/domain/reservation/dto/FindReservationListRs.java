@@ -28,7 +28,8 @@ public class FindReservationListRs {
     @QueryProjection
     public FindReservationListRs(Long memberId, Long reservationId, Long siteId, String siteName,
         LocalDate startDate, LocalDate endDate, int humanCapacity, ReservationStatus status,
-        Long payment, LocalDate createdAt, LocalDate cancelAt, boolean campLogYn, boolean campLogWritableYn) {
+        Long payment, LocalDate createdAt, LocalDate cancelAt, boolean campLogYn,
+        boolean campLogWritableYn) {
         this.memberId = memberId;
         this.reservationId = reservationId;
         this.siteId = siteId;

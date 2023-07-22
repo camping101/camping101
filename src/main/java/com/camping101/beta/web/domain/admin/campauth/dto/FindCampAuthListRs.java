@@ -12,8 +12,6 @@ public class FindCampAuthListRs {
     private String campName;
     private String campAuthStatus;
 
-
-
 //    private CampInfo campInfo;
 //
 //    static class CampInfo {

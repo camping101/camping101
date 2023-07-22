@@ -35,12 +35,13 @@ public class CommentService {
     public CommentInfoResponse createComment(CommentCreateRequest request) {
 
         CampLog campLog = campLogRepository.findById(request.getCampLogId())
-                .orElseThrow(() -> new CampLogException(CAMPLOG_NOT_FOUND));
+            .orElseThrow(() -> new CampLogException(CAMPLOG_NOT_FOUND));
 
         Member commentWriter = memberRepository.findByEmail(request.getWriterEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
+            .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
 
-        Comment newComment = commentRepository.save(Comment.from(campLog, commentWriter, request.getContent()));
+        Comment newComment = commentRepository.save(
+            Comment.from(campLog, commentWriter, request.getContent()));
 
         return CommentInfoResponse.fromEntity(newComment);
 
@@ -49,7 +50,8 @@ public class CommentService {
     @Transactional(readOnly = true)
     public CommentListResponse getCommentListOfCampLog(CommentListRequest request) {
 
-        Page<Comment> comments = commentRepository.findCommentListByCampLogId(request.getCampLogId(), request.toPageable());
+        Page<Comment> comments = commentRepository.findCommentListByCampLogId(
+            request.getCampLogId(), request.toPageable());
 
         return CommentListResponse.fromEntity(request.getCampLogId(), comments);
     }
@@ -58,7 +60,7 @@ public class CommentService {
     public CommentInfoResponse updateComment(Long commentId, CommentUpdateRequest request) {
 
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(COMMENT_NOT_FOUND));
+            .orElseThrow(() -> new CommentException(COMMENT_NOT_FOUND));
 
         // 댓글 작성자만 수정이 가능하다.
         if (!comment.getMember().getEmail().equals(request.getRequesterEmail())) {
@@ -74,7 +76,7 @@ public class CommentService {
     public void deleteComment(Long commentId, String requesterEmail) {
 
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(COMMENT_NOT_FOUND));
+            .orElseThrow(() -> new CommentException(COMMENT_NOT_FOUND));
 
         // 댓글 작성자만 삭제 가능하다.
         if (!comment.getMember().getEmail().equals(requesterEmail)) {

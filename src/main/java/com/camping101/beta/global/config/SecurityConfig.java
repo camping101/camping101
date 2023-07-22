@@ -67,7 +67,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .permitAll()
 
             .antMatchers("/api/member", "/api/member/**", "/api/signout")
-            .hasAnyAuthority(MemberType.CUSTOMER.name(), MemberType.ADMIN.name(), MemberType.OWNER.name())
+            .hasAnyAuthority(MemberType.CUSTOMER.name(), MemberType.ADMIN.name(),
+                MemberType.OWNER.name())
 
 //            .antMatchers(HttpMethod.GET, "/api/camp/owner/**", "/api/camp/detail/owner/**", "/api/site/owner/**")
 //            .hasAnyAuthority(MemberType.OWNER.name())

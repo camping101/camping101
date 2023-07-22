@@ -76,7 +76,8 @@ public class MemberSignInServiceImpl implements MemberSignInService {
     }
 
     private void validateIfPasswordMatching(SignInByEmailRequest request, Member member) {
-        if (!isPasswordMatching(member.getMemberId(), request.getPassword(), member.getPassword())) {
+        if (!isPasswordMatching(member.getMemberId(), request.getPassword(),
+            member.getPassword())) {
             log.info("MemberSignInServiceImpl,signInByEmail : 비밀번호 불일치");
             throw new BadCredentialsException("비밀번호 불일치");
         }

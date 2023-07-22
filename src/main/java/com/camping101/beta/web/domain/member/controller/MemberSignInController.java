@@ -52,7 +52,7 @@ public class MemberSignInController {
 
     @PostMapping("/mail")
     public ResponseEntity<Void> emailSignIn(@RequestBody SignInByEmailRequest request,
-                                            @ApiIgnore HttpServletResponse response) {
+        @ApiIgnore HttpServletResponse response) {
 
         request.setMemberType(MemberType.CUSTOMER);
 

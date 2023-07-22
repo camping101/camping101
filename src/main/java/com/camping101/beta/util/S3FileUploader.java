@@ -25,7 +25,8 @@ public class S3FileUploader {
 
     public String uploadFileAndGetURL(MultipartFile multipartFile) {
 
-        if (multipartFile.isEmpty() || StringUtils.isNullOrEmpty(multipartFile.getOriginalFilename())) {
+        if (multipartFile.isEmpty() || StringUtils.isNullOrEmpty(
+            multipartFile.getOriginalFilename())) {
             return "";
         }
 
@@ -35,7 +36,7 @@ public class S3FileUploader {
             String extension = getExtension(originalFileName);
             String contentType = getContentType(extension);
             String changedFilename =
-                UUID.randomUUID().toString().replace("-", "").replace("_","") + "." + extension;
+                UUID.randomUUID().toString().replace("-", "").replace("_", "") + "." + extension;
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(contentType);

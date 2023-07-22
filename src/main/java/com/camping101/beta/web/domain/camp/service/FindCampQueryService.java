@@ -49,7 +49,6 @@ public class FindCampQueryService {
 
         List<SiteInCamp> sites = findSiteAndReservation(siteIds);
 
-
         // 트러블슈팅 : 해당 캠프에 해당하는 모든 캠프로그들을 가져와야함.
         // 이때 캠프로그는 사이트에 속해있음.
         // 결국 해당캠프에 속한 사이트들에 속한 캠프로그들을 가져와야 하는데....

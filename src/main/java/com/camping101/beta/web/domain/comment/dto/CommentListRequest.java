@@ -11,11 +11,12 @@ public class CommentListRequest extends CustomPage {
 
     private Long campLogId;
 
-    CommentListRequest(Long campLogId, Integer pageNumber, Integer recordSize, String orderBy, String orderDir) {
+    CommentListRequest(Long campLogId, Integer pageNumber, Integer recordSize, String orderBy,
+        String orderDir) {
         super(pageNumber == null || pageNumber < 1 ? 1 : pageNumber,
-                recordSize == null || recordSize < 1 ? 10 : recordSize,
-                StringUtils.isNullOrEmpty(orderBy) ? "createdAt" : orderBy,
-                StringUtils.isNullOrEmpty(orderDir) ? "DESC" : orderDir
+            recordSize == null || recordSize < 1 ? 10 : recordSize,
+            StringUtils.isNullOrEmpty(orderBy) ? "createdAt" : orderBy,
+            StringUtils.isNullOrEmpty(orderDir) ? "DESC" : orderDir
         );
         this.campLogId = campLogId;
     }

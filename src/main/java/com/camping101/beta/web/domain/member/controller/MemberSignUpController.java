@@ -26,7 +26,7 @@ public class MemberSignUpController {
 
     @PostMapping(value = "/mail", consumes = "multipart/form-data")
     public ResponseEntity<?> signUpByMail(@Valid SignUpByEmailRequest signUpByEmailRequest,
-                                          @ModelAttribute @RequestParam(name = "profileImage", required = false) MultipartFile image) {
+        @ModelAttribute @RequestParam(name = "profileImage", required = false) MultipartFile image) {
 
         signUpByEmailRequest.setProfileImage(image);
 

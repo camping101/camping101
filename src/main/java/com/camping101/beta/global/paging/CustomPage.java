@@ -28,16 +28,16 @@ public class CustomPage {
         Optional<Sort.Order> sort = pageable.getSort().stream().findFirst();
 
         return CustomPage.builder()
-                .pageNumber(pageable.getPageNumber())
-                .recordSize(pageable.getPageSize())
-                .orderBy(sort.isEmpty() ? "" : sort.get().getProperty())
-                .orderDir(sort.isEmpty() ? "" : sort.get().getDirection().name())
-                .build();
+            .pageNumber(pageable.getPageNumber())
+            .recordSize(pageable.getPageSize())
+            .orderBy(sort.isEmpty() ? "" : sort.get().getProperty())
+            .orderDir(sort.isEmpty() ? "" : sort.get().getDirection().name())
+            .build();
     }
 
     public Pageable toPageable() {
         return PageRequest.of(this.pageNumber, this.recordSize,
-                Sort.Direction.valueOf(this.orderDir.toUpperCase(Locale.ROOT)), this.orderBy);
+            Sort.Direction.valueOf(this.orderDir.toUpperCase(Locale.ROOT)), this.orderBy);
     }
 
 }

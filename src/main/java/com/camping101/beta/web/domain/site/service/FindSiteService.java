@@ -54,7 +54,8 @@ public class FindSiteService {
         Camp findCamp = findCampService.findCampOrElseThrow(campId);
 
         List<Site> siteList = siteRepository.findByCamp(findCamp);
-        return siteList.stream().map(FindSiteListByCampIdRs::createSiteListRs).collect(Collectors.toList());
+        return siteList.stream().map(FindSiteListByCampIdRs::createSiteListRs)
+            .collect(Collectors.toList());
 
     }
 }

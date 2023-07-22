@@ -30,12 +30,13 @@ public class ReCommentService {
     public ReCommentInfoResponse createReComment(ReCommentCreateRequest request) {
 
         Comment parentComment = commentRepository.findById(request.getParentId())
-                .orElseThrow(() -> new CommentException(COMMENT_NOT_FOUND));
+            .orElseThrow(() -> new CommentException(COMMENT_NOT_FOUND));
 
         Member reCommentWriter = memberRepository.findByEmail(request.getWriterEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
+            .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
 
-        ReComment newReComment = reCommentRepository.save(ReComment.from(parentComment, reCommentWriter, request.getContent()));
+        ReComment newReComment = reCommentRepository.save(
+            ReComment.from(parentComment, reCommentWriter, request.getContent()));
 
         return ReCommentInfoResponse.fromEntity(newReComment);
 
@@ -45,7 +46,7 @@ public class ReCommentService {
     public ReCommentInfoResponse updateReComment(Long reCommentId, ReCommentUpdateRequest request) {
 
         ReComment reComment = reCommentRepository.findById(reCommentId)
-                .orElseThrow(() -> new CommentException(COMMENT_NOT_FOUND));
+            .orElseThrow(() -> new CommentException(COMMENT_NOT_FOUND));
 
         if (!reComment.getMember().getEmail().equals(request.getRequesterEmail())) {
             throw new CommentException(ErrorCode.COMMENT_WRITER_MISMATCH);
@@ -60,7 +61,7 @@ public class ReCommentService {
     public void deleteReComment(Long reCommentId, String requesterEmail) {
 
         ReComment reComment = reCommentRepository.findById(reCommentId)
-                .orElseThrow(() -> new CommentException(COMMENT_NOT_FOUND));
+            .orElseThrow(() -> new CommentException(COMMENT_NOT_FOUND));
 
         if (!reComment.getMember().getEmail().equals(requesterEmail)) {
             throw new CommentException(ErrorCode.COMMENT_WRITER_MISMATCH);
