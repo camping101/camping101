@@ -57,6 +57,7 @@ public class CreateCampRq {
             .firstImage(rq.getFirstImage())
             .homepage(rq.getHomepage())
             .businessNo(rq.getBusinessNo())
+            .campLogCnt(0L)
             .build();
 
     }

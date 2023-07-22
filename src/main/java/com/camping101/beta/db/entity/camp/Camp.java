@@ -22,7 +22,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,7 +32,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 public class Camp {
@@ -72,7 +71,7 @@ public class Camp {
     private String firstImage;
     private String homepage;
     private String businessNo;
-    private Long campLogCnt;
+    private long campLogCnt;
 
     @CreatedDate
     @Column(updatable = false, insertable = true)
@@ -120,6 +119,14 @@ public class Camp {
     }
 
     public void minusCampLogCnt() {
-        this.campLogCnt--;
+        if (campLogCnt <= 0) {
+            campLogCnt = 0;
+            return;
+        }
+        campLogCnt--;
+    }
+
+    public void addSite(Site site) {
+        sites.add(site);
     }
 }
