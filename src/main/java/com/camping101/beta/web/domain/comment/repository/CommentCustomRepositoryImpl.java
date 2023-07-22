@@ -1,6 +1,6 @@
 package com.camping101.beta.web.domain.comment.repository;
 
-import com.camping101.beta.db.entity.campLog.QCampLog;
+import com.camping101.beta.db.entity.camplog.QCampLog;
 import com.camping101.beta.db.entity.comment.Comment;
 import com.camping101.beta.db.entity.comment.QComment;
 import com.camping101.beta.db.entity.comment.QReComment;
@@ -10,19 +10,16 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.CollectionUtils;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor

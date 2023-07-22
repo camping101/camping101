@@ -1,13 +1,20 @@
 package com.camping101.beta.web.domain.comment.service;
 
-import com.camping101.beta.db.entity.campLog.CampLog;
+import static com.camping101.beta.global.exception.camplog.ErrorCode.CAMPLOG_NOT_FOUND;
+import static com.camping101.beta.global.exception.comment.ErrorCode.COMMENT_NOT_FOUND;
+
+import com.camping101.beta.db.entity.camplog.CampLog;
 import com.camping101.beta.db.entity.comment.Comment;
 import com.camping101.beta.db.entity.member.Member;
-import com.camping101.beta.web.domain.campLog.exception.CampLogException;
-import com.camping101.beta.web.domain.campLog.repository.CampLogRepository;
-import com.camping101.beta.web.domain.comment.dto.*;
-import com.camping101.beta.web.domain.comment.exception.CommentException;
-import com.camping101.beta.web.domain.comment.exception.ErrorCode;
+import com.camping101.beta.global.exception.camplog.CampLogException;
+import com.camping101.beta.global.exception.comment.CommentException;
+import com.camping101.beta.global.exception.comment.ErrorCode;
+import com.camping101.beta.web.domain.camplog.repository.CampLogRepository;
+import com.camping101.beta.web.domain.comment.dto.CommentCreateRequest;
+import com.camping101.beta.web.domain.comment.dto.CommentInfoResponse;
+import com.camping101.beta.web.domain.comment.dto.CommentListRequest;
+import com.camping101.beta.web.domain.comment.dto.CommentListResponse;
+import com.camping101.beta.web.domain.comment.dto.CommentUpdateRequest;
 import com.camping101.beta.web.domain.comment.repository.CommentRepository;
 import com.camping101.beta.web.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import static com.camping101.beta.web.domain.campLog.exception.ErrorCode.CAMPLOG_NOT_FOUND;
-import static com.camping101.beta.web.domain.comment.exception.ErrorCode.COMMENT_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor

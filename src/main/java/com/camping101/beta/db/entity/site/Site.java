@@ -1,12 +1,10 @@
 package com.camping101.beta.db.entity.site;
 
 import com.camping101.beta.db.entity.camp.Camp;
-import com.camping101.beta.db.entity.campLog.CampLog;
+import com.camping101.beta.db.entity.camplog.CampLog;
 import com.camping101.beta.db.entity.reservation.Reservation;
 import com.camping101.beta.web.domain.site.dto.ModifySiteRq;
-import com.camping101.beta.web.domain.site.dto.FindSiteListByCampIdRs;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;

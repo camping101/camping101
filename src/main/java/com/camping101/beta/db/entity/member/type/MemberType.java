@@ -1,7 +1,7 @@
 package com.camping101.beta.db.entity.member.type;
 
-import com.camping101.beta.web.domain.member.exception.ErrorCode;
-import com.camping101.beta.web.domain.member.exception.MemberException;
+import com.camping101.beta.global.exception.member.ErrorCode;
+import com.camping101.beta.global.exception.member.MemberException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;

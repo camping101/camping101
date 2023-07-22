@@ -1,5 +1,10 @@
 package com.camping101.beta.web.domain.member.controller;
 
+import static com.camping101.beta.global.config.GoogleOAuthConfig.googleAuthorizationUri;
+import static com.camping101.beta.global.config.GoogleOAuthConfig.googleClientId;
+import static com.camping101.beta.global.config.GoogleOAuthConfig.googleRedirectUri;
+import static com.camping101.beta.global.config.GoogleOAuthConfig.googleScope;
+
 import com.camping101.beta.db.entity.member.type.MemberType;
 import com.camping101.beta.web.domain.member.dto.mypage.TemporalPasswordSendRequest;
 import com.camping101.beta.web.domain.member.dto.signin.SignInByEmailRequest;
@@ -8,20 +13,22 @@ import com.camping101.beta.web.domain.member.dto.token.ReissueRefreshTokenRespon
 import com.camping101.beta.web.domain.member.dto.token.TokenInfo;
 import com.camping101.beta.web.domain.member.service.signin.MemberSignInService;
 import com.camping101.beta.web.domain.member.service.signin.oAuth.OAuthService;
-import com.camping101.beta.web.domain.member.service.temporalPassword.TemporalPasswordService;
+import com.camping101.beta.web.domain.member.service.temporalpassword.TemporalPasswordService;
 import io.swagger.annotations.Api;
+import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.IOException;
-
-import static com.camping101.beta.global.config.GoogleOAuthConfig.*;
 
 @RestController
 @RequiredArgsConstructor

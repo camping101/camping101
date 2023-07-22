@@ -4,7 +4,6 @@ import com.camping101.beta.db.entity.site.SiteCapacity;
 import com.camping101.beta.db.entity.site.SiteType;
 import com.camping101.beta.db.entity.site.SiteYn;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

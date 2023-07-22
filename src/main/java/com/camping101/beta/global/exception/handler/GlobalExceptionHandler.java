@@ -1,10 +1,10 @@
 package com.camping101.beta.global.exception.handler;
 
-import com.camping101.beta.web.domain.admin.recTag.exception.RecTagException;
-import com.camping101.beta.web.domain.campLog.exception.CampLogException;
-import com.camping101.beta.web.domain.comment.exception.CommentException;
-import com.camping101.beta.web.domain.member.exception.MemberException;
-import com.camping101.beta.web.domain.member.exception.TokenException;
+import com.camping101.beta.global.exception.camplog.CampLogException;
+import com.camping101.beta.global.exception.comment.CommentException;
+import com.camping101.beta.global.exception.member.MemberException;
+import com.camping101.beta.global.exception.member.TokenException;
+import com.camping101.beta.web.domain.admin.rectag.exception.RecTagException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

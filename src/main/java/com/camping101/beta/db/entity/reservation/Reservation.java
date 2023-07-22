@@ -5,7 +5,6 @@ import static com.camping101.beta.db.entity.reservation.ReservationStatus.CANCEL
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.site.Site;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -23,9 +22,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.lang.Nullable;
 
 @Entity
 @Getter

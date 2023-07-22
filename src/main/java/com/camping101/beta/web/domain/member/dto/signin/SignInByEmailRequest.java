@@ -1,10 +1,9 @@
 package com.camping101.beta.web.domain.member.dto.signin;
 
-import java.io.Serializable;
-import javax.validation.constraints.NotBlank;
-
 import com.camping101.beta.db.entity.member.type.MemberType;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

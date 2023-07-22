@@ -2,7 +2,7 @@ package com.camping101.beta.web.domain.site.service;
 
 import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.site.Site;
-import com.camping101.beta.global.exception.CannotFindSiteException;
+import com.camping101.beta.global.exception.site.CannotFindSiteException;
 import com.camping101.beta.web.domain.camp.service.FindCampService;
 import com.camping101.beta.web.domain.site.dto.FindSiteListByCampIdRs;
 import com.camping101.beta.web.domain.site.dto.sitedetailsresponse.FindSiteDetailsRs;

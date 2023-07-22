@@ -2,7 +2,6 @@ package com.camping101.beta.web.domain.camp.dto.campdetaildto;
 
 import com.camping101.beta.db.entity.reservation.Reservation;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter

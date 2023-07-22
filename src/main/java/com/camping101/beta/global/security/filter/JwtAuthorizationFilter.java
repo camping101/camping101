@@ -1,6 +1,6 @@
 package com.camping101.beta.global.security.filter;
 
-import static com.camping101.beta.global.security.SecurityConfig.AUTHORIZATION_HEADER;
+import static com.camping101.beta.global.config.SecurityConfig.AUTHORIZATION_HEADER;
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 

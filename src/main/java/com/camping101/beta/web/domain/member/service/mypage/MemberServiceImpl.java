@@ -2,12 +2,11 @@ package com.camping101.beta.web.domain.member.service.mypage;
 
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.member.status.MemberStatus;
-import com.camping101.beta.db.entity.member.type.SignUpType;
+import com.camping101.beta.global.exception.member.ErrorCode;
+import com.camping101.beta.global.exception.member.MemberException;
 import com.camping101.beta.util.S3FileUploader;
 import com.camping101.beta.web.domain.member.dto.mypage.MemberInfoResponse;
 import com.camping101.beta.web.domain.member.dto.mypage.MemberUpdateRequest;
-import com.camping101.beta.web.domain.member.exception.ErrorCode;
-import com.camping101.beta.web.domain.member.exception.MemberException;
 import com.camping101.beta.web.domain.member.repository.MemberRepository;
 import com.querydsl.core.util.StringUtils;
 import java.time.LocalDateTime;

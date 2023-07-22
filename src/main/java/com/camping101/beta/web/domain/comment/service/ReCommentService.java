@@ -1,23 +1,22 @@
 package com.camping101.beta.web.domain.comment.service;
 
+import static com.camping101.beta.global.exception.comment.ErrorCode.COMMENT_NOT_FOUND;
+
 import com.camping101.beta.db.entity.comment.Comment;
 import com.camping101.beta.db.entity.comment.ReComment;
 import com.camping101.beta.db.entity.member.Member;
+import com.camping101.beta.global.exception.comment.CommentException;
+import com.camping101.beta.global.exception.comment.ErrorCode;
 import com.camping101.beta.web.domain.comment.dto.ReCommentCreateRequest;
 import com.camping101.beta.web.domain.comment.dto.ReCommentInfoResponse;
 import com.camping101.beta.web.domain.comment.dto.ReCommentUpdateRequest;
-import com.camping101.beta.web.domain.comment.exception.CommentException;
-import com.camping101.beta.web.domain.comment.exception.ErrorCode;
 import com.camping101.beta.web.domain.comment.repository.CommentRepository;
 import com.camping101.beta.web.domain.comment.repository.ReCommentRepository;
 import com.camping101.beta.web.domain.member.repository.MemberRepository;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-
-import static com.camping101.beta.web.domain.comment.exception.ErrorCode.COMMENT_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor

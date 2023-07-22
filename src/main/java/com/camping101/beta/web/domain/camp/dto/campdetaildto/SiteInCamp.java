@@ -3,15 +3,11 @@ package com.camping101.beta.web.domain.camp.dto.campdetaildto;
 import com.camping101.beta.db.entity.site.Site;
 import com.camping101.beta.db.entity.site.SiteCapacity;
 import com.camping101.beta.db.entity.site.SiteType;
-import com.camping101.beta.web.domain.site.dto.sitedetailsresponse.ReservationDto;
 import com.querydsl.core.annotations.QueryProjection;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter

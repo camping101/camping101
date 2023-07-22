@@ -4,7 +4,7 @@ import static com.camping101.beta.db.entity.camp.ManageStatus.AUTHORIZED;
 
 import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.member.Member;
-import com.camping101.beta.global.exception.CannotFindCampException;
+import com.camping101.beta.global.exception.camp.CannotFindCampException;
 import com.camping101.beta.web.domain.camp.dto.FindCampDetailsAdminRs;
 import com.camping101.beta.web.domain.camp.dto.FindCampDetailsOwnerRs;
 import com.camping101.beta.web.domain.camp.dto.FindCampListRs;

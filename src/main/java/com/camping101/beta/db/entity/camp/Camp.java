@@ -2,12 +2,11 @@ package com.camping101.beta.db.entity.camp;
 
 import static javax.persistence.EnumType.STRING;
 
+import com.camping101.beta.db.entity.campauth.CampAuth;
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.site.Site;
-import com.camping101.beta.db.type.CampAuth;
 import com.camping101.beta.web.domain.camp.dto.ModifyCampRq;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -85,7 +84,7 @@ public class Camp {
     @OneToMany(mappedBy = "camp", cascade = CascadeType.REMOVE)
     private List<CampAuth> campAuthList = new ArrayList<>();
 
-    public Camp updateCamp(ModifyCampRq modifyCampRq) {
+    public Camp modifyCamp(ModifyCampRq modifyCampRq) {
 
         this.campId = modifyCampRq.getCampId();
         this.intro = modifyCampRq.getIntro();

@@ -1,6 +1,6 @@
 package com.camping101.beta.db.entity.regtag;
 
-import com.camping101.beta.web.domain.admin.recTag.dto.AdminRecTagCreateRequest;
+import com.camping101.beta.web.domain.admin.rectag.dto.AdminRecTagCreateRequest;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;

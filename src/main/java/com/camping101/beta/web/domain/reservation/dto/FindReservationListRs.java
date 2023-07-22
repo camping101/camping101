@@ -4,7 +4,6 @@ import com.camping101.beta.db.entity.reservation.Reservation;
 import com.camping101.beta.db.entity.reservation.ReservationStatus;
 import com.querydsl.core.annotations.QueryProjection;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 

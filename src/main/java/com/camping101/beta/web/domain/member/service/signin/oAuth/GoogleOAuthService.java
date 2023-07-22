@@ -1,18 +1,27 @@
 package com.camping101.beta.web.domain.member.service.signin.oAuth;
 
+import static com.camping101.beta.global.config.GoogleOAuthConfig.googleClientId;
+import static com.camping101.beta.global.config.GoogleOAuthConfig.googleClientSecret;
+import static com.camping101.beta.global.config.GoogleOAuthConfig.googleRedirectUri;
+import static com.camping101.beta.global.config.GoogleOAuthConfig.googleRevokeUri;
+import static com.camping101.beta.global.config.GoogleOAuthConfig.googleTokenUri;
+import static com.camping101.beta.global.exception.member.ErrorCode.INVALID_REFRESH_TOKEN;
+
 import com.camping101.beta.db.entity.member.Member;
+import com.camping101.beta.global.exception.member.ErrorCode;
+import com.camping101.beta.global.exception.member.MemberException;
+import com.camping101.beta.global.exception.member.TokenException;
 import com.camping101.beta.util.JsonParser;
-import com.camping101.beta.web.domain.member.dto.signin.oAuth.GoogleAccountInfo;
-import com.camping101.beta.web.domain.member.dto.signin.oAuth.GoogleTokenInfo;
+import com.camping101.beta.web.domain.member.dto.signin.oauth.GoogleAccountInfo;
+import com.camping101.beta.web.domain.member.dto.signin.oauth.GoogleTokenInfo;
 import com.camping101.beta.web.domain.member.dto.token.TokenInfo;
-import com.camping101.beta.web.domain.member.exception.ErrorCode;
-import com.camping101.beta.web.domain.member.exception.MemberException;
 import com.camping101.beta.web.domain.member.repository.MemberRepository;
-import com.camping101.beta.db.entity.member.RefreshToken;
-import com.camping101.beta.web.domain.member.exception.TokenException;
 import com.camping101.beta.web.domain.member.service.token.TokenService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.jsonwebtoken.lang.Strings;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Optional;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -25,12 +34,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import javax.transaction.Transactional;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Optional;
-import static com.camping101.beta.global.config.GoogleOAuthConfig.*;
-import static com.camping101.beta.web.domain.member.exception.ErrorCode.INVALID_REFRESH_TOKEN;
 
 @Service
 @RequiredArgsConstructor

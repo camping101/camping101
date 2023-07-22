@@ -1,6 +1,6 @@
 package com.camping101.beta.global.config;
 
-import static com.camping101.beta.global.security.SecurityConfig.AUTHORIZATION_HEADER;
+import static com.camping101.beta.global.config.SecurityConfig.AUTHORIZATION_HEADER;
 
 import java.util.Arrays;
 import java.util.HashSet;

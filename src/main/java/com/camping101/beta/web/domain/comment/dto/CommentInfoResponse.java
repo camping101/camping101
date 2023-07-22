@@ -1,10 +1,14 @@
 package com.camping101.beta.web.domain.comment.dto;
 
 import com.camping101.beta.db.entity.comment.Comment;
-import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter

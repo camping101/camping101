@@ -2,7 +2,7 @@ package com.camping101.beta.util;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import com.camping101.beta.web.domain.member.exception.ErrorResponse;
+import com.camping101.beta.global.exception.member.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.HashMap;

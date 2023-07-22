@@ -1,12 +1,15 @@
 package com.camping101.beta.web.domain.comment.dto;
 
-import com.camping101.beta.db.entity.campLog.CampLog;
 import com.camping101.beta.db.entity.comment.Comment;
-import lombok.*;
-import org.springframework.data.domain.Page;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.domain.Page;
 
 @Getter
 @Setter

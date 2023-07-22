@@ -3,7 +3,7 @@ package com.camping101.beta.web.domain.reservation.service;
 import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.reservation.Reservation;
 import com.camping101.beta.db.entity.site.Site;
-import com.camping101.beta.global.exception.CannotFindReservationException;
+import com.camping101.beta.global.exception.reservation.CannotFindReservationException;
 import com.camping101.beta.web.domain.camp.service.FindCampService;
 import com.camping101.beta.web.domain.reservation.dto.FindAllSitesByCampId;
 import com.camping101.beta.web.domain.reservation.dto.FindReservationBySiteIdRs;

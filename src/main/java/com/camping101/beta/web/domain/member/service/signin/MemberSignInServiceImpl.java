@@ -1,18 +1,22 @@
 package com.camping101.beta.web.domain.member.service.signin;
 
+import static com.camping101.beta.global.exception.member.ErrorCode.INVALID_REFRESH_TOKEN;
+import static com.camping101.beta.global.exception.member.ErrorCode.MEMBER_SIGN_IN_ERROR;
+import static com.camping101.beta.global.exception.member.ErrorCode.MEMBER_TYPE_NOT_MATCHING;
+
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.member.RefreshToken;
 import com.camping101.beta.db.entity.member.type.MemberType;
 import com.camping101.beta.db.entity.member.type.SignUpType;
+import com.camping101.beta.global.exception.member.MemberException;
+import com.camping101.beta.global.exception.member.TokenException;
 import com.camping101.beta.global.security.authentication.MemberDetails;
 import com.camping101.beta.web.domain.member.dto.signin.SignInByEmailRequest;
 import com.camping101.beta.web.domain.member.dto.token.ReissueRefreshTokenResponse;
 import com.camping101.beta.web.domain.member.dto.token.TokenInfo;
-import com.camping101.beta.web.domain.member.exception.MemberException;
-import com.camping101.beta.web.domain.member.exception.TokenException;
 import com.camping101.beta.web.domain.member.repository.MemberRepository;
 import com.camping101.beta.web.domain.member.service.signin.oAuth.OAuthService;
-import com.camping101.beta.web.domain.member.service.temporalPassword.TemporalPasswordService;
+import com.camping101.beta.web.domain.member.service.temporalpassword.TemporalPasswordService;
 import com.camping101.beta.web.domain.member.service.token.TokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -26,8 +30,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import static com.camping101.beta.web.domain.member.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor

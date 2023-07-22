@@ -1,11 +1,11 @@
 package com.camping101.beta.web.domain.camp.service;
 
 import com.camping101.beta.db.entity.camp.Camp;
+import com.camping101.beta.db.entity.campauth.CampAuth;
 import com.camping101.beta.db.entity.member.Member;
 import com.camping101.beta.db.entity.site.Site;
-import com.camping101.beta.db.type.CampAuth;
-import com.camping101.beta.global.exception.CannotDeleteCampException;
-import com.camping101.beta.web.domain.admin.campAuth.repository.CampAuthRepository;
+import com.camping101.beta.global.exception.camp.CannotDeleteCampException;
+import com.camping101.beta.web.domain.admin.campauth.repository.CampAuthRepository;
 import com.camping101.beta.web.domain.camp.dto.CreateCampRq;
 import com.camping101.beta.web.domain.camp.dto.CreateCampRs;
 import com.camping101.beta.web.domain.camp.dto.FindCampIdAndNameRs;
@@ -65,8 +65,7 @@ public class CampService {
     public ModifyCampRs modifyCamp(ModifyCampRq rq) {
 
         Camp camp = findCampService.findCampOrElseThrow(rq.getCampId());
-
-        Camp modifiedCamp = camp.updateCamp(rq);
+        Camp modifiedCamp = camp.modifyCamp(rq);
 
         return ModifyCampRs.createModifyCampRs(modifiedCamp);
     }

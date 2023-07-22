@@ -4,7 +4,7 @@ import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.reservation.Reservation;
 import com.camping101.beta.db.entity.reservation.ReservationStatus;
 import com.camping101.beta.db.entity.site.Site;
-import com.camping101.beta.global.exception.CannotDeleteCampException;
+import com.camping101.beta.global.exception.camp.CannotDeleteCampException;
 import com.camping101.beta.web.domain.camp.service.FindCampService;
 import com.camping101.beta.web.domain.site.dto.CreateSiteRq;
 import com.camping101.beta.web.domain.site.dto.CreateSiteRs;

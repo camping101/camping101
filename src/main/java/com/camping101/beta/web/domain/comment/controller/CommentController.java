@@ -1,13 +1,24 @@
 package com.camping101.beta.web.domain.comment.controller;
 
-import com.camping101.beta.web.domain.comment.dto.*;
+import com.camping101.beta.web.domain.comment.dto.CommentCreateRequest;
+import com.camping101.beta.web.domain.comment.dto.CommentInfoResponse;
+import com.camping101.beta.web.domain.comment.dto.CommentListRequest;
+import com.camping101.beta.web.domain.comment.dto.CommentListResponse;
+import com.camping101.beta.web.domain.comment.dto.CommentUpdateRequest;
 import com.camping101.beta.web.domain.comment.service.CommentService;
 import io.swagger.annotations.Api;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
-import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor

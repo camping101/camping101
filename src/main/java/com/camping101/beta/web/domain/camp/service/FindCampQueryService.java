@@ -1,7 +1,6 @@
 package com.camping101.beta.web.domain.camp.service;
 
-import static com.camping101.beta.db.entity.camp.QCamp.camp;
-import static com.camping101.beta.db.entity.campLog.QCampLog.campLog;
+import static com.camping101.beta.db.entity.camplog.QCampLog.campLog;
 import static com.camping101.beta.db.entity.member.QMember.member;
 import static com.camping101.beta.db.entity.site.QSite.site;
 
@@ -17,7 +16,6 @@ import com.camping101.beta.web.domain.site.repository.SiteRepository;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -50,6 +48,7 @@ public class FindCampQueryService {
         List<Long> siteIds = findSiteIds(campId);
 
         List<SiteInCamp> sites = findSiteAndReservation(siteIds);
+
 
         // 트러블슈팅 : 해당 캠프에 해당하는 모든 캠프로그들을 가져와야함.
         // 이때 캠프로그는 사이트에 속해있음.
@@ -103,7 +102,6 @@ public class FindCampQueryService {
 
         return queryFactory.select(new QSiteInCamp(site)).from(site)
             .where(site.siteId.in(siteIds), predicate).fetch();
-
     }
 
     private List<Long> findSiteIds(Long campId) {

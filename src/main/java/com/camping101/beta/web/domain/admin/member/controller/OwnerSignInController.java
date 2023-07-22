@@ -5,6 +5,7 @@ import com.camping101.beta.web.domain.member.dto.signin.SignInByEmailRequest;
 import com.camping101.beta.web.domain.member.dto.token.TokenInfo;
 import com.camping101.beta.web.domain.member.service.signin.MemberSignInService;
 import io.swagger.annotations.Api;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
-
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequiredArgsConstructor
