@@ -113,7 +113,7 @@ public class ReservationService {
                 // 이미 캠프로그를 작성한적 있거나 예약이 취소된적 있으면 캠프로그를 더이상 작성할 수 없다.
                 if (!reservation.isCampLogYn()
                     && reservation.getStatus() == ReservationStatus.COMP) {
-                    reservation.changeCampLogWritableYn(reservation);
+                    reservation.changeCampLogWritableYn();
                 }
             }
         }
@@ -136,7 +136,7 @@ public class ReservationService {
         LocalDate now = LocalDate.now();
 
         if (localDate.isAfter(now)) {
-            Reservation.modifyReservationStatus(findReservation);
+            findReservation.modifyReservationStatus();
         } else {
             throw new CannotDeleteReservationException();
         }

@@ -30,7 +30,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor()
 @EntityListeners(AuditingEntityListener.class)
 @Builder
 public class Site {
@@ -72,12 +72,14 @@ public class Site {
     private LocalDate refundableDate;
 
     public void addCamp(Camp camp) {
-
         this.camp = camp;
+        if(camp.getSites().contains(this)) {
+            camp.addSite(this);
+        }
     }
 
-    public void addReservation(List<Reservation> reservations) {
-        this.reservationList = reservations;
+    public void addReservation(Reservation reservation) {
+        this.reservationList.add(reservation);
     }
 
     public Site updateSite(ModifySiteRq modifySiteRq) {

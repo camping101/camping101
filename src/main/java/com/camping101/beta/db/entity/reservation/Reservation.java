@@ -70,19 +70,19 @@ public class Reservation {
 
     public void addSite(Site site) {
         this.site = site;
+        if (!site.getReservationList().contains(this)) {
+            site.addReservation(this);
+        }
     }
 
-    public static void modifyReservationStatus(Reservation reservation) {
-
-        reservation.status = CANCEL;
-        reservation.cancelAt = LocalDate.now();
+    public void modifyReservationStatus() {
+        this.status = CANCEL;
+        this.cancelAt = LocalDate.now();
     }
 
 
-    public void changeCampLogWritableYn(Reservation reservation) {
-
+    public void changeCampLogWritableYn() {
         this.campLogWritableYn = true;
-
     }
 
     public void addPayment(Long payment) {
