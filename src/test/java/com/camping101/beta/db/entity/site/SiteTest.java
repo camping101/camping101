@@ -35,6 +35,7 @@ class SiteTest {
         site.addReservation(reservation);
         // then
         assertThat(site.getReservationList().contains(reservation)).isTrue();
+
     }
 
     @Test
