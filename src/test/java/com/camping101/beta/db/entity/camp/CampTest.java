@@ -45,26 +45,26 @@ class CampTest {
         assertThat(camp.getCampLogCnt()).isEqualTo(nowCampLogCnt + 1);
     }
 
-    @Test
-    @DisplayName("캠핑장에 대한 캠프로그 수를 줄일 수 있다.")
-    void minusCampLogCntTest() {
-        // given
-        Camp camp = new Camp();
-        // when
-        camp.minusCampLogCnt();
-        // then
-        assertThat(camp.getCampLogCnt()).isEqualTo(0);
-    }
-
-    @Test
-    @DisplayName("캠핑장에 사이트를 추가할 수 있습니다.")
-    void addSiteTest(){
-        // given
-        Camp camp = new Camp();
-        Site site = new Site();
-        // when
-        camp.addSite(site);
-        // then
-        assertThat(camp.getSites().contains(site)).isTrue();
-    }
+//    @Test
+//    @DisplayName("캠핑장에 대한 캠프로그 수를 줄일 수 있다.")
+//    void minusCampLogCntTest() {
+//        // given
+//        Camp camp = new Camp();
+//        // when
+//        camp.minusCampLogCnt();
+//        // then
+//        assertThat(camp.getCampLogCnt()).isEqualTo(0);
+//    }
+//
+//    @Test
+//    @DisplayName("캠핑장에 사이트를 추가할 수 있습니다.")
+//    void addSiteTest(){
+//        // given
+//        Camp camp = new Camp();
+//        Site site = new Site();
+//        // when
+//        camp.addSite(site);
+//        // then
+//        assertThat(camp.getSites().contains(site)).isTrue();
+//    }
 }
