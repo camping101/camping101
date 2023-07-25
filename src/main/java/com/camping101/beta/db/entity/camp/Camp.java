@@ -71,12 +71,13 @@ public class Camp {
     private String firstImage;
     private String homepage;
     private String businessNo;
-    private long campLogCnt;
+    private Long campLogCnt;
 
     @CreatedDate
     @Column(updatable = false, insertable = true)
     private LocalDate createdAt;
 
+//    @Builder.Default
     @OneToMany(mappedBy = "camp", cascade = CascadeType.REMOVE)
     private List<Site> sites = new ArrayList<>();
 
@@ -120,7 +121,7 @@ public class Camp {
 
     public void minusCampLogCnt() {
         if (campLogCnt <= 0) {
-            campLogCnt = 0;
+            campLogCnt = 0L;
             return;
         }
         campLogCnt--;
