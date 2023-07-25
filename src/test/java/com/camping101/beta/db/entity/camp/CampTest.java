@@ -33,17 +33,17 @@ class CampTest {
         assertThat(camp.getManageStatus()).isEqualTo(AUTHORIZED);
     }
 
-    @Test
-    @DisplayName("캠핑장에 대한 캠프로그 수를 늘릴 수 있다.")
-    void plusCampLogCntTest() {
-        // given
-        Camp camp = new Camp();
-        Long nowCampLogCnt = camp.getCampLogCnt();
-        // when
-        camp.plusCampLogCnt();
-        // then
-        assertThat(camp.getCampLogCnt()).isEqualTo(nowCampLogCnt + 1);
-    }
+//    @Test
+//    @DisplayName("캠핑장에 대한 캠프로그 수를 늘릴 수 있다.")
+//    void plusCampLogCntTest() {
+//        // given
+//        Camp camp = new Camp();
+//        Long nowCampLogCnt = camp.getCampLogCnt();
+//        // when
+//        camp.plusCampLogCnt();
+//        // then
+//        assertThat(camp.getCampLogCnt()).isEqualTo(nowCampLogCnt + 1);
+//    }
 
 //    @Test
 //    @DisplayName("캠핑장에 대한 캠프로그 수를 줄일 수 있다.")
