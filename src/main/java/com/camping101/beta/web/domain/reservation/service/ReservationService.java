@@ -84,11 +84,11 @@ public class ReservationService {
 //    - 예약 목록 조회시 캠프 로그를 쓸수있는지 없는지가 나타남
     // -> 예약 목록 조회시 취소된 예약은 캠프로그를 작성할 수 없게 해야한다.
     public List<FindReservationListRs> findReservationFilterList(Long memberId,
-        Optional<Integer> month, Pageable pageable) {
+        Optional<Integer> month) {
 
         List<Reservation> reservationList = findReservationQueryService.findReservationList(
             month,
-            memberId, pageable);
+            memberId);
 
         if (reservationList.size() == 0) {
             throw new CannotFindReservationException();

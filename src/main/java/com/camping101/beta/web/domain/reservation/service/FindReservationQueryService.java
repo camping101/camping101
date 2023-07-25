@@ -28,15 +28,14 @@ public class FindReservationQueryService {
     }
 
     // 해당 기간에 해당하는 모든 회원의 예약 내역 가져오기
-    public List<Reservation> findReservationList(Optional<Integer> month, Long memberId,
-        Pageable pageable) {
+    public List<Reservation> findReservationList(Optional<Integer> month, Long memberId) {
 
         if (month.isEmpty()) {
             return queryFactory.select(reservation)
                 .from(reservation)
                 .where(reservation.member.memberId.eq(memberId))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize())
                 .fetch();
         }
 
@@ -65,8 +64,8 @@ public class FindReservationQueryService {
                     // 해당 회원이 한 예약들
                     .and(reservation.member.memberId.eq(memberId))
             )
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
+//            .offset(pageable.getOffset())
+//            .limit(pageable.getPageSize())
             .fetch();
     }
 

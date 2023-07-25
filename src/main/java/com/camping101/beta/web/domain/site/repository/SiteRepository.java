@@ -9,10 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SiteRepository extends JpaRepository<Site, Long> {
 
-//    List<Site> findAllByCampAndOpenYn(Camp camp, boolean openYn, SiteStatus siteStatus);
-
     // 캠핑장의 모든 사이트 가져오기
     List<Site> findByCamp(Camp camp);
-
-
 }

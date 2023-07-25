@@ -52,12 +52,11 @@ public class ReservationController {
         ApiPath.RESERVATION_CUSTOMER_MEMBER_ID})
     public List<FindReservationListRs> reservationFilterList(
         @PathVariable("member-id") Long memberId,
-        @PathVariable(value = "month", required = false) Optional<Integer> month,
-        @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        @PathVariable(value = "month", required = false) Optional<Integer> month) {
 
-        Pageable pageable = PageRequest.of(page, size);
+//        Pageable pageable = PageRequest.of(page, size);
 
-        return reservationService.findReservationFilterList(memberId, month, pageable);
+        return reservationService.findReservationFilterList(memberId, month);
     }
 
 //    @GetMapping(ApiPath.RESERVATION_CAMP_CAMP_ID)
