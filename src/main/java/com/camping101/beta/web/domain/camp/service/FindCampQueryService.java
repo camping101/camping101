@@ -4,9 +4,11 @@ import static com.camping101.beta.db.entity.camp.ManageStatus.AUTHORIZED;
 import static com.camping101.beta.db.entity.camp.QCamp.camp;
 import static com.camping101.beta.db.entity.camplog.QCampLog.campLog;
 import static com.camping101.beta.db.entity.member.QMember.member;
+import static com.camping101.beta.db.entity.reservation.QReservation.reservation;
 import static com.camping101.beta.db.entity.site.QSite.site;
 
 import com.camping101.beta.db.entity.camp.Camp;
+import com.camping101.beta.db.entity.reservation.QReservation;
 import com.camping101.beta.db.entity.site.Site;
 import com.camping101.beta.web.domain.camp.dto.FindCampListRs;
 import com.camping101.beta.web.domain.camp.dto.QFindCampListRs;
@@ -96,14 +98,15 @@ public class FindCampQueryService {
 
     private List<SiteInCamp> findSiteAndReservation(List<Long> siteIds) {
 
-        LocalDate fromDate = LocalDate.from(LocalDate.now().atStartOfDay());
-        LocalDate toDate = LocalDate.from(LocalDate.now().plusMonths(2).atStartOfDay());
-
-        Predicate predicate = (site.reservationList.any().startDate.between(fromDate, toDate))
-            .and(site.reservationList.any().endDate.between(fromDate, toDate));
+//        LocalDate fromDate = LocalDate.from(LocalDate.now().atStartOfDay());
+//        LocalDate toDate = LocalDate.from(LocalDate.now().plusMonths(2).atStartOfDay());
+//
+//        Predicate predicate = (site.reservationList.any().startDate.between(fromDate, toDate))
+//            .and(site.reservationList.any().endDate.between(fromDate, toDate));
 
         return queryFactory.select(new QSiteInCamp(site)).from(site)
-            .where(site.siteId.in(siteIds), predicate).fetch();
+            .where(site.siteId.in(siteIds))
+            .fetch();
     }
 
     private List<Long> findSiteIds(Long campId) {

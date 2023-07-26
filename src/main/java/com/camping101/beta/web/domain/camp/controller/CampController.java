@@ -72,7 +72,6 @@ public class CampController {
         PageRequest campLogPageRq = PageRequest.of(campLogPage, campLogSize);
 
         return findCampService.findCampDetails(campId, campLogPageRq);
-
     }
 
     // 캠핑장 상세 정보 조회 - 캠핑장 주인
