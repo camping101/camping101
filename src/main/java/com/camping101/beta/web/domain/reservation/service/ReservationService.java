@@ -68,11 +68,11 @@ public class ReservationService {
     }
 
     // 결제하기
-    public Long payment(CreateReservationPaymentRq rq) {
-
-        long days = ChronoUnit.DAYS.between(rq.getStartDate(), rq.getEndDate());
-        return rq.getPrice() * days;
-    }
+//    public Long payment(CreateReservationPaymentRq rq) {
+//
+//        long days = ChronoUnit.DAYS.between(rq.getStartDate(), rq.getEndDate());
+//        return rq.getPrice() * days;
+//    }
 
 
     // 사이트 예약 목록 조회 (회원(손님)기능)

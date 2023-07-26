@@ -5,6 +5,7 @@ import com.camping101.beta.web.domain.reservation.dto.CreateReservationPaymentRq
 import com.camping101.beta.web.domain.reservation.dto.CreateReservationRq;
 import com.camping101.beta.web.domain.reservation.dto.CreateReservationRs;
 import com.camping101.beta.web.domain.reservation.dto.FindReservationBySiteIdRs;
+import com.camping101.beta.web.domain.reservation.dto.FindReservationDetailsRs;
 import com.camping101.beta.web.domain.reservation.dto.FindReservationListRs;
 import com.camping101.beta.web.domain.reservation.service.FindReservationService;
 import com.camping101.beta.web.domain.reservation.service.ReservationService;
@@ -40,10 +41,10 @@ public class ReservationController {
 
     }
 
-    @PostMapping(ApiPath.RESERVATION_PAYMENT)
-    public void paymentReservationPrice(@RequestBody CreateReservationPaymentRq rq) {
-        reservationService.payment(rq);
-    }
+//    @PostMapping(ApiPath.RESERVATION_PAYMENT)
+//    public void paymentReservationPrice(@RequestBody CreateReservationPaymentRq rq) {
+//        reservationService.payment(rq);
+//    }
 
     // 사이트 예약 목록 조회(회원이 자신의 예약 내역 조회)
     // 해당 월의 예약 목록 가져오기
@@ -72,14 +73,14 @@ public class ReservationController {
         return findReservationService.findReservationBySiteId(siteId);
     }
 
-    // 사이트 예약 상세 조회
-//    @GetMapping(ApiPath.RESERVATION_DETAILS_RESERVATION_ID)
-//    public FindReservationDetailsRs reservationDetails(
-//        @PathVariable("reservation-id") Long reservationId) {
-//
-//        return findReservationService.findReservationDetails(
-//            reservationId);
-//    }
+//     사이트 예약 상세 조회
+    @GetMapping(ApiPath.RESERVATION_DETAILS_RESERVATION_ID)
+    public FindReservationDetailsRs reservationDetails(
+        @PathVariable("reservation-id") Long reservationId) {
+
+        return findReservationService.findReservationDetails(
+            reservationId);
+    }
 
     // 사이트 예약 취소
     @DeleteMapping(ApiPath.RESERVATION_ID)
