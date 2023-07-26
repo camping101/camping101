@@ -10,6 +10,7 @@ import com.camping101.beta.web.domain.camp.dto.FindCampListRs;
 import com.camping101.beta.web.domain.camp.dto.ModifyCampRq;
 import com.camping101.beta.web.domain.camp.dto.ModifyCampRs;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.FindCampDetailsRs;
+import com.camping101.beta.web.domain.camp.dto.content.ContentRs;
 import com.camping101.beta.web.domain.camp.service.CampService;
 import com.camping101.beta.web.domain.camp.service.FindCampService;
 import io.swagger.annotations.Api;
@@ -54,12 +55,15 @@ public class CampController {
 
     // 캠핑장 목록 조회(회원, 비회원, 관리자)
     @GetMapping(ApiPath.CAMP)
-    public List<FindCampListRs> campList(
+    public ContentRs campList(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int size) {
 
         PageRequest pageRequest = PageRequest.of(page, size);
-        return findCampService.findCampList(pageRequest);
+
+        List<FindCampListRs> rs = findCampService.findCampList(pageRequest);
+
+        return ContentRs.of(rs);
     }
 
     // 캠핑장 상세 정보 조회 - 손님
