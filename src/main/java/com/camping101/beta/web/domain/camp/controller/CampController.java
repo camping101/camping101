@@ -54,7 +54,7 @@ public class CampController {
 
     // 캠핑장 목록 조회(회원, 비회원, 관리자)
     @GetMapping(ApiPath.CAMP)
-    public Page<FindCampListRs> campList(
+    public List<FindCampListRs> campList(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int size) {
 

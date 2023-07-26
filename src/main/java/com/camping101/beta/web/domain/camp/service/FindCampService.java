@@ -46,15 +46,17 @@ public class FindCampService {
     }
 
     // 캠핑장 목록 조회(페이징 처리 하기) (손님 + 비회원)
-    public Page<FindCampListRs> findCampList(Pageable pageable) {
-        Page<Camp> camps = campRepository.findAllByManageStatus(pageable, AUTHORIZED);
+    public List<FindCampListRs> findCampList(Pageable pageable) {
 
-        List<FindCampListRs> filteredCamps = camps.getContent().stream()
-            .filter(camp -> camp.getSites().size() != 0)
-            .map(FindCampListRs::createCampListRs)
-            .collect(Collectors.toList());
-
-        return new PageImpl<>(filteredCamps, pageable, camps.getTotalElements());
+//        Page<Camp> camps = campRepository.findAllByManageStatus(pageable, AUTHORIZED);
+//
+//        List<FindCampListRs> filteredCamps = camps.getContent().stream()
+//            .filter(camp -> camp.getSites().size() != 0)
+//            .map(FindCampListRs::createCampListRs)
+//            .collect(Collectors.toList());
+//
+//        return new PageImpl<>(filteredCamps, pageable, camps.getTotalElements());
+        return findCampQueryService.findAllByManageStatusAndSiteSize(pageable);
     }
 
 

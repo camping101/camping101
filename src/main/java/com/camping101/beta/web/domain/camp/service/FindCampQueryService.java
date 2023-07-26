@@ -1,11 +1,15 @@
 package com.camping101.beta.web.domain.camp.service;
 
+import static com.camping101.beta.db.entity.camp.ManageStatus.AUTHORIZED;
+import static com.camping101.beta.db.entity.camp.QCamp.camp;
 import static com.camping101.beta.db.entity.camplog.QCampLog.campLog;
 import static com.camping101.beta.db.entity.member.QMember.member;
 import static com.camping101.beta.db.entity.site.QSite.site;
 
 import com.camping101.beta.db.entity.camp.Camp;
 import com.camping101.beta.db.entity.site.Site;
+import com.camping101.beta.web.domain.camp.dto.FindCampListRs;
+import com.camping101.beta.web.domain.camp.dto.QFindCampListRs;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.CampLogInCamp;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.FindCampDetailsRs;
 import com.camping101.beta.web.domain.camp.dto.campdetaildto.QCampLogInCamp;
@@ -40,8 +44,7 @@ public class FindCampQueryService {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public FindCampDetailsRs findCampAndSiteAndCampLog(Long campId,
-        Pageable campLogPageable) {
+    public FindCampDetailsRs findCampAndSiteAndCampLog(Long campId, Pageable campLogPageable) {
 
         FindCampDetailsRs rs = findCampDetails(campId);
 
@@ -138,6 +141,21 @@ public class FindCampQueryService {
             .offset(campLogPageable.getOffset())
             .limit(campLogPageable.getPageSize())
             .fetch();
+    }
+
+    public List<FindCampListRs> findAllByManageStatusAndSiteSize(Pageable pageable) {
+
+        return queryFactory
+            .select(new QFindCampListRs(
+                camp.name, camp.campId, camp.intro, camp.manageStatus,
+                camp.location, camp.openSeason, camp.animalCapable,
+                camp.firstImage, camp.campLogCnt))
+            .from(camp)
+            .where(camp.sites.isEmpty().and(camp.manageStatus.eq(AUTHORIZED)))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
     }
 
 
