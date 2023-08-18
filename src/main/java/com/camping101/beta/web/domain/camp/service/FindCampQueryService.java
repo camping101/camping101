@@ -154,7 +154,7 @@ public class FindCampQueryService {
                 camp.location, camp.openSeason, camp.animalCapable,
                 camp.firstImage, camp.campLogCnt))
             .from(camp)
-            .where(camp.sites.isEmpty().and(camp.manageStatus.eq(AUTHORIZED)))
+            .where(camp.sites.isNotEmpty().and(camp.manageStatus.eq(AUTHORIZED)))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
